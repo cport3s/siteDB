@@ -1,0 +1,85 @@
+<!DOCTYPE html5>
+<html>
+    <head>
+        <title>Altice SiteDB Wiki</title>
+    </head>
+    <body>
+        <header>
+            <h1><a href="/">Altice SiteDB Wiki</a></h1>
+        </header>
+        <article>
+            <h2>What is it?</h2>
+            <p>
+                It's a tool designed to to show live network related information as fresh as possible, correlating data between different departments.
+            </p>
+            <h2>Who's it meant for?</h2>
+            <p>
+                Altice Engineers from the following departments:
+            </p>
+            <ul>
+                <li><a href="mailto:bsc@altice.com.do">RAN Operations Engineers</a></li>
+                <li><a href="mailto:radio@altice.com.do">Radio Design Engineers</a></li>
+                <li><a href="mailto:nocaltice@altice.com.do">NOC Technicians</a></li>
+                <li><a href="mailto:trans@altice.com.do">Transmission Engineers</a></li>
+            </ul>
+            <h2>How does it work?</h2>
+            <p>
+                It pulls data from the live RAN network, stores it into a database and correlates that infornmation with data from other departments, to maintain coherence accross the network inventory. It consists of the following parts:
+            </p>
+            <ul>
+                <li>Huawei U2020 iSStar Scripts</li>
+                <p>
+                    IP Address: https://172.17.112.2:31943/
+                    There are several scripts that run in the background that handle live network data colletion and database population.
+                    They connect to the NEs on the network, pull the desired data and then populate that information to the MySQL databse running on the BSCServer.
+                    iSStar is a propietary Huawei OSS module that works on a Python based scripting language, the documentation can be found on the U2020 Product Documentation.
+                    iSStar doesn't support external database connection, so to get around the issue, we opened an SSH session to an OpenSSH server running on the BSCServer, and once connected, then we issue the mysql command on the CLI.
+                    Credentials for the OpenSSH connection:
+                    User: sitedb
+                    Password: BSCAltice.123
+                    Peer IP: 172.16.121.41 (BSCServer)
+                    Port: 22
+                    There's an U2020 user designated specifically to run these collection scripts, with LST and DSP commands allowed only. The credentials are as follows:
+                    User: sitedb
+                    password: BSCAltice@123
+                </p>
+                <li>BSCServer MySQL Database</li>
+                <p>
+                    IP Address: 172.16.121.41 (as of 2020-05-27)
+                    Hostname: bscserver
+                    Port: 3306
+                    Credentials:
+                    <ul>
+                        <li>root/BSCAltice.123</li>
+                        <li>sitedb/BSCAltice.123</li>
+                    </ul>
+                    MySQL database running on the BSCServer holds all the information coming from the Huawei OSS and any other data source to correlate. As of 2020-05-27, the only data sources are Huawei OSS and Radio Planning Excel documents.
+                </p>
+                <li>BSCServer Flask/Python WebApp</li>
+                <p>
+                    The main app directory is D:\sitedb_v1 (as of 2020-05-27) and contains all python scripts and html files (including this wiki) that compose the WebApp.
+                    The database data query is done from here and so is the front-end of the webapp, which runs on HTML and CSS only. All code has its corresponding comments and should be fairly easy to understand.
+                    The main python code (sitedb_v2.py) pulls the data from the database and responds to the GET and POST requests from the HTML files (located on D:\sitedb_v1\templates\).
+                    There is another python code (dashboard_v1.py) that pulls the data from the mAOS reports (stored every 1 hour on the directory D:\ftproot\BSC\) and generates the plots you see on the dashboard section of the webapp.
+                    There's a Windows Task scheduled to run every hour that executes a bat file located in D:\sitedb_v1\ to execute the dashboard_v1.py, which pulls data from the mAOS reports, plots it as a graph using matplotlib.pyplot and stores those graphs on D:\sitedb_v1\images\static\.
+
+                </p>
+            </ul>
+        </article>
+        <section>
+            <h2>Changelog:</h2>
+            <ol>
+                <li>2020-05-27: Initial wiki release.</li>
+            </ol>
+        </section>
+        <footer>
+            <p>
+                <ul>
+                    <li>WebApp Administrator: Carlos Portes</li>
+                    <li>Contact Information: caportes@altice.com.do</li>
+                    <li>Phone: 8098591379</li>
+                </ul>
+            </p>
+        </footer>
+    </body>
+</html>

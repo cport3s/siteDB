@@ -1,0 +1,43 @@
+{% extends "NewInfo_Base.html" %}
+{% block newsector %}
+<table>
+    <tbody>
+        <tr>
+            <td width=50%>
+                <form action="/newsectorprovisioning" style="text-align: right;" method="POST">
+                    <label for="egbtsname">eGBTS Name: </label>
+                    <input type="text" id="egbtsname" name="egbtsnameh" placeholder=" Ex.: G075S"><br>
+                    <label for="gcellid">GCell ID: </label>
+                    <input type="text" id="gcellid" name="gcellidh"><br>
+                    <label for="ncc">NCC: </label>
+                    <input type="text" id="ncc" name="ncch"><br>
+                    <label for="bcc">BCC: </label>
+                    <input type="text" id="bcc" name="bcch"><br>
+                    <label for="bcch">BCCH: </label>
+                    <input type="text" id="bcch" name="bcchh"><br>
+                    <label for="tch1">TCH1: </label>
+                    <input type="text" id="tch1" name="tch1h"><br>
+                    <label for="tch2">TCH2: </label>
+                    <input type="text" id="tch2" name="tch2h"><br>
+                    <label for="tch3">TCH3: </label>
+                    <input type="text" id="tch3" name="tch3h"><br>
+                    <label for="enbname">eNodeB Name: </label>
+                    <input type="text" id="enbname" name="enbnameh" placeholder=" Ex.: L002S"><br>
+                    <label for="cellid">Cell ID: </label>
+                    <input type="text" id="cellid" name="cellidh"><br>
+                    <label for="pci">PCI: </label>
+                    <input type="text" id="pci" name="pcih"><br>
+                    <label for="prach">Root Index: </label>
+                    <input type="text" id="prach" name="prachh"><br>
+                    <label for="cellrad">Cell Radius: </label>
+                    <input type="text" id="cellrad" name="cellradh"><br>
+                    <input type="submit">
+                </form>
+            </td>
+        </tr>
+    </tbody>
+</table>
+{% endblock %}
+{% block newsite %}
+
+{% endblock %}

@@ -1,0 +1,83 @@
+{% extends "Main_Base.html" %}
+{% block dashboard_main_child %}
+<style>
+    .table.graphtable {
+        border: 2px solid #FFFFFF;
+		width: 100%;
+		text-align: center;
+		border-collapse: collapse;
+    }
+    table.graphtable td, th {
+		border: 1px solid #b8b8b8;
+		padding: 1px;
+        width: 50%;
+        line-height: 0;
+	}
+    table.graphtable img {
+        padding: 0px;
+        margin: 0px;
+        border: none;
+    }
+</style>
+<article>
+    <!--Set automatic refresh rate for every 30 minutes (1800 seconds)-->
+    <meta http-equiv="refresh" content="1800">
+    <table class="graphtable">
+        <tbody>
+			<tr>
+                <th>
+                    <h1>BSC TRX Usage</h1>
+                </th>
+            </tr>
+			<tr>
+                <td>
+                    <figure>
+                        <img src="/static/images/trx_usage.png">
+                    </figure>
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    <h1>BSC FE/GE Interface</h1>
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    <figure>
+                        <img src="/static/images/BSC_01_RRA_FE-GE_Interface.png">
+                    </figure>
+                </td>
+                <td>
+                    <figure>
+                        <img src="/static/images/BSC_05_RRA_FE-GE_Interface.png">
+                    </figure>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <figure>
+                        <img src="/static/images/BSC_03_VM_FE-GE_Interface.png">
+                    </figure>
+                </td>
+                <td>
+                    <figure>
+                        <img src="/static/images/BSC_04_VM_FE-GE_Interface.png">
+                    </figure>
+                </td>
+            </tr>
+                    <tr>
+                        <td>
+                    <figure>
+                        <img src="/static/images/BSC_02_STGO_FE-GE_Interface.png">
+                    </figure>
+                </td>
+                <td>
+                    <figure>
+                        <img src="/static/images/BSC_06_STGO_FE-GE_Interface.png">
+                    </figure>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</article>
+{% endblock %}

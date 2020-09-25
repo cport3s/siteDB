@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Altice SiteDB</title>
+</head>
+<body bgcolor="black" text="white">
+    <style>
+        .stickyheader {
+            overflow: hidden;
+            position: sticky;
+            top: 0;
+            background: #000000;
+            background-image: url("https://www.alticeusa.com/sites/default/files/alticeusa-logo.png");
+            background-repeat: no-repeat;
+            background-position: center center;
+            height: 225px;	
+            z-index: 1;
+        }
+        .stickyheader a {
+            float: left;
+            display: block;
+            text-align: center;
+            padding: 0px;
+            text-decoration: none;
+            color: #ffffff;
+        }
+        .mainbody {
+            margin-top: 1px;
+        }
+    </style>
+    <div class="stickyheader">
+        <a href="/">
+            <h1>Altice DR Site DB</h1>
+        </a>
+    </div>
+    <div class="mainbody">
+        <table width=100%>
+            <h3 style="text-align: center;">New Site/Sector Input Form</h3>
+            <tbody>
+                <tr>
+                    <td width=50%>
+                        <div style="text-align: center;">
+                            <form action="/newsector" method="POST">
+                                <input type="submit" value="New Sector" name="newsectorh">
+                            </form>
+                        </div>
+                    </td>
+                    <td width=50%>
+                        <div style="text-align: center;">
+                            <form action="/newsite" method="POST">
+                                <input type="submit" value="New Site" name="newsiteh">
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="newpci">
+        <p>{% block newsector %}{% endblock %}</p>
+    </div>
+    <div id="newsite">
+        <p>{% block newsite %}{% endblock %}</p>
+    </div>
+</body>
+</html>

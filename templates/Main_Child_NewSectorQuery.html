@@ -1,0 +1,85 @@
+{% extends "Main_Base.html" %}
+{% block newsectorquerydisplay %}
+	<table>
+		<style>
+			table, th, td {
+				padding: 6px;
+				border: 1px solid white;
+				border-collapse: collapse;
+			}
+		</style>
+		<tbody>
+			<tr><th>eGBTS Name</th><td colspan="12">{{ egbtsnameh }}</td></tr>
+			<tr>
+				<th>GSM Cell ID</th>
+				{% for gcellid in gcellidh %}
+				<td>{{ gcellid }}</td>
+				{% endfor %}
+			</tr>
+			<tr>
+				<th>NCC</th>
+				{% for ncc in ncch %}
+				<td>{{ ncc }}</td>
+				{% endfor %}
+			</tr>
+			<tr>
+				<th>BCC</th>
+				{% for bcc in bcch %}
+				<td>{{ bcc }}</td>
+				{% endfor %}
+			</tr>
+			<tr>
+				<th>BCCH</th>
+				{% for bcch in bcchh %}
+				<td>{{ bcch }}</td>
+				{% endfor %}
+			</tr>
+			<tr>
+				<th>TCH1</th>
+				{% for tch1 in tch1h %}
+				<td>{{ tch1 }}</td>
+				{% endfor %}
+			</tr>
+			<tr>
+				<th>TCH1</th>
+				{% for tch2 in tch2h %}
+				<td>{{ tch2 }}</td>
+				{% endfor %}
+			</tr>
+			<tr>
+				<th>TCH3</th>
+				{% for tch3 in tch3h %}
+				<td>{{ tch3 }}</td>
+				{% endfor %}
+			</tr>
+			<tr><th>LAC</th><td colspan="12">{{ lach }}</td></tr>
+			<tr><th>eNodeB Name</th><td colspan="12">{{ enbnameh }}</td></tr>
+			<tr><th>eNodeB ID</th><td colspan="12">{{ enbidh }}</td></tr>
+			<tr>
+				<th>Cell ID</th>
+				{% for lcellid in lcellidh %}
+				<td>{{ lcellid }}</td>
+				{% endfor %}
+			</tr>
+			<tr>
+				<th>PCI</th>
+				{% for pci in pcih %}
+				<td>{{ pci }}</td>
+				{% endfor %}
+			</tr>
+			<tr>
+				<th>Root Index</th>
+				{% for prach in prachh %}
+				<td>{{ prach }}</td>
+				{% endfor %}
+			</tr>
+			<tr>
+				<th>Cell Radius</th>
+				{% for cellrad in cellradh %}
+				<td>{{ cellrad }}</td>
+				{% endfor %}
+			</tr>
+			<tr><th>TAC</th><td colspan="12">{{ tach }}</td></tr>
+		</tbody>
+	</table>
+{% endblock %}
