@@ -127,7 +127,7 @@ wiki_html = 'Main_Child_Wiki.html'
 # DB Connection Parameters
 dbusername = 'sitedb'
 dbpassword = 'BSCAltice.123'
-hostip = 'localhost'
+hostip = '172.16.121.41'
 dbname = 'alticedr_sitedb'
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
@@ -194,7 +194,7 @@ def searchsite():
     return render_template(searchhtml)
 
 # Live Site Search result page
-@app.route('/sitesearch', methods = ['POST'])
+@app.route('/siteQuery', methods = ['POST'])
 def site_db_consult():
     siteid = int(request.form['siteidh'])
     siteid, sitename, egbtsname, unodebname, enbname, nelist, nodal_id, tricom_name = siteconversion(siteid)

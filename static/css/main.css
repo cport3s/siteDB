@@ -1,0 +1,56 @@
+body {
+    background-color: black;
+    color: white;
+}
+
+header {
+    overflow: hidden;
+    position: sticky;
+    top: 0;
+    background: #000000;
+    background-image: url("https://www.alticeusa.com/sites/default/files/alticeusa-logo.png");
+    background-repeat: no-repeat;
+    background-position: center center;
+    height: 140px;
+    z-index: 1;
+}
+
+.headerTitle {
+    height: auto;
+    display: block;
+    width: 100%;
+}
+
+.headerTitle .titleContent {
+    text-shadow: 3px 3px 3px black;
+    margin-top: 0;
+    margin-bottom: 0;
+    float: left;
+    text-decoration: none;
+    color: #ffffff;
+}
+
+header table {
+    width: 100%;
+}
+
+td {
+    width: 50%;
+}
+
+td div {
+    text-align: center;
+}
+
+.textShadow {
+    text-shadow: 2px 2px 3px black;
+}
+
+div h4 {
+    display: block;
+    margin-bottom: 0;
+}
+
+.mainbody {
+    margin-top: 1px;
+}

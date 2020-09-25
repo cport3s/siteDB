@@ -1,67 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Altice SiteDB</title>
+	<title>Altice Site Database</title>
+	<!--Link to a CSS file for styles-->
+	<link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet" type="text/css"/>
+	<!--Link to a JavaScript file for scripts-->
+	<script src="{{ url_for('static', filename='js/main.js') }}" rel="stylesheet"/></script>
 </head>
-<body bgcolor="black" text="white">
-	<style>
-		.stickyheader {
-			overflow: hidden;
-			position: sticky;
-			top: 0;
-			background: #000000;
-			background-image: url("https://www.alticeusa.com/sites/default/files/alticeusa-logo.png");
-			background-repeat: no-repeat;
-			background-position: center center;
-			height: 225px;	
-			z-index: 1;
-		}
-		.stickyheader a {
-			float: left;
-			display: block;
-			text-align: center;
-			padding: 0px;
-			text-decoration: none;
-			color: #ffffff;
-		}
-		.mainbody {
-			margin-top: 1px;
-		}
-	</style>
-	<div class="stickyheader">
-		<a href="/" style="text-shadow: 3px 3px 3px black;">
-			<h1>Altice DR Site DB</h1>
-		</a>
-		<a href="/wiki" style="text-shadow: 3px 3px 3px black;">
-			<h6>Wiki</h6>
-		</a>
-		<table style="width:100%">
+<body>
+	<header>
+		<section class="headerTitle">
+			<a href="/">
+				<h1 class="titleContent">SiteDB</h1>
+			</a>
+			<a href="/wiki">
+				<h6 class="titleContent">Wiki</h6>
+			</a>
+		</section>
+		<table>
 			<tbody>
 				<tr>
-					<td width="50%">
-						<div style="text-align: center;">
-							<form action="/sitesearch" method="POST">
-								<label style="text-shadow: 2px 2px 3px black;">Live Site Information Query</label>
+					<td>
+						<div>
+							<h4 class="textShadow">Site Information</h4>
+							<form action="/siteQuery" method="POST">
+								<labe class="textShadow">Live Site Information Query</label>
 								<input name="siteidh" placeholder=" Ex.: 086" required type="number" minlength="1" maxlength="4">
-								<input type="submit" value="Search Site">
+								<input type="submit" value="Search">
 							</form>
 							<form action="/newsectorquery" method="POST">
-								<label style="text-shadow: 2px 2px 3px black;">Sector Split PCI Query</label>
+								<label class="textShadow">Sector Split PCI Query</label>
 								<input name="siteidh" placeholder=" Ex.: 014" required type="number" minlength="1" maxlength="4">
-								<input type="submit" value="Search Site">
+								<input type="submit" value="Search">
 							</form>
 							<form action="/dashboard" method="GET">
 								<input type="submit" value="Dashboard">
 							</form>
 						</div>
 					</td>
-					<td width="50%">
-						<div style="text-align: center;">
-							<h4 style="text-shadow: 2px 2px 3px black;">Login</h4>
+					<td>
+						<div>
+							<h4 class="textShadow">Login</h4>
 							<form action="/login" method="POST">
-								<label for="username" style="text-shadow: 2px 2px 3px black;">Username: </label>
+								<label class="textShadow" for="username">Username: </label>
 								<input type="text" id="username" name="usernameh"><br>
-								<label for="password" style="text-shadow: 2px 2px 3px black;">Password: </label>
+								<label class="textShadow" for="password">Password: </label>
 								<input type="password" id="password" name="passwordh"><br>
 								<input type="submit">
 								{% if errorh %}
@@ -73,7 +56,7 @@
 				</tr>
 			</tbody>
 		</table>
-	</div>
+	</header>
 	<div class="mainbody" id="livesitequerydisplay" style="width:100%">
 		{% block livesitequerydisplay %}{% endblock %}
 	</div>
