@@ -8,6 +8,18 @@ from datetime import datetime
 import requests
 
 # -----------------------------------------------------------OBJECTS-----------------------------------------------------------#
+# transDB class
+class transDBInfo():
+    ranSiteId = ''
+    transSiteId = ''
+    ptiSiteName = ''
+    address = ''
+    towerTopo = ''
+    locationType = ''
+    txType = ''
+    manRouter = ''
+    ibnRouter = ''
+
 # RET class
 class RetDevice():
     retdeviceno = []
@@ -392,12 +404,40 @@ def site_db_consult():
     # Close DB connection
     pointer.close()
     connectr.close()
+    # Get transDB site info
+    transDbData = transDBInfo()
+    response = requests.get('http://transdb/cgi-bin/querysite.py?site_name={}'.format(str(siteid)))
+    # Check response status code to see if the information was found on server
+    if int(response.status_code) == 200:
+        # Parse json key 'line' to an array
+        dataList = response.json()['line']
+        # Cycle through the array and search for the especific site id
+        for data in dataList:
+            if data['ran_site_name'] == siteid:
+                transDbData.ranSiteId = data['ran_site_name']
+                transDbData.transSiteId = data['trans_site_name']
+                transDbData.ptiSiteName = data['pti_site_name']
+                transDbData.address = data['direccion']
+                transDbData.towerTopo = data['Tipo_Torre']
+                transDbData.locationType = data['PTI_estructura']
+                transDbData.txType = data['Transmision']
+                transDbData.manRouter = data['man']
+                transDbData.ibnRouter = data['ibn']
+    else:
+        transDbData.ranSiteId = 'N/A'
+        transDbData.transSiteId = 'N/A'
+        transDbData.ptiSiteName = 'N/A'
+        transDbData.address = 'N/A'
+        transDbData.towerTopo = 'N/A'
+        transDbData.locationType = 'N/A'
+        transDbData.txType = 'N/A'
+        transDbData.manRouter = 'N/A'
+        transDbData.ibnRouter = 'N/A'
     # 'cellnameh' is a variable in the HTML code on Main.html
-    #return render_template(mainhtml, pticodeh = pticode, lath = lat, longh = lon, nodalidh = nodal_id, tricomnameh = tricom_name, nelisth = nelist, retdevicenoh = retdevice.retdeviceno, retdevicenameh = retdevice.retdevicename, retsubrackh = retdevice.retsubrack, retmanufacturerh = retdevice.retmanufacturer, retserialh = retdevice.retserial, rettilth = retdevice.rettilt, retantmodelh = retdevice.retantmodel, retantmintilth = retdevice.retantmintilt, retantmaxtilth = retdevice.retantmaxtilt, btsnameh = gsmcell.egbtsname, egbtsidh = gsmcell.egbtsid, egbtsidxh = gsmcell.btsidx, gcellnameh = gsmcell.gcellname, bsch = gsmcell.bscname, gcellindexh = gsmcell.gcellidx, gcellidh = gsmcell.gcellid, gcellbandh = gsmcell.gband, lach = gsmcell.glac, ncch = gsmcell.ncc, bcch = gsmcell.bcc, hsnh = gsmcell.hsn, rach = gsmcell.grac, nbnameh = umtscell.unodebname, unodebidh = umtscell.unodebid, rnch = umtscell.urncname, ucellnameh = umtscell.ucellname, ucellidh = umtscell.ucellid, ucellbandh = umtscell.uband, ulach = umtscell.ulac, urach = umtscell.urac, upsch = umtscell.upsc, uarfcnh = umtscell.ularfcn, darfcnh = umtscell.dlarfcn, enbnameh = ltecell.enbname, enbidh = ltecell.enbid, lcellnameh = ltecell.lcellname, lcellidh = ltecell.lcellid, lcellbandh = ltecell.lband, pcih = ltecell.pci, prachh = ltecell.prach, txmodeh = ltecell.txmode, tach = ltecell.tac, earfcnh = ltecell.earfcn)
-    return render_template(mainhtml, pticodeh = pticode, lath = lat, longh = lon, nodalidh = nodal_id, tricomnameh = tricom_name, nelisth = nelist, retdevicenoh = retdevice.retdeviceno, retdevicenameh = retdevice.retdevicename, retsubrackh = retdevice.retsubrack, retmanufacturerh = retdevice.retmanufacturer, retserialh = retdevice.retserial, rettilth = retdevice.rettilt, retantmodelh = retdevice.retantmodel, retantmintilth = retdevice.retantmintilt, retantmaxtilth = retdevice.retantmaxtilt, btsnameh = gsmcell.egbtsname, egbtsidh = gsmcell.egbtsid, egbtsidxh = gsmcell.btsidx, gcellnameh = gsmcell.gcellname, bsch = gsmcell.bscname, gcellindexh = gsmcell.gcellidx, gcellidh = gsmcell.gcellid, gcellbandh = gsmcell.gband, lach = gsmcell.glac, ncch = gsmcell.ncc, bcch = gsmcell.bcc, hsnh = gsmcell.hsn, rach = gsmcell.grac, nbnameh = umtscell.unodebname, unodebidh = umtscell.unodebid, rnch = umtscell.urncname, ucellnameh = umtscell.ucellname, ucellidh = umtscell.ucellid, ucellbandh = umtscell.uband, ulach = umtscell.ulac, urach = umtscell.urac, upsch = umtscell.upsc, uarfcnh = umtscell.ularfcn, darfcnh = umtscell.dlarfcn, lteCellh = ltecell)
+    return render_template(mainhtml, pticodeh = pticode, lath = lat, longh = lon, nodalidh = nodal_id, tricomnameh = tricom_name, nelisth = nelist, transDbDatah = transDbData, retDeviceh = retdevice, gsmCellh = gsmcell, umtsCellh = umtscell, lteCellh = ltecell)
 
 # New Sector Query Result
-@app.route('/newsectorquery', methods =['POST'])
+@app.route('/newsectorquery', methods = ['POST'])
 def newsectorquery():
     # Declare objects to be used in this route
     gsmcell = GSMCell()

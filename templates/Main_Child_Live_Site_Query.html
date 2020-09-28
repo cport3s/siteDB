@@ -60,6 +60,12 @@
 		  						{% endfor %}
 							</ul>
 						</li>
+						<li style="margin-left: 20px;">Address: {{ transDbDatah.address }}</li>
+						<li style="margin-left: 20px;">Tower Topology: {{ transDbDatah.towerTopo }}</li>
+						<li style="margin-left: 20px;">Location Type: {{ transDbDatah.locationType }}</li>
+						<li style="margin-left: 20px;">Tx Type: {{ transDbDatah.txType }}</li>
+						<li style="margin-left: 20px;">Has MAN Router? {{ transDbDatah.manRouter }}</li>
+						<li style="margin-left: 20px;">Has IBN Router? {{ transDBDatah.ibnRouter }}</li>
 					</ul>
 				</td>
 				<td width="50%">
@@ -91,18 +97,18 @@
 		  		</tr>
 		  	</thead>
 		  	<tbody>
-		  		{% for i in retdevicenoh %}
-		  			<tr><td>{{ retdevicenoh[loop.index0] }}</td><td>{{ retdevicenameh[loop.index0] }}</td><td>{{ retsubrackh[loop.index0] }}</td><td>{{ retmanufacturerh[loop.index0] }}</td><td>{{ retserialh[loop.index0] }}</td><td>{{ rettilth[loop.index0] }}</td><td>{{ retantmodelh[loop.index0] }}</td><td>{{ retantmintilth[loop.index0] }}</td><td>{{ retantmaxtilth[loop.index0] }}</td></tr>
+		  		{% for i in retDeviceh.retdeviceno %}
+		  			<tr><td>{{ retDeviceh.retdeviceno[loop.index0] }}</td><td>{{ retDeviceh.retdevicename[loop.index0] }}</td><td>{{ retDeviceh.retsubrack[loop.index0] }}</td><td>{{ retDeviceh.retmanufacturer[loop.index0] }}</td><td>{{ retDeviceh.retserial[loop.index0] }}</td><td>{{ retDeviceh.rettilt[loop.index0] }}</td><td>{{ retDeviceh.retantmodel[loop.index0] }}</td><td>{{ retDeviceh.retantmintilt[loop.index0] }}</td><td>{{ retDeviceh.retantmaxtilt[loop.index0] }}</td></tr>
 		  		{% endfor %}
 		  	</tbody>
 		</table>
 	</div>
 	<div>
 		<table class="retgridtable">
-			<tr><th>eGBTS Name</th><td colspan="13">{{ btsnameh }}</td></tr>
-			<tr><th>BSC</th><td colspan="13">{{ bsch }}</td></tr>
-			<tr><th>eGBTS ID</th><td colspan="13">{{ egbtsidh }}</td></tr>
-			<tr><th>eGBTS Index</th><td colspan="13">{{ egbtsidxh }}</td></tr>
+			<tr><th>eGBTS Name</th><td colspan="13">{{ gsmCellh.egbtsname }}</td></tr>
+			<tr><th>BSC</th><td colspan="13">{{ gsmCellh.bscname }}</td></tr>
+			<tr><th>eGBTS ID</th><td colspan="13">{{ gsmCellh.egbtsid }}</td></tr>
+			<tr><th>eGBTS Index</th><td colspan="13">{{ gsmCellh.btsidx }}</td></tr>
 			<tr>
 				<th>Cell Name</th>
 				<th>Cell ID</th>
@@ -115,14 +121,14 @@
 				<th>RA</th>
 			</tr>
 			<tbody>
-				{% for i in gcellnameh %}
-		  			<tr><td>{{ gcellnameh[loop.index0] }}</td><td>{{ gcellidh[loop.index0] }}</td><td>{{ gcellindexh[loop.index0] }}</td><td>{{ gcellbandh[loop.index0] }}</td><td>{{ lach[loop.index0] }}</td><td>{{ ncch[loop.index0] }}</td><td>{{ bcch[loop.index0] }}</td><td>{{ hsnh[loop.index0] }}</td><td>{{ rach[loop.index0] }}</td></tr>
+				{% for i in gsmCellh.gcellname %}
+		  			<tr><td>{{ gsmCellh.gcellname[loop.index0] }}</td><td>{{ gsmCellh.gcellid[loop.index0] }}</td><td>{{ gsmCellh.gcellidx[loop.index0] }}</td><td>{{ gsmCellh.gband[loop.index0] }}</td><td>{{ gsmCellh.glac[loop.index0] }}</td><td>{{ gsmCellh.ncc[loop.index0] }}</td><td>{{ gsmCellh.bcc[loop.index0] }}</td><td>{{ gsmCellh.hsn[loop.index0] }}</td><td>{{ gsmCellh.grac[loop.index0] }}</td></tr>
 		  		{% endfor %}
 			</tbody>
 		</table>
 		<table class="retgridtable">
-			<tr><th>NodeB Name</th><td colspan="8">{{ nbnameh }}</td></tr>
-			<tr><th>RNC</th><td colspan="8">{{ rnch }}</td></tr>
+			<tr><th>NodeB Name</th><td colspan="8">{{ umtsCellh.unodebname }}</td></tr>
+			<tr><th>RNC</th><td colspan="8">{{ umtsCellh.urncname }}</td></tr>
 			<tr>
 				<th>Cell Name</th>
 				<th>Cell ID</th>
@@ -134,8 +140,8 @@
 				<th>DL ARFCN</th>
 			</tr>
 			<tbody>
-				{% for i in ucellnameh %}
-		  			<tr><td>{{ ucellnameh[loop.index0] }}</td><td>{{ ucellidh[loop.index0] }}</td><td>{{ ucellbandh[loop.index0] }}</td><td>{{ ulach[loop.index0] }}</td><td>{{ urach[loop.index0] }}</td><td>{{ upsch[loop.index0] }}</td><td>{{ uarfcnh[loop.index0] }}</td><td>{{ darfcnh[loop.index0] }}</td></tr>
+				{% for i in umtsCellh.ucellname %}
+		  			<tr><td>{{ umtsCellh.ucellname[loop.index0] }}</td><td>{{ umtsCellh.ucellid[loop.index0] }}</td><td>{{ umtsCellh.uband[loop.index0] }}</td><td>{{ umtsCellh.ulac[loop.index0] }}</td><td>{{ umtsCellh.urac[loop.index0] }}</td><td>{{ umtsCellh.upsc[loop.index0] }}</td><td>{{ umtsCellh.ularfcn[loop.index0] }}</td><td>{{ umtsCellh.dlarfcn[loop.index0] }}</td></tr>
 		  		{% endfor %}
 			</tbody>
 		</table>
