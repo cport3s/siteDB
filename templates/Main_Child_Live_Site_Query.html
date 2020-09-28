@@ -140,8 +140,8 @@
 			</tbody>
 		</table>
 		<table class="retgridtable">
-			<tr><th>eNodeB Name</th><td colspan="13">{{ enbnameh }}</td></tr>
-			<tr><th>eNodeB ID</th><td colspan="13">{{ enbidh }}</td></tr>
+			<tr><th>eNodeB Name</th><td colspan="8">{{ lteCellh.enbname }}</td></tr>
+			<tr><th>eNodeB ID</th><td colspan="8">{{ lteCellh.enbid }}</td></tr>
 			<tr>
 				<th>Cell Name</th>
 				<th>Cell ID</th>
@@ -151,10 +151,11 @@
 				<th>Root Index</th>
 				<th>Tranmission Mode</th>
 				<th>TAC</th>
+				<th>Cell Radius</th>
 			</tr>
 			<tbody>
-				{% for i in lcellnameh %}
-		  			<tr><td>{{ lcellnameh[loop.index0] }}</td><td>{{ lcellidh[loop.index0] }}</td><td>{{ lcellbandh[loop.index0] }}</td><td>{{ earfcnh[loop.index0] }}</td><td>{{ pcih[loop.index0] }}</td><td>{{ prachh[loop.index0] }}</td><td>{{ txmodeh[loop.index0] }}</td><td>{{ tach[loop.index0] }}</td></tr>
+				{% for i in lteCellh.lcellname %}
+		  			<tr><td>{{ lteCellh.lcellname[loop.index0] }}</td><td>{{ lteCellh.lcellid[loop.index0] }}</td><td>{{ lteCellh.lband[loop.index0] }}</td><td>{{ lteCellh.earfcn[loop.index0] }}</td><td>{{ lteCellh.pci[loop.index0] }}</td><td>{{ lteCellh.prach[loop.index0] }}</td><td>{{ lteCellh.txmode[loop.index0] }}</td><td>{{ lteCellh.tac[loop.index0] }}</td><td>{{ lteCellh.cellrad[loop.index0] }}</td></tr>
 		  		{% endfor %}
 			</tbody>
 		</table>

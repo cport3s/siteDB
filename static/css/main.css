@@ -37,11 +37,11 @@ header table {
     width: 100%;
 }
 
-td {
+.headerDiv {
     width: 50%;
 }
 
-td div {
+.headerDiv div {
     text-align: center;
 }
 

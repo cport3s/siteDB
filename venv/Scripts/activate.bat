@@ -8,7 +8,7 @@ if defined _OLD_CODEPAGE (
     "%SystemRoot%\System32\chcp.com" 65001 > nul
 )
 
-set VIRTUAL_ENV=C:\Apache24\htdocs\sitedb_live\venv
+set VIRTUAL_ENV=D:\Code\siteDB_testBed\venv
 
 if not defined PROMPT set PROMPT=$P$G
 

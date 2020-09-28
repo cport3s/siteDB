@@ -341,6 +341,7 @@ def site_db_consult():
             ltecell.lband.append(querypayload[i][5])
             ltecell.txmode.append(querypayload[i][6])
             ltecell.tac.append(querypayload[i][7])
+            ltecell.cellrad.append(querypayload[i][10])
     # If the return is empty, fill the vars with 'N/A'
     else:
         ltecell.enbid = 'N/A'
@@ -353,6 +354,7 @@ def site_db_consult():
         ltecell.lband.append('N/A')
         ltecell.txmode.append('N/A')
         ltecell.tac.append('N/A')
+        ltecell.cellrad.append('N/A')
     # Get UL eNodeB Data from DB
     pointer.execute('SELECT * FROM alticedr_sitedb.ltecellpara WHERE enbid = ' + str(80000 + int(siteid)) + ';')
     querypayload = pointer.fetchall()
@@ -391,7 +393,8 @@ def site_db_consult():
     pointer.close()
     connectr.close()
     # 'cellnameh' is a variable in the HTML code on Main.html
-    return render_template(mainhtml, pticodeh = pticode, lath = lat, longh = lon, nodalidh = nodal_id, tricomnameh =tricom_name, nelisth = nelist, retdevicenoh = retdevice.retdeviceno, retdevicenameh = retdevice.retdevicename, retsubrackh = retdevice.retsubrack, retmanufacturerh = retdevice.retmanufacturer, retserialh = retdevice.retserial, rettilth = retdevice.rettilt, retantmodelh = retdevice.retantmodel, retantmintilth = retdevice.retantmintilt, retantmaxtilth = retdevice.retantmaxtilt, btsnameh = gsmcell.egbtsname, egbtsidh = gsmcell.egbtsid, egbtsidxh = gsmcell.btsidx, gcellnameh = gsmcell.gcellname, bsch = gsmcell.bscname, gcellindexh = gsmcell.gcellidx, gcellidh = gsmcell.gcellid, gcellbandh = gsmcell.gband, lach = gsmcell.glac, ncch = gsmcell.ncc, bcch = gsmcell.bcc, hsnh = gsmcell.hsn, rach = gsmcell.grac, nbnameh = umtscell.unodebname, unodebidh = umtscell.unodebid, rnch = umtscell.urncname, ucellnameh = umtscell.ucellname, ucellidh = umtscell.ucellid, ucellbandh = umtscell.uband, ulach = umtscell.ulac, urach = umtscell.urac, upsch = umtscell.upsc, uarfcnh = umtscell.ularfcn, darfcnh = umtscell.dlarfcn, enbnameh = ltecell.enbname, enbidh = ltecell.enbid, lcellnameh = ltecell.lcellname, lcellidh = ltecell.lcellid, lcellbandh = ltecell.lband, pcih = ltecell.pci, prachh = ltecell.prach, txmodeh = ltecell.txmode, tach = ltecell.tac, earfcnh = ltecell.earfcn)
+    #return render_template(mainhtml, pticodeh = pticode, lath = lat, longh = lon, nodalidh = nodal_id, tricomnameh = tricom_name, nelisth = nelist, retdevicenoh = retdevice.retdeviceno, retdevicenameh = retdevice.retdevicename, retsubrackh = retdevice.retsubrack, retmanufacturerh = retdevice.retmanufacturer, retserialh = retdevice.retserial, rettilth = retdevice.rettilt, retantmodelh = retdevice.retantmodel, retantmintilth = retdevice.retantmintilt, retantmaxtilth = retdevice.retantmaxtilt, btsnameh = gsmcell.egbtsname, egbtsidh = gsmcell.egbtsid, egbtsidxh = gsmcell.btsidx, gcellnameh = gsmcell.gcellname, bsch = gsmcell.bscname, gcellindexh = gsmcell.gcellidx, gcellidh = gsmcell.gcellid, gcellbandh = gsmcell.gband, lach = gsmcell.glac, ncch = gsmcell.ncc, bcch = gsmcell.bcc, hsnh = gsmcell.hsn, rach = gsmcell.grac, nbnameh = umtscell.unodebname, unodebidh = umtscell.unodebid, rnch = umtscell.urncname, ucellnameh = umtscell.ucellname, ucellidh = umtscell.ucellid, ucellbandh = umtscell.uband, ulach = umtscell.ulac, urach = umtscell.urac, upsch = umtscell.upsc, uarfcnh = umtscell.ularfcn, darfcnh = umtscell.dlarfcn, enbnameh = ltecell.enbname, enbidh = ltecell.enbid, lcellnameh = ltecell.lcellname, lcellidh = ltecell.lcellid, lcellbandh = ltecell.lband, pcih = ltecell.pci, prachh = ltecell.prach, txmodeh = ltecell.txmode, tach = ltecell.tac, earfcnh = ltecell.earfcn)
+    return render_template(mainhtml, pticodeh = pticode, lath = lat, longh = lon, nodalidh = nodal_id, tricomnameh = tricom_name, nelisth = nelist, retdevicenoh = retdevice.retdeviceno, retdevicenameh = retdevice.retdevicename, retsubrackh = retdevice.retsubrack, retmanufacturerh = retdevice.retmanufacturer, retserialh = retdevice.retserial, rettilth = retdevice.rettilt, retantmodelh = retdevice.retantmodel, retantmintilth = retdevice.retantmintilt, retantmaxtilth = retdevice.retantmaxtilt, btsnameh = gsmcell.egbtsname, egbtsidh = gsmcell.egbtsid, egbtsidxh = gsmcell.btsidx, gcellnameh = gsmcell.gcellname, bsch = gsmcell.bscname, gcellindexh = gsmcell.gcellidx, gcellidh = gsmcell.gcellid, gcellbandh = gsmcell.gband, lach = gsmcell.glac, ncch = gsmcell.ncc, bcch = gsmcell.bcc, hsnh = gsmcell.hsn, rach = gsmcell.grac, nbnameh = umtscell.unodebname, unodebidh = umtscell.unodebid, rnch = umtscell.urncname, ucellnameh = umtscell.ucellname, ucellidh = umtscell.ucellid, ucellbandh = umtscell.uband, ulach = umtscell.ulac, urach = umtscell.urac, upsch = umtscell.upsc, uarfcnh = umtscell.ularfcn, darfcnh = umtscell.dlarfcn, lteCellh = ltecell)
 
 # New Sector Query Result
 @app.route('/newsectorquery', methods =['POST'])
