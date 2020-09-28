@@ -12,7 +12,7 @@ header {
     background: #000000;
     background-image: url("https://www.alticeusa.com/sites/default/files/alticeusa-logo.png");
     background-repeat: no-repeat;
-    background-position: center center;
+    background-position: 50% 42%;
     height: 135px;
     z-index: 1;
     width: 100%;

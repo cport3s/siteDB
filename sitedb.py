@@ -5,6 +5,7 @@ import mysql.connector
 import os
 import csv
 from datetime import datetime
+import requests
 
 # -----------------------------------------------------------OBJECTS-----------------------------------------------------------#
 # RET class
