@@ -413,7 +413,7 @@ def site_db_consult():
         dataList = response.json()['line']
         # Cycle through the array and search for the especific site id
         for data in dataList:
-            if data['ran_site_name'] == siteid:
+            if data['ran_site_name'] == str(siteid):
                 transDbData.ranSiteId = data['ran_site_name']
                 transDbData.transSiteId = data['trans_site_name']
                 transDbData.ptiSiteName = data['pti_site_name']
@@ -423,18 +423,19 @@ def site_db_consult():
                 transDbData.txType = data['Transmision']
                 transDbData.manRouter = data['man']
                 transDbData.ibnRouter = data['ibn']
-    else:
-        transDbData.ranSiteId = 'N/A'
-        transDbData.transSiteId = 'N/A'
-        transDbData.ptiSiteName = 'N/A'
-        transDbData.address = 'N/A'
-        transDbData.towerTopo = 'N/A'
-        transDbData.locationType = 'N/A'
-        transDbData.txType = 'N/A'
-        transDbData.manRouter = 'N/A'
-        transDbData.ibnRouter = 'N/A'
+                break
+            else:
+                transDbData.ranSiteId = 'N/A'
+                transDbData.transSiteId = 'N/A'
+                transDbData.ptiSiteName = 'N/A'
+                transDbData.address = 'N/A'
+                transDbData.towerTopo = 'N/A'
+                transDbData.locationType = 'N/A'
+                transDbData.txType = 'N/A'
+                transDbData.manRouter = 'N/A'
+                transDbData.ibnRouter = 'N/A'
     # 'cellnameh' is a variable in the HTML code on Main.html
-    return render_template(mainhtml, pticodeh = pticode, lath = lat, longh = lon, nodalidh = nodal_id, tricomnameh = tricom_name, nelisth = nelist, transDbDatah = transDbData, retDeviceh = retdevice, gsmCellh = gsmcell, umtsCellh = umtscell, lteCellh = ltecell)
+    return render_template(mainhtml, pticodeh = pticode, lath = lat, longh = lon, nodalidh = nodal_id, tricomnameh = tricom_name, nelisth = nelist, retDeviceh = retdevice, gsmCellh = gsmcell, umtsCellh = umtscell, lteCellh = ltecell)
 
 # New Sector Query Result
 @app.route('/newsectorquery', methods = ['POST'])

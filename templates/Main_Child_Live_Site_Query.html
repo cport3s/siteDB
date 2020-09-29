@@ -1,48 +1,5 @@
 {% extends "Main_Base.html" %}
 {% block livesitequerydisplay %}
-	<style>
-		table.retgridtable {
-			border: 2px solid #FFFFFF;
-			width: 100%;
-			text-align: center;
-			border-collapse: collapse;
-		}
-		table.retgridtable td, table.retgridtable th {
-			border: 1px solid #b8b8b8;
-			padding: 3px 4px;
-		}
-		table.retgridtable tbody td {
-			font-size: 16px;
-		}
-		table.retgridtable thead {
-		  border-bottom: 1px solid #b8b8b8;
-		}
-		table.retgridtable thead th {
-			font-size: 18px;
-			font-weight: bold;
-			color: #b8b8b8;
-			text-align: center;
-			border-left: 1px solid #b8b8b8;
-		}
-		table.retgridtable thead th:first-child {
-			border-left: none;
-		}
-		table.retgridtable tfoot td {
-			font-size: 14px;
-		}
-		.mapouter {
-			position:relative;
-			text-align:right;
-			height:250px;
-			width:"100%";
-		}
-		.gmap_canvas {
-			overflow:hidden;
-			background:none;
-			height:250px;
-			width:"100%";
-		}
-	</style>
 	<table class="retgridtable">
 		<tbody>
 			<tr>
@@ -60,12 +17,6 @@
 		  						{% endfor %}
 							</ul>
 						</li>
-						<li style="margin-left: 20px;">Address: {{ transDbDatah.address }}</li>
-						<li style="margin-left: 20px;">Tower Topology: {{ transDbDatah.towerTopo }}</li>
-						<li style="margin-left: 20px;">Location Type: {{ transDbDatah.locationType }}</li>
-						<li style="margin-left: 20px;">Tx Type: {{ transDbDatah.txType }}</li>
-						<li style="margin-left: 20px;">Has MAN Router? {{ transDbDatah.manRouter }}</li>
-						<li style="margin-left: 20px;">Has IBN Router? {{ transDBDatah.ibnRouter }}</li>
 					</ul>
 				</td>
 				<td width="50%">
@@ -90,7 +41,7 @@
 		  			<th>Controller Subrack</th>
 		  			<th>Vendor Code</th>
 		  			<th>Serial</th>
-		  			<th>Actual Titl</th>
+		  			<th>Actual Tilt</th>
 		  			<th>Antenna Model</th>
 		  			<th>Min Tilt</th>
 		  			<th>Max Tilt</th>
