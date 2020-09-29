@@ -75,6 +75,7 @@ div h4 {
 
 .retgridtable tbody td {
     font-size: 16px;
+
 }
 
 .retgridtable thead {
@@ -98,15 +99,15 @@ div h4 {
 }
 
 .mapouter {
-    position:relative;
-    text-align:right;
-    height:250px;
-    width:"100%";
+    position: relative;
+    text-align: right;
+    height: 250px;
+    width: "100%";
 }
 
 .gmap_canvas {
-    overflow:hidden;
-    background:none;
-    height:250px;
-    width:"100%";
+    overflow: hidden;
+    background: none;
+    height: 250px;
+    width: "100%";
 }

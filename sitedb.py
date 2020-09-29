@@ -406,7 +406,7 @@ def site_db_consult():
     connectr.close()
     # Get transDB site info
     transDbData = transDBInfo()
-    response = requests.get('http://transdb/cgi-bin/querysite.py?site_name={}'.format(str(siteid)))
+    response = requests.get('http://transdb/cgi-bin/querysite.py?site_name=1207')
     # Check response status code to see if the information was found on server
     if int(response.status_code) == 200:
         # Parse json key 'line' to an array
