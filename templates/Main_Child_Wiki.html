@@ -29,7 +29,7 @@
             <ul>
                 <li>Huawei U2020 iSStar Scripts</li>
                 <p>
-                    IP Address: https://172.17.112.2:31943/
+                    IP Address: https://172.17.160.5:31943/
                     There are several scripts that run in the background that handle live network data colletion and database population.
                     They connect to the NEs on the network, pull the desired data and then populate that information to the MySQL databse running on the BSCServer.
                     iSStar is a propietary Huawei OSS module that works on a Python based scripting language, the documentation can be found on the U2020 Product Documentation.
@@ -53,22 +53,51 @@
                         <li>root/BSCAltice.123</li>
                         <li>sitedb/BSCAltice.123</li>
                     </ul>
+                    <br>
                     MySQL database running on the BSCServer holds all the information coming from the Huawei OSS and any other data source to correlate. As of 2020-05-27, the only data sources are Huawei OSS and Radio Planning Excel documents.
                 </p>
                 <li>BSCServer Flask/Python WebApp</li>
                 <p>
-                    The main app directory is D:\sitedb_v1 (as of 2020-05-27) and contains all python scripts and html files (including this wiki) that compose the WebApp.
+                    The main app directory is C:\Apache24\htdocs\sitedb_live\ (as of 2020-06-01) and contains all python scripts and html files (including this wiki) that compose the WebApp.
+                    We use a python web framework called <a href="https://flask.palletsprojects.com/en/1.1.x/">Flask</a> that's in charge of linking the HTTP requests, HTML files and Python scripts.
                     The database data query is done from here and so is the front-end of the webapp, which runs on HTML and CSS only. All code has its corresponding comments and should be fairly easy to understand.
-                    The main python code (sitedb_v2.py) pulls the data from the database and responds to the GET and POST requests from the HTML files (located on D:\sitedb_v1\templates\).
+                    The main python code (sitedb_v2.py) pulls the data from the database and responds to the GET and POST requests from the HTML files (located on C:\Apache24\htdocs\sitedb_live\templates\).
                     There is another python code (dashboard_v1.py) that pulls the data from the mAOS reports (stored every 1 hour on the directory D:\ftproot\BSC\) and generates the plots you see on the dashboard section of the webapp.
-                    There's a Windows Task scheduled to run every hour that executes a bat file located in D:\sitedb_v1\ to execute the dashboard_v1.py, which pulls data from the mAOS reports, plots it as a graph using matplotlib.pyplot and stores those graphs on D:\sitedb_v1\images\static\.
+                    There's a Windows Task scheduled to run every hour that executes a bat file located in C:\Apache24\htdocs\sitedb_live\ to execute the dashboard_v1.py, which pulls data from the mAOS reports, plots it as a graph using matplotlib.pyplot and stores those graphs on C:\Apache24\htdocs\sitedb_live\images\static\.
+                    The commercial webapp is running on url: <a href="http://bscserver:5000/">bscserver:5000</a> and the test server is running on <a href="http://bscserver:5001/">bscserver:5001</a> (when started from inside the virtual environment with py -3 -m flask run --host=0.0.0.0 --port=5001).
 
+                </p>
+                <li>BSCServer Web Server</li>
+                <p>
+                    The Web server running on the BSCServer is <a href="https://httpd.apache.org/">Apache 2.4</a>, specifically <a href="https://www.apachelounge.com/download/">Apache Lounge</a>, deployed using the <a href="https://flask.palletsprojects.com/en/1.1.x/deploying/mod_wsgi/">mod_wsgi</a>.
+                    The following lines are essential on the httpd.conf file (in case it ever gets lost or corrupted): 
+                    <p>Listen 5000</p>
+                    <p>LoadModule wsgi_module "c:/apache24/htdocs/sitedb_live/venv/lib/site-packages/mod_wsgi/server/mod_wsgi.cp38-win_amd64.pyd"</p>
+                    <p>WSGIApplicationGroup %{GLOBAL}</p>
+                    <p>WSGIPythonHome "C:/Users/cportes/AppData/Local/Programs/Python/Python38"</p>
+                    <p>WSGIPythonPath "C:/Apache24/htdocs/sitedb_live/venv/Lib/site-packages"</p>
+
+                    And the following lines belong to the httpd-vhost.conf file:
+                    <p>VirtualHost *:5000</p>
+                    <p>ServerName bscserver</p>
+                    <p>WSGIScriptAlias / "C:/Apache24/htdocs/sitedb_live/sitedb_v2.wsgi"</p>
+                    <p>Directory "C:/Apache24/htdocs/sitedb_live/"></p>
+                    <p>Options +ExecCGI</p>
+                    <p>AddHandler wsgi-script .wsgi</p>
+                    <p>Options FollowSymLinks</p>
+                    <p>AllowOverride None</p>
+                    <p>Require all granted</p>
+                    <p>/Directory</p>
+                    <p>/VirtualHost</p>
                 </p>
             </ul>
         </article>
         <section>
             <h2>Changelog:</h2>
             <ol>
+                <li>2020-09-03: Added TRX Usage Graphic to dashboard per BSC</li>
+                <li>2020-08-11: U2020 Taishan IP & user credentials updated.</li>
+                <li>2020-06-01: Added Apache Web Server documentation. WebApp running on a commercial web server.</li>
                 <li>2020-05-27: Initial wiki release.</li>
             </ol>
         </section>
