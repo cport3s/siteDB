@@ -12,12 +12,12 @@
             <p>
                 It's a tool designed to to show live network related information as fresh as possible, correlating data between different departments.
             </p>
-            <h2>Who's it meant for?</h2>
+            <h2>Who's this tool meant for?</h2>
             <p>
                 Altice Engineers from the following departments:
             </p>
             <ul>
-                <li><a href="mailto:bsc@altice.com.do">RAN Operations Engineers</a></li>
+                <li><a href="mailto:ran-operaciones@altice.com.do">RAN Operations Engineers</a></li>
                 <li><a href="mailto:radio@altice.com.do">Radio Design Engineers</a></li>
                 <li><a href="mailto:nocaltice@altice.com.do">NOC Technicians</a></li>
                 <li><a href="mailto:trans@altice.com.do">Transmission Engineers</a></li>
@@ -41,7 +41,7 @@
                     Port: 22
                     There's an U2020 user designated specifically to run these collection scripts, with LST and DSP commands allowed only. The credentials are as follows:
                     User: sitedb
-                    password: BSCAltice@123
+                    password: BSCAltice.123
                 </p>
                 <li>BSCServer MySQL Database</li>
                 <p>
@@ -61,8 +61,8 @@
                     The main app directory is C:\Apache24\htdocs\sitedb_live\ (as of 2020-06-01) and contains all python scripts and html files (including this wiki) that compose the WebApp.
                     We use a python web framework called <a href="https://flask.palletsprojects.com/en/1.1.x/">Flask</a> that's in charge of linking the HTTP requests, HTML files and Python scripts.
                     The database data query is done from here and so is the front-end of the webapp, which runs on HTML and CSS only. All code has its corresponding comments and should be fairly easy to understand.
-                    The main python code (sitedb_v2.py) pulls the data from the database and responds to the GET and POST requests from the HTML files (located on C:\Apache24\htdocs\sitedb_live\templates\).
-                    There is another python code (dashboard_v1.py) that pulls the data from the mAOS reports (stored every 1 hour on the directory D:\ftproot\BSC\) and generates the plots you see on the dashboard section of the webapp.
+                    The main python code (sitedb.py) pulls the data from the database and responds to the GET and POST requests from the HTML files (located on C:\Apache24\htdocs\sitedb_live\templates\).
+                    There is another python code (dashboard.py) that pulls the data from the mAOS reports (stored every 1 hour on the directory D:\ftproot\BSC\) and generates the plots you see on the dashboard section of the webapp.
                     There's a Windows Task scheduled to run every hour that executes a bat file located in C:\Apache24\htdocs\sitedb_live\ to execute the dashboard_v1.py, which pulls data from the mAOS reports, plots it as a graph using matplotlib.pyplot and stores those graphs on C:\Apache24\htdocs\sitedb_live\images\static\.
                     The commercial webapp is running on url: <a href="http://bscserver:5000/">bscserver:5000</a> and the test server is running on <a href="http://bscserver:5001/">bscserver:5001</a> (when started from inside the virtual environment with py -3 -m flask run --host=0.0.0.0 --port=5001).
 
@@ -80,7 +80,7 @@
                     And the following lines belong to the httpd-vhost.conf file:
                     <p>VirtualHost *:5000</p>
                     <p>ServerName bscserver</p>
-                    <p>WSGIScriptAlias / "C:/Apache24/htdocs/sitedb_live/sitedb_v2.wsgi"</p>
+                    <p>WSGIScriptAlias / "C:/Apache24/htdocs/sitedb_live/sitedb.wsgi"</p>
                     <p>Directory "C:/Apache24/htdocs/sitedb_live/"></p>
                     <p>Options +ExecCGI</p>
                     <p>AddHandler wsgi-script .wsgi</p>
@@ -95,7 +95,8 @@
         <section>
             <h2>Changelog:</h2>
             <ol>
-                <li>2020-09-03: Added TRX Usage Graphic to dashboard per BSC</li>
+                <li>2020-09-30: Updated sitedb_live with new code, connected sitedb to transdb.</li>
+                <li>2020-09-03: Added TRX Usage Graphic to dashboard per BSC.</li>
                 <li>2020-08-11: U2020 Taishan IP & user credentials updated.</li>
                 <li>2020-06-01: Added Apache Web Server documentation. WebApp running on a commercial web server.</li>
                 <li>2020-05-27: Initial wiki release.</li>

@@ -335,7 +335,7 @@ def site_db_consult():
         umtscell.upsc.append('N/A')
     querypayload.clear()
     # Get LTE Data from DB
-    pointer.execute('SELECT * FROM alticedr_sitedb.ltecellpara WHERE enbid = ' + str(siteid) + ';')
+    pointer.execute('SELECT * FROM alticedr_sitedb.ltecellpara WHERE enbid = ' + str(siteid) + ' order by band asc;')
     querypayload = pointer.fetchall()
     # Check if the return is not empty
     # Instantiate new LTE Cell Class object to store DB information
@@ -587,11 +587,11 @@ def newpciprovisioning():
     return render_template(newpcihtml)
 
 @app.route('/dashboard')
-# Home Page
+# Dashboard Home Page
 def dashboard_main():
     return render_template(dashboard_main_html)
 
 @app.route('/wiki')
-# Home Page
+# Wiki Home Page
 def wiki_main():
     return render_template(wiki_html)
