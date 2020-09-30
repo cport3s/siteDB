@@ -435,7 +435,7 @@ def site_db_consult():
                 transDbData.manRouter = 'N/A'
                 transDbData.ibnRouter = 'N/A'
     # 'cellnameh' is a variable in the HTML code on Main.html
-    return render_template(mainhtml, pticodeh = pticode, lath = lat, longh = lon, nodalidh = nodal_id, tricomnameh = tricom_name, nelisth = nelist, retDeviceh = retdevice, gsmCellh = gsmcell, umtsCellh = umtscell, lteCellh = ltecell)
+    return render_template(mainhtml, pticodeh = pticode, lath = lat, longh = lon, nodalidh = nodal_id, tricomnameh = tricom_name, nelisth = nelist, transDbDatah = transDbData, retDeviceh = retdevice, gsmCellh = gsmcell, umtsCellh = umtscell, lteCellh = ltecell)
 
 # New Sector Query Result
 @app.route('/newsectorquery', methods = ['POST'])
