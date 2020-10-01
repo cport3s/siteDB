@@ -1,43 +1,45 @@
 {% extends "Main_Base.html" %}
 {% block livesitequerydisplay %}
-	<table class="retgridtable">
-		<tbody>
-			<tr>
-				<td width="50%" style="text-align: left;">
-					<ul>
-						<li style="margin-left: 20px;">PTI Code: {{ pticodeh }}</li>
-						<li style="margin-left: 20px;">Latitude: {{ lath }}</li>
-						<li style="margin-left: 20px;">Longitude: {{ longh }}</li>
-						<li style="margin-left: 20px;">Trans ID: {{ transDbDatah.transSiteId }}</li>
-						<li style="margin-left: 20px;">Tricom Name: {{ tricomnameh }}</li>
-						<li style="margin-left: 20px;">NE Names:
-							<ul>
-								{% for ne in nelisth %}
-		  							<li>{{ ne }}</li>
-		  						{% endfor %}
-							</ul>
-						</li>
-						<li style="margin-left: 20px;">Address: {{ transDbDatah.address }}</li>
-						<li style="margin-left: 20px;">Tower Topology: {{ transDbDatah.towerTopo }}</li>
-						<li style="margin-left: 20px;">Location Type: {{ transDbDatah.locationType }}</li>
-						<li style="margin-left: 20px;">Tx Type: {{ transDbDatah.txType }}</li>
-						<li style="margin-left: 20px;">Has MAN Router? {{ transDbDatah.manRouter }}</li>
-						<li style="margin-left: 20px;">Has IBN Router? {{ transDbDatah.ibnRouter }}</li>
-					</ul>
-				</td>
-				<td width="50%">
-					<div class="mapouter">
-						<div class="gmap_canvas">
-							<iframe width="100%" height="300px" id="gmap_canvas" src="https://maps.google.com/maps?q={{ lath }}%2C%20{{ longh }}&t=&z=13&ie=UTF8&iwloc=&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0">
-							</iframe>
-							<a href="https://www.embedgooglemap.net/blog/private-internet-access-coupon/">
-							</a>
+	<section class="subMenu nocInfo">
+		<table class="retgridtable">
+			<tbody>
+				<tr>
+					<td width="50%" style="text-align: left;">
+						<ul>
+							<li style="margin-left: 20px;">PTI Code: {{ pticodeh }}</li>
+							<li style="margin-left: 20px;">Latitude: {{ lath }}</li>
+							<li style="margin-left: 20px;">Longitude: {{ longh }}</li>
+							<li style="margin-left: 20px;">Trans ID: {{ transDbDatah.transSiteId }}</li>
+							<li style="margin-left: 20px;">Tricom Name: {{ tricomnameh }}</li>
+							<li style="margin-left: 20px;">NE Names:
+								<ul>
+									{% for ne in nelisth %}
+										  <li>{{ ne }}</li>
+									  {% endfor %}
+								</ul>
+							</li>
+							<li style="margin-left: 20px;">Address: {{ transDbDatah.address }}</li>
+							<li style="margin-left: 20px;">Tower Topology: {{ transDbDatah.towerTopo }}</li>
+							<li style="margin-left: 20px;">Location Type: {{ transDbDatah.locationType }}</li>
+							<li style="margin-left: 20px;">Tx Type: {{ transDbDatah.txType }}</li>
+							<li style="margin-left: 20px;">Has MAN Router? {{ transDbDatah.manRouter }}</li>
+							<li style="margin-left: 20px;">Has IBN Router? {{ transDbDatah.ibnRouter }}</li>
+						</ul>
+					</td>
+					<td width="50%">
+						<div class="mapouter">
+							<div class="gmap_canvas">
+								<iframe width="100%" height="300px" id="gmap_canvas" src="https://maps.google.com/maps?q={{ lath }}%2C%20{{ longh }}&t=&z=13&ie=UTF8&iwloc=&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0">
+								</iframe>
+								<a href="https://www.embedgooglemap.net/blog/private-internet-access-coupon/">
+								</a>
+							</div>
 						</div>
-					</div>
-				</td>
-			</tr>
-		</tbody>
-	</table>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</section>
 	<div>
 		<table class="retgridtable">
 		  	<thead>
