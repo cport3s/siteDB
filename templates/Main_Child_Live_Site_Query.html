@@ -1,30 +1,30 @@
 {% extends "Main_Base.html" %}
 {% block livesitequerydisplay %}
-	<section class="subMenu">
-		<button onclick="toggleContent('nocInfo')">Site Information</button>
-		<table class="retgridtable" id="nocInfo">
+	<button class="retGridTableButton" onclick="toggleContent('nocInfo')">Site Information</button>
+	<section class="subMenu" id="nocInfo">
+		<table class="retgridtable">
 			<tbody>
 				<tr>
 					<td width="50%" style="text-align: left;">
 						<ul>
-							<li style="margin-left: 20px;">PTI Code: {{ pticodeh }}</li>
-							<li style="margin-left: 20px;">Latitude: {{ lath }}</li>
-							<li style="margin-left: 20px;">Longitude: {{ longh }}</li>
-							<li style="margin-left: 20px;">Trans ID: {{ transDbDatah.transSiteId }}</li>
-							<li style="margin-left: 20px;">Tricom Name: {{ tricomnameh }}</li>
-							<li style="margin-left: 20px;">NE Names:
+							<li>PTI Code: {{ pticodeh }}</li>
+							<li>Latitude: {{ lath }}</li>
+							<li>Longitude: {{ longh }}</li>
+							<li>Trans ID: {{ transDbDatah.transSiteId }}</li>
+							<li>Tricom Name: {{ tricomnameh }}</li>
+							<li>NE Names:
 								<ul>
 									{% for ne in nelisth %}
 										  <li>{{ ne }}</li>
 									  {% endfor %}
 								</ul>
 							</li>
-							<li style="margin-left: 20px;">Address: {{ transDbDatah.address }}</li>
-							<li style="margin-left: 20px;">Tower Topology: {{ transDbDatah.towerTopo }}</li>
-							<li style="margin-left: 20px;">Location Type: {{ transDbDatah.locationType }}</li>
-							<li style="margin-left: 20px;">Tx Type: {{ transDbDatah.txType }}</li>
-							<li style="margin-left: 20px;">Has MAN Router? {{ transDbDatah.manRouter }}</li>
-							<li style="margin-left: 20px;">Has IBN Router? {{ transDbDatah.ibnRouter }}</li>
+							<li>Address: {{ transDbDatah.address }}</li>
+							<li>Tower Topology: {{ transDbDatah.towerTopo }}</li>
+							<li>Location Type: {{ transDbDatah.locationType }}</li>
+							<li>Tx Type: {{ transDbDatah.txType }}</li>
+							<li>Has MAN Router? {{ transDbDatah.manRouter }}</li>
+							<li>Has IBN Router? {{ transDbDatah.ibnRouter }}</li>
 						</ul>
 					</td>
 					<td width="50%">
@@ -41,6 +41,7 @@
 			</tbody>
 		</table>
 	</section>
+	<button class="retGridTableButton" onclick="toggleContent('retInfo')">RET Information</button>
 	<section class="subMenu" id="retInfo">
 		<table class="retgridtable">
 			  <thead>
@@ -63,6 +64,7 @@
 			  </tbody>
 		</table>
 	</section>
+	<button class="retGridTableButton" onclick="toggleContent('gsmInfo')">GSM Information</button>
 	<section class="subMenu" id="gsmInfo">
 		<table class="retgridtable">
 			<tr><th>eGBTS Name</th><td colspan="13">{{ gsmCellh.egbtsname }}</td></tr>
@@ -87,7 +89,8 @@
 			</tbody>
 		</table>
 	</section>
-	<div>
+	<button class="retGridTableButton" onclick="toggleContent('umtsInfo')">UMTS Information</button>
+	<section class="subMenu" id="umtsInfo">
 		<table class="retgridtable">
 			<tr><th>NodeB Name</th><td colspan="8">{{ umtsCellh.unodebname }}</td></tr>
 			<tr><th>RNC</th><td colspan="8">{{ umtsCellh.urncname }}</td></tr>
@@ -107,6 +110,9 @@
 		  		{% endfor %}
 			</tbody>
 		</table>
+	</section>
+	<button class="retGridTableButton" onclick="toggleContent('lteInfo')">LTE Information</button>
+	<section class="subMenu" id="lteInfo">
 		<table class="retgridtable">
 			<tr><th>eNodeB Name</th><td colspan="8">{{ lteCellh.enbname }}</td></tr>
 			<tr><th>eNodeB ID</th><td colspan="8">{{ lteCellh.enbid }}</td></tr>
@@ -127,7 +133,7 @@
 		  		{% endfor %}
 			</tbody>
 		</table>
-	</div>
+	</section>
 	<div>
 		<iframe src="http://transshooting/" frameborder="0" style="width: 100%; height: 800px;"></iframe>
 	</div>

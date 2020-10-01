@@ -1,6 +1,5 @@
-function toggleContent(contentClass) {
-    let displayStatus = document.getElementById(contentClass);
-    console.log(displayStatus.style.display);
+function toggleContent(contentId) {
+    var displayStatus = document.getElementById(contentId);
     if (displayStatus.style.display == 'block') {
         displayStatus.style.display = 'none';
     } else if (displayStatus.style.display == 'none') {

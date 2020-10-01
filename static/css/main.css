@@ -112,6 +112,30 @@ div h4 {
     width: 100%;
 }
 
+.retGridTableButton {
+    width: 100%;
+}
+
+#nocInfo li {
+    margin-left: 20px;
+}
+
 #nocInfo {
+    display: block;
+}
+
+#retInfo {
+    display: block;
+}
+
+#gsmInfo {
+    display: block;
+}
+
+#umtsInfo {
+    display: block;
+}
+
+#lteInfo {
     display: block;
 }
