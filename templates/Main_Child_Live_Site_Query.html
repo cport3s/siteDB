@@ -1,7 +1,8 @@
 {% extends "Main_Base.html" %}
 {% block livesitequerydisplay %}
-	<section class="subMenu nocInfo">
-		<table class="retgridtable">
+	<section class="subMenu">
+		<button onclick="toggleContent('nocInfo')">Site Information</button>
+		<table class="retgridtable" id="nocInfo">
 			<tbody>
 				<tr>
 					<td width="50%" style="text-align: left;">
@@ -40,29 +41,29 @@
 			</tbody>
 		</table>
 	</section>
-	<div>
+	<section class="subMenu" id="retInfo">
 		<table class="retgridtable">
-		  	<thead>
-		  		<tr>
-		  			<th>RET Device Number</th>
-		  			<th>Device Name</th>
-		  			<th>Controller Subrack</th>
-		  			<th>Vendor Code</th>
-		  			<th>Serial</th>
-		  			<th>Actual Tilt</th>
-		  			<th>Antenna Model</th>
-		  			<th>Min Tilt</th>
-		  			<th>Max Tilt</th>
-		  		</tr>
-		  	</thead>
-		  	<tbody>
-		  		{% for i in retDeviceh.retdeviceno %}
-		  			<tr><td>{{ retDeviceh.retdeviceno[loop.index0] }}</td><td>{{ retDeviceh.retdevicename[loop.index0] }}</td><td>{{ retDeviceh.retsubrack[loop.index0] }}</td><td>{{ retDeviceh.retmanufacturer[loop.index0] }}</td><td>{{ retDeviceh.retserial[loop.index0] }}</td><td>{{ retDeviceh.rettilt[loop.index0] }}</td><td>{{ retDeviceh.retantmodel[loop.index0] }}</td><td>{{ retDeviceh.retantmintilt[loop.index0] }}</td><td>{{ retDeviceh.retantmaxtilt[loop.index0] }}</td></tr>
-		  		{% endfor %}
-		  	</tbody>
+			  <thead>
+				  <tr>
+					  <th>RET Device Number</th>
+					  <th>Device Name</th>
+					  <th>Controller Subrack</th>
+					  <th>Vendor Code</th>
+					  <th>Serial</th>
+					  <th>Actual Tilt</th>
+					  <th>Antenna Model</th>
+					  <th>Min Tilt</th>
+					  <th>Max Tilt</th>
+				  </tr>
+			  </thead>
+			  <tbody>
+				  {% for i in retDeviceh.retdeviceno %}
+					  <tr><td>{{ retDeviceh.retdeviceno[loop.index0] }}</td><td>{{ retDeviceh.retdevicename[loop.index0] }}</td><td>{{ retDeviceh.retsubrack[loop.index0] }}</td><td>{{ retDeviceh.retmanufacturer[loop.index0] }}</td><td>{{ retDeviceh.retserial[loop.index0] }}</td><td>{{ retDeviceh.rettilt[loop.index0] }}</td><td>{{ retDeviceh.retantmodel[loop.index0] }}</td><td>{{ retDeviceh.retantmintilt[loop.index0] }}</td><td>{{ retDeviceh.retantmaxtilt[loop.index0] }}</td></tr>
+				  {% endfor %}
+			  </tbody>
 		</table>
-	</div>
-	<div>
+	</section>
+	<section class="subMenu" id="gsmInfo">
 		<table class="retgridtable">
 			<tr><th>eGBTS Name</th><td colspan="13">{{ gsmCellh.egbtsname }}</td></tr>
 			<tr><th>BSC</th><td colspan="13">{{ gsmCellh.bscname }}</td></tr>
@@ -85,6 +86,8 @@
 		  		{% endfor %}
 			</tbody>
 		</table>
+	</section>
+	<div>
 		<table class="retgridtable">
 			<tr><th>NodeB Name</th><td colspan="8">{{ umtsCellh.unodebname }}</td></tr>
 			<tr><th>RNC</th><td colspan="8">{{ umtsCellh.urncname }}</td></tr>

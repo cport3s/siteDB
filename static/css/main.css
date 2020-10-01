@@ -111,3 +111,7 @@ div h4 {
     height: 100%;
     width: 100%;
 }
+
+#nocInfo {
+    display: block;
+}
