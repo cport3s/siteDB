@@ -1,4 +1,9 @@
-body {
+@keyframes fadeInAnimation {
+    from {opacity: 0;}
+    to {opacity: 100;}
+}
+
+.mainBody {
     background-color: black;
     color: white;
 }

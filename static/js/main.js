@@ -6,3 +6,8 @@ function toggleContent(contentId) {
         displayStatus.style.display = 'block';
     }
 }
+
+function fadeInAnimation() {
+    document.body.style.animationName = 'fadeInAnimation';
+    document.body.style.animationDuration = '3s'; 
+}
