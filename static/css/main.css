@@ -54,7 +54,7 @@ header table {
     text-shadow: 2px 2px 3px black;
 }
 
-div h4 {
+.headerDiv div h4 {
     display: block;
     margin-bottom: 0;
     padding: 0px;
@@ -80,7 +80,6 @@ div h4 {
 
 .retgridtable tbody td {
     font-size: 16px;
-
 }
 
 .retgridtable thead {
@@ -142,5 +141,9 @@ div h4 {
 }
 
 #lteInfo {
+    display: block;
+}
+
+#transDBiframe {
     display: block;
 }
