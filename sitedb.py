@@ -20,6 +20,17 @@ class transDBInfo():
     manRouter = ''
     ibnRouter = ''
 
+class ipPara():
+    neName = ''
+    functionName = ''
+    cpIP = ''
+    upIP = ''
+    gwIP = ''
+    vlanID = ''
+    ptpIP = ''
+    omIP = ''
+    peerIP = ''
+
 # RET class
 class RetDevice():
     retdeviceno = []
@@ -227,8 +238,11 @@ def site_db_consult():
     lat = querypayload[3]
     lon = querypayload[4]
     pticode = querypayload[2]
+    # Pull IP Data  from DB
+    pointer.execute('select * from alticedr_sitedb.ippara where sitename = \'' + str(sitename) + '\';')
+
     # Get RET Device Data from DB
-    pointer.execute('SELECT * FROM retpara WHERE sitename = \'' + str(sitename) + '\';')
+    pointer.execute('SELECT * FROM alticedr_sitedb.retpara WHERE sitename = \'' + str(sitename) + '\';')
     # We use fetchall because the return is a 2D list.
     querypayload = pointer.fetchall()
     # Check if the return is not empty
@@ -435,7 +449,7 @@ def site_db_consult():
                 transDbData.manRouter = 'N/A'
                 transDbData.ibnRouter = 'N/A'
     # 'cellnameh' is a variable in the HTML code on Main.html
-    return render_template(mainhtml, pticodeh = pticode, lath = lat, longh = lon, nodalidh = nodal_id, tricomnameh = tricom_name, nelisth = nelist, transDbDatah = transDbData, retDeviceh = retdevice, gsmCellh = gsmcell, umtsCellh = umtscell, lteCellh = ltecell)
+    return render_template(mainhtml, pticodeh = pticode, lath = lat, longh = lon, nodalidh = nodal_id, tricomnameh = tricom_name, nelisth = nelist, transDbDatah = transDbData, ipPara = ipPara, retDeviceh = retdevice, gsmCellh = gsmcell, umtsCellh = umtscell, lteCellh = ltecell)
 
 # New Sector Query Result
 @app.route('/newsectorquery', methods = ['POST'])

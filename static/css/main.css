@@ -125,25 +125,29 @@ header table {
 }
 
 #nocInfo {
-    display: block;
+    display: none;
+}
+
+#ipInfo {
+    display: none;
 }
 
 #retInfo {
-    display: block;
+    display: none;
 }
 
 #gsmInfo {
-    display: block;
+    display: none;
 }
 
 #umtsInfo {
-    display: block;
+    display: none;
 }
 
 #lteInfo {
-    display: block;
+    display: none;
 }
 
 #transDBiframe {
-    display: block;
+    display: none;
 }

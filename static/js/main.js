@@ -1,9 +1,9 @@
 function toggleContent(contentId) {
     let displayStatus = document.getElementById(contentId);
-    if (displayStatus.style.display == 'block') {
-        displayStatus.style.display = 'none';
-    } else {
+    if (displayStatus.style.display == 'none') {
         displayStatus.style.display = 'block';
+    } else {
+        displayStatus.style.display = 'none';
     };
 }
 

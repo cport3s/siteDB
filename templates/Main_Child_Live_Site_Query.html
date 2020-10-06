@@ -41,6 +41,39 @@
 			</tbody>
 		</table>
 	</section>
+	<button class="retGridTableButton" onclick="toggleContent('ipInfo')">IP Transport Information</button>
+	<section class="subMenu" id="ipInfo">
+		<table class="retgridtable">
+			  <thead>
+				  <tr>
+					  <th>NE Name</th>
+					  <th>Function Name</th>
+					  <th>Control Plane IP</th>
+					  <th>User Plane IP</th>
+					  <th>Gateway IP</th>
+					  <th>VLAN ID</th>
+					  <th>Sync IP</th>
+					  <th>O&M IP</th>
+					  <th>Destination IP</th>
+				  </tr>
+			  </thead>
+			  <tbody>
+				  {% for i in ipPara.neName %}
+					  <tr>
+						<td>{{ ipPara.neName[loop.index0] }}</td>
+						<td>{{ ipPara.functionName[loop.index0] }}</td>
+						<td>{{ ipPara.cpIP[loop.index0] }}</td>
+						<td>{{ ipPara.upIP[loop.index0] }}</td>
+						<td>{{ ipPara.gwIP[loop.index0] }}</td>
+						<td>{{ ipPara.vlanID[loop.index0] }}</td>
+						<td>{{ ipPara.ptpIP[loop.index0] }}</td>
+						<td>{{ ipPara.omIP[loop.index0] }}</td>
+						<td>{{ ipPara.peerIP[loop.index0] }}</td>
+					</tr>
+				  {% endfor %}
+			  </tbody>
+		</table>
+	</section>
 	<button class="retGridTableButton" onclick="toggleContent('retInfo')">RET Information</button>
 	<section class="subMenu" id="retInfo">
 		<table class="retgridtable">
@@ -134,8 +167,8 @@
 			</tbody>
 		</table>
 	</section>
-	<button class="retGridTableButton" onclick="toggleContent('transDBiframe')">TransDB</button>
-	<div id="transDBiframe">
+	<button class="retGridTableButton" onclick="toggleContent('transDBiframe')">transShooting</button>
+	<section class="subMenu" id="transDBiframe">
 		<iframe src="http://transshooting/" frameborder="0" style="width: 100%; height: 800px;"></iframe>
-	</div>
+	</section>
 {% endblock %}
