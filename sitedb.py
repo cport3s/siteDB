@@ -20,16 +20,27 @@ class transDBInfo():
     manRouter = ''
     ibnRouter = ''
 
-class ipPara():
-    neName = ''
-    functionName = ''
-    cpIP = ''
-    upIP = ''
-    gwIP = ''
-    vlanID = ''
-    ptpIP = ''
-    omIP = ''
-    peerIP = ''
+class ipParaClass():
+    neName = []
+    functionName = []
+    cpIP = []
+    upIP = []
+    gwIP = []
+    vlanID = []
+    ptpIP = []
+    omIP = []
+    peerIP = []
+
+    def clrlst(self):
+        self.neName.clear()
+        self.functionName.clear()
+        self.cpIP.clear()
+        self.upIP.clear()
+        self.gwIP.clear()
+        self.vlanID.clear()
+        self.ptpIP.clear()
+        self.omIP.clear()
+        self.peerIP.clear()
 
 # RET class
 class RetDevice():
@@ -239,8 +250,26 @@ def site_db_consult():
     lon = querypayload[4]
     pticode = querypayload[2]
     # Pull IP Data  from DB
-    pointer.execute('select * from alticedr_sitedb.ippara where sitename = \'' + str(sitename) + '\';')
-
+    # Instantiate ipParaClass and clear all lists to ensure they are empty.
+    ipPara = ipParaClass()
+    ipPara.clrlst()
+    # Search all siteid's ne names
+    for ne in nelist:
+        pointer.execute('select * from alticedr_sitedb.ippara where sitename = \'' + str(ne) + '\';')
+        querypayload = pointer.fetchall()
+        # If the query payload is not empty, then....
+        if querypayload:
+            # Append all information to class instance
+            for i in range(len(querypayload)):
+                ipPara.neName.append(querypayload[i][0])
+                ipPara.functionName.append(querypayload[i][1])
+                ipPara.cpIP.append(querypayload[i][2])
+                ipPara.upIP.append(querypayload[i][3])
+                ipPara.gwIP.append(querypayload[i][4])
+                ipPara.vlanID.append(querypayload[i][5])
+                ipPara.ptpIP.append(querypayload[i][6])
+                ipPara.omIP.append(querypayload[i][7])
+                ipPara.peerIP.append(querypayload[i][8])
     # Get RET Device Data from DB
     pointer.execute('SELECT * FROM alticedr_sitedb.retpara WHERE sitename = \'' + str(sitename) + '\';')
     # We use fetchall because the return is a 2D list.
