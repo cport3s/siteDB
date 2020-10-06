@@ -8,6 +8,20 @@ from datetime import datetime
 import requests
 
 # -----------------------------------------------------------OBJECTS-----------------------------------------------------------#
+# NE Element Class
+class neElement():
+	siteID = ''
+	neName = ''
+	eGbtsName = ''
+	nodebName = ''
+	eNodebName = ''
+	ptiCode = ''
+	lat = ''
+	lon = ''
+	transID = ''
+	tricomName = ''
+	neList = []
+
 # transDB class
 class transDBInfo():
     ranSiteId = ''
@@ -20,6 +34,7 @@ class transDBInfo():
     manRouter = ''
     ibnRouter = ''
 
+#IP Parameter Class
 class ipParaClass():
     neName = []
     functionName = []
