@@ -6,163 +6,9 @@ import os
 import csv
 from datetime import datetime
 import requests
-
+import classes
 # -----------------------------------------------------------OBJECTS-----------------------------------------------------------#
-# NE Element Class
-class neElement():
-	siteID = ''
-	neName = ''
-	eGbtsName = ''
-	nodebName = ''
-	eNodebName = ''
-	ptiCode = ''
-	lat = ''
-	lon = ''
-	transID = ''
-	tricomName = ''
-	neList = []
 
-# transDB class
-class transDBInfo():
-    ranSiteId = ''
-    transSiteId = ''
-    ptiSiteName = ''
-    address = ''
-    towerTopo = ''
-    locationType = ''
-    txType = ''
-    manRouter = ''
-    ibnRouter = ''
-
-#IP Parameter Class
-class ipParaClass():
-    neName = []
-    functionName = []
-    cpIP = []
-    upIP = []
-    gwIP = []
-    vlanID = []
-    ptpIP = []
-    omIP = []
-    peerIP = []
-
-    def clrlst(self):
-        self.neName.clear()
-        self.functionName.clear()
-        self.cpIP.clear()
-        self.upIP.clear()
-        self.gwIP.clear()
-        self.vlanID.clear()
-        self.ptpIP.clear()
-        self.omIP.clear()
-        self.peerIP.clear()
-
-# RET class
-class RetDevice():
-    retdeviceno = []
-    retdevicename = []
-    retsubrack = []
-    retmanufacturer = []
-    retserial = []
-    rettilt = []
-    retantmodel = []
-    retantmaxtilt = []
-    retantmintilt = []
-
-    def clrlst(self):
-        self.retdeviceno.clear()
-        self.retdevicename.clear()
-        self.retsubrack.clear()
-        self.retmanufacturer.clear()
-        self.retserial.clear()
-        self.rettilt.clear()
-        self.retantmodel.clear()
-        self.retantmaxtilt.clear()
-        self.retantmintilt.clear()
-
-# GSM Cell class
-class GSMCell():
-    btsidx = ''
-    egbtsname = ''
-    bscname = ''
-    egbtsid = ''
-    gcellidx = []
-    gcellid = []
-    gcellname = []
-    gband = []
-    glac = []
-    ncc = []
-    bcc = []
-    hsn = []
-    grac = []
-    gbcch = []
-    tch1 = []
-    tch2 = []
-    tch3 = []
-
-    def clrlst(self):
-        self.gcellidx.clear()
-        self.gcellid.clear()
-        self.gcellname.clear()
-        self.gband.clear()
-        self.glac.clear()
-        self.ncc.clear()
-        self.bcc.clear()
-        self.hsn.clear()
-        self.grac.clear()
-        self.gbcch.clear()
-        self.tch1.clear()
-        self.tch2.clear()
-        self.tch3.clear()
-
-# UMTS Cell class
-class UMTSCell():
-    unodebname = ''
-    urncname = ''
-    unodebid = ''
-    ucellid = []
-    ucellname = []
-    ulac = []
-    urac = []
-    dlarfcn = []
-    ularfcn = []
-    uband = []
-    upsc = []
-
-    def clrlst(self):
-        self.ucellid.clear()
-        self.ucellname.clear()
-        self.ulac.clear()
-        self.urac.clear()
-        self.dlarfcn.clear()
-        self.ularfcn.clear()
-        self.uband.clear()
-        self.upsc.clear()
-
-#LTE Cell class
-class LTECell():
-    enbid = ''
-    enbname = ''
-    lcellname = []
-    lcellid = []
-    lband = []
-    tac = []
-    pci = []
-    prach = []
-    cellrad = []
-    txmode = []
-    earfcn = []
-
-    def clrlst(self):
-        self.lcellname.clear()
-        self.lcellid.clear()
-        self.pci.clear()
-        self.prach.clear()
-        self.earfcn.clear()
-        self.lband.clear()
-        self.txmode.clear()
-        self.tac.clear()
-        self.cellrad.clear()
 # ----------------------------------------------------------VARIABLES----------------------------------------------------------#
 # HTML Files
 mainhtml = 'Main_Child_Live_Site_Query.html'
@@ -182,60 +28,71 @@ dbname = 'alticedr_sitedb'
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 # ----------------------------------------------------------FUNCTIONS----------------------------------------------------------#
-def siteconversion(siteid):
-    # Function recieves an INT and must return 6 strings and a list
-    nelistf = []
+def siteconversion(networkElement):
+    # Function recieves an instance of a class and must populate all of its vars.
     connectr = mysql.connector.connect(user = dbusername, password = dbpassword, host = hostip, database = dbname)
     pointer = connectr.cursor(buffered=True)
     # Check if siteid is a trans id and get the ran id
-    if (len(str(siteid)) == 3 or len(str(siteid)) == 4) and (str(siteid)[0] == '7' or str(siteid)[0] == '8'):
-        pointer.execute('SELECT * FROM siteinfo WHERE transid = ' + str(siteid) + ';')
+    if (len(str(networkElement.siteID)) == 3 or len(str(networkElement.siteID)) == 4) and (str(networkElement.siteID)[0] == '7' or str(networkElement.siteID)[0] == '8'):
+        pointer.execute('SELECT * FROM siteinfo WHERE transid = ' + str(networkElement.siteID) + ';')
         querypayload = pointer.fetchone()
-        siteid = querypayload[0]
-    pointer.execute('SELECT * FROM siteinfo WHERE id = ' + str(siteid) + ';')
+        networkElement.siteID = querypayload[0]
+    pointer.execute('SELECT * FROM siteinfo WHERE id = ' + str(networkElement.siteID) + ';')
     querypayload = pointer.fetchone()
     # Check if query result is not empty
     if querypayload:
-        sitenamef = querypayload[1]
-        enbnamef = 'L' + sitenamef[1:]
-        nodebnamef = 'U' + sitenamef[1:]
-        egbtsnamef = 'G' + sitenamef[1:]
-        nodal_idf = querypayload[7]
-        tricom_namef = querypayload[8]
-        nelistf.append('M' + sitenamef[1:])
-        # Search for external NodeB
-        pointer.execute('select * from ippara where functionname = \'' + nodebnamef + '\';')
-        querypayload = pointer.fetchone()
-        if querypayload:
-            if querypayload[0] == querypayload[1]:
-                # If nename and nodebfunction name are the same, then....
-                nelistf.append('U' + sitenamef[1:])
-        # Search for L900 external enodeb
-        pointer.execute('select * from ltecellpara where enbid = ' + str(80000 + int(siteid)) + ';')
-        querypayload = pointer.fetchall()
-        if querypayload:
-            nelistf.append('UL' + sitenamef[1:])
-        # Search for WTTx external enodeb
-        pointer.execute('select * from ltecellpara where enbid = ' + str(100000 + int(siteid)) + ';')
-        querypayload = pointer.fetchall()
-        if querypayload:
-            nelistf.append('LT' + sitenamef[1:])
-        # Search for NR-NSA external enodeb
-        pointer.execute('select * from ltecellpara where enbid = ' + str(110000 + int(siteid)) + ';')
-        querypayload = pointer.fetchall()
-        if querypayload:
-            nelistf.append('NR' + sitenamef[1:])
+        networkElement.transID = querypayload[7]
+        networkElement.tricomName = querypayload[8]
+        networkElement.ptiCode = querypayload[2]
+        networkElement.lat = querypayload[3]
+        networkElement.lon = querypayload[4]
+        networkElement.neName = querypayload[1]
+        networkElement.neList.append(querypayload[1])
     else:
-        sitenamef = 'N/A'
-        enbnamef = 'N/A'
-        nodebnamef = 'N/A'
-        egbtsnamef = 'N/A'
-        nelistf = 'N/A'
-        nodal_idf = 'N/A'
-        tricom_namef = 'N/A'
+        networkElement.transID = 'N/A'
+        networkElement.tricomName = 'N/A'
+        networkElement.ptiCode = 'N/A'
+        networkElement.lat = 'N/A'
+        networkElement.lon = 'N/A'
+        networkElement.neName = 'N/A'
+    # Complete missing information and validate it exists on the database
+    networkElement.eGbtsName = 'G' + networkElement.neName[1:]
+    networkElement.nodebName = 'U' + networkElement.neName[1:]
+    networkElement.eNodebName = 'L' + networkElement.neName[1:]
+    # Check if all functions exists 
+    pointer.execute('select * from alticedr_sitedb.gsmcellpara where egbtsname = \'' + networkElement.eGbtsName + '\';')
+    if not(pointer.fetchone()):
+        networkElement.eGbtsName = 'N/A'
+    pointer.execute('select * from alticedr_sitedb.umtscellpara where unodebname = \'' + networkElement.nodebName + '\';')
+    if not(pointer.fetchone()):
+        networkElement.nodebName = 'N/A'
+    pointer.execute('select * from alticedr_sitedb.ltecellpara where enbname = \'' + networkElement.eNodebName + '\';')
+    if not(pointer.fetchone()):
+        networkElement.eNodebName = 'N/A'
+    # Search for external UMTS Only BBU
+    pointer.execute('select * from ippara where functionname = \'' + networkElement.nodebName + '\';')
+    querypayload = pointer.fetchone()
+    if querypayload:
+        if querypayload[0] == networkElement.nodebName:
+            # If nename and nodebfunction name are the same, then....
+            networkElement.neList.append(querypayload[0])
+    # Search for L900 external enodeb
+    pointer.execute('select * from ltecellpara where enbid = ' + str(80000 + int(networkElement.siteID)) + ';')
+    querypayload = pointer.fetchall()
+    if querypayload:
+        networkElement.neList.append('UL' + networkElement.neName[1:])
+    # Search for WTTx external enodeb
+    pointer.execute('select * from ltecellpara where enbid = ' + str(100000 + int(networkElement.siteID)) + ';')
+    querypayload = pointer.fetchall()
+    if querypayload:
+        networkElement.neList.append('LT' + networkElement.neName[1:])
+    # Search for NR-NSA external enodeb
+    pointer.execute('select * from ltecellpara where enbid = ' + str(110000 + int(networkElement.siteID)) + ';')
+    querypayload = pointer.fetchall()
+    if querypayload:
+        networkElement.neList.append('NR' + networkElement.neName[1:])
     pointer.close()
     connectr.close()
-    return siteid, sitenamef, egbtsnamef, nodebnamef, enbnamef, nelistf, nodal_idf, tricom_namef
 
 # -----------------------------------------------------------MAINCODE----------------------------------------------------------#
 @app.route('/')
@@ -246,30 +103,26 @@ def searchsite():
 # Live Site Search result page
 @app.route('/siteQuery', methods = ['POST'])
 def site_db_consult():
-    siteid = int(request.form['siteidh'])
-    siteid, sitename, egbtsname, unodebname, enbname, nelist, nodal_id, tricom_name = siteconversion(siteid)
+    # Instantiate new ne element
+    networkElement = classes.neElement()
+    networkElement.neList.clear()
+    #networkElement.clrlst()
+    networkElement.siteID = int(request.form['siteidh'])
+    # Pass instance to function
+    siteconversion(networkElement)
     # If site doesn't exists, return error site
-    if sitename == 'N/A':
+    if networkElement.neName == 'N/A' and networkElement.eGbtsName == 'N/A' and networkElement.nodebName == 'N/A' and networkElement.eNodebName:
         return render_template(errorhtml)
     # Connect to DB
     connectr = mysql.connector.connect(user = dbusername, password = dbpassword, host = hostip, database = dbname)
     # Connection must be buffered when executing multiple querys on DB before closing connection.
     pointer = connectr.cursor(buffered=True)
-    # Execute Query on DB
-    # Get Site Information from DB
-    pointer.execute('SELECT * FROM alticedr_sitedb.siteinfo WHERE id = ' + str(siteid) + ';')
-    # Convery query result into a list. We use fetchone because the return is a single list.
-    querypayload = pointer.fetchone()
-    # Site info data
-    lat = querypayload[3]
-    lon = querypayload[4]
-    pticode = querypayload[2]
     # Pull IP Data  from DB
     # Instantiate ipParaClass and clear all lists to ensure they are empty.
-    ipPara = ipParaClass()
+    ipPara = classes.ipParaClass()
     ipPara.clrlst()
     # Search all siteid's ne names
-    for ne in nelist:
+    for ne in networkElement.neList:
         pointer.execute('select * from alticedr_sitedb.ippara where sitename = \'' + str(ne) + '\';')
         querypayload = pointer.fetchall()
         # If the query payload is not empty, then....
@@ -286,12 +139,12 @@ def site_db_consult():
                 ipPara.omIP.append(querypayload[i][7])
                 ipPara.peerIP.append(querypayload[i][8])
     # Get RET Device Data from DB
-    pointer.execute('SELECT * FROM alticedr_sitedb.retpara WHERE sitename = \'' + str(sitename) + '\';')
+    pointer.execute('SELECT * FROM alticedr_sitedb.retpara WHERE sitename = \'' + str(networkElement.neName) + '\';')
     # We use fetchall because the return is a 2D list.
     querypayload = pointer.fetchall()
     # Check if the return is not empty
     # Instantiate new RET Class object to store DB information
-    retdevice = RetDevice()
+    retdevice = classes.RetDevice()
     retdevice.clrlst()
     if querypayload:
         # querypayload contains a matrix array
@@ -318,12 +171,12 @@ def site_db_consult():
         retdevice.retantmaxtilt.append('N/A')
         retdevice.retantmintilt.append('N/A')
     # Get GSM Data from DB
-    pointer.execute('SELECT * FROM gsmcellpara WHERE egbtsname = \'' + str(egbtsname) + '\';')
+    pointer.execute('SELECT * FROM gsmcellpara WHERE egbtsname = \'' + str(networkElement.eGbtsName) + '\';')
     # We use fetchall because the return is a 2D list.
     querypayload = pointer.fetchall()
     # Check if the return is not empty
     # Instantiate new GSM Cell Class object to store DB information
-    gsmcell = GSMCell()
+    gsmcell = classes.GSMCell()
     gsmcell.clrlst()
     if querypayload:
         # querypayload contains a matrix array
@@ -359,11 +212,11 @@ def site_db_consult():
         gsmcell.grac.append('N/A')
     querypayload.clear()
     # Get UMTS Data from DB
-    pointer.execute('SELECT * FROM alticedr_sitedb.umtscellpara WHERE unodebname = \'' + str(unodebname) + '\';')
+    pointer.execute('SELECT * FROM alticedr_sitedb.umtscellpara WHERE unodebname = \'' + str(networkElement.nodebName) + '\';')
     querypayload = pointer.fetchall()
     # Check if the return is not empty
     # Instantiate new UMTS Cell Class object to store DB information
-    umtscell = UMTSCell()
+    umtscell = classes.UMTSCell()
     umtscell.clrlst()
     if querypayload:
         umtscell.unodebname = querypayload[0][2]
@@ -393,11 +246,11 @@ def site_db_consult():
         umtscell.upsc.append('N/A')
     querypayload.clear()
     # Get LTE Data from DB
-    pointer.execute('SELECT * FROM alticedr_sitedb.ltecellpara WHERE enbid = ' + str(siteid) + ' order by band asc;')
+    pointer.execute('SELECT * FROM alticedr_sitedb.ltecellpara WHERE enbid = ' + str(networkElement.siteID) + ' order by band asc;')
     querypayload = pointer.fetchall()
     # Check if the return is not empty
     # Instantiate new LTE Cell Class object to store DB information
-    ltecell = LTECell()
+    ltecell = classes.LTECell()
     ltecell.clrlst()
     if querypayload:
         ltecell.enbid = querypayload[0][0]
@@ -426,7 +279,7 @@ def site_db_consult():
         ltecell.tac.append('N/A')
         ltecell.cellrad.append('N/A')
     # Get UL eNodeB Data from DB
-    pointer.execute('SELECT * FROM alticedr_sitedb.ltecellpara WHERE enbid = ' + str(80000 + int(siteid)) + ';')
+    pointer.execute('SELECT * FROM alticedr_sitedb.ltecellpara WHERE enbid = ' + str(80000 + int(networkElement.siteID)) + ';')
     querypayload = pointer.fetchall()
     # Check if the return is not empty
     if querypayload:
@@ -443,7 +296,7 @@ def site_db_consult():
     else:
         pass
     # Get LT eNodeB Data from DB
-    pointer.execute('SELECT * FROM alticedr_sitedb.ltecellpara WHERE enbid = ' + str(100000 + int(siteid)) + ';')
+    pointer.execute('SELECT * FROM alticedr_sitedb.ltecellpara WHERE enbid = ' + str(100000 + int(networkElement.siteID)) + ';')
     querypayload = pointer.fetchall()
     # Check if the return is not empty
     if querypayload:
@@ -463,15 +316,15 @@ def site_db_consult():
     pointer.close()
     connectr.close()
     # Get transDB site info
-    transDbData = transDBInfo()
-    response = requests.get('http://transdb/cgi-bin/querysite.py?site_name={}'.format(str(siteid)))
+    transDbData = classes.transDBInfo()
+    response = requests.get('http://transdb/cgi-bin/querysite.py?site_name={}'.format(str(networkElement.siteID)))
     # Check response status code to see if the information was found on server
     if int(response.status_code) == 200:
         # Parse json key 'line' to an array
         dataList = response.json()['line']
         # Cycle through the array and search for the especific site id
         for data in dataList:
-            if data['ran_site_name'] == str(siteid):
+            if data['ran_site_name'] == str(networkElement.siteID):
                 transDbData.ranSiteId = data['ran_site_name']
                 transDbData.transSiteId = data['trans_site_name']
                 transDbData.ptiSiteName = data['pti_site_name']
@@ -493,15 +346,15 @@ def site_db_consult():
                 transDbData.manRouter = 'N/A'
                 transDbData.ibnRouter = 'N/A'
     # 'cellnameh' is a variable in the HTML code on Main.html
-    return render_template(mainhtml, pticodeh = pticode, lath = lat, longh = lon, nodalidh = nodal_id, tricomnameh = tricom_name, nelisth = nelist, transDbDatah = transDbData, ipPara = ipPara, retDeviceh = retdevice, gsmCellh = gsmcell, umtsCellh = umtscell, lteCellh = ltecell)
+    return render_template(mainhtml, networkElement = networkElement, transDbDatah = transDbData, ipPara = ipPara, retDeviceh = retdevice, gsmCellh = gsmcell, umtsCellh = umtscell, lteCellh = ltecell)
 
 # New Sector Query Result
 @app.route('/newsectorquery', methods = ['POST'])
 def newsectorquery():
     # Declare objects to be used in this route
-    gsmcell = GSMCell()
+    gsmcell = classes.GSMCell()
     gsmcell.clrlst()
-    ltecell = LTECell()
+    ltecell = classes.LTECell()
     ltecell.clrlst()
     siteid = request.form['siteidh']
     sitename, gsmcell.egbtsname, unodebname, ltecell.enbname = siteconversion(siteid)
