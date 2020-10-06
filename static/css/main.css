@@ -3,9 +3,20 @@
     to {opacity: 100;}
 }
 
+@keyframes expandTitle {
+    from {font-size: 20px;}
+    to {font-size: 28px;}
+}
+
+@keyframes collapseTitle {
+    from {font-size: 28px;}
+    to {font-size: 20px;}
+}
+
 .mainBody {
     background-color: black;
     color: white;
+    font-family: 'Play', sans-serif;
 }
 
 header {
@@ -118,6 +129,19 @@ header table {
 
 .retGridTableButton {
     width: 100%;
+    border: 2px solid white;
+    background-color: black;
+    color: white;
+    font-size: 20px;
+    font-family: 'Play', sans-serif;
+    animation-name: collapseTitle;
+    animation-duration: 0.5s;
+}
+
+.retGridTableButton:hover {
+    animation-name: expandTitle;
+    animation-duration: 0.5s;
+    font-size: 28px;
 }
 
 #nocInfo li {
@@ -125,7 +149,7 @@ header table {
 }
 
 #nocInfo {
-    display: none;
+    display: block;
 }
 
 #ipInfo {
