@@ -6,6 +6,7 @@
 	<link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet" type="text/css"/>
 	<!--Link to a JavaScript file for scripts-->
 	<script src="{{ url_for('static', filename='js/main.js') }}" type="text/javascript"></script>
+	<!--External font link-->
 	<link href="https://fonts.googleapis.com/css2?family=Play&display=swap" rel="stylesheet">
 </head>
 <body class="mainBody" onload="fadeInAnimation()">
@@ -14,10 +15,11 @@
 			<a href="/">
 				<h1 class="titleContent">SiteDB</h1>
 			</a>
-			<a href="/wiki">
+			<a href="/">
 				<h6 class="titleContent">Wiki</h6>
 			</a>
 		</section>
+		<button id="loginShow" onclick="showCredentials()">Login</button>
 		<table>
 			<tbody>
 				<tr>
@@ -29,18 +31,17 @@
 								<input name="siteidh" placeholder=" Ex.: 086" required type="number" minlength="1" maxlength="4">
 								<input type="submit" value="Search">
 							</form>
-							<form action="/newsectorquery" method="POST">
+							<!--<form action="/newsectorquery" method="POST">
 								<label class="textShadow">Sector Split PCI Query</label>
 								<input name="siteidh" placeholder=" Ex.: 014" required type="number" minlength="1" maxlength="4">
 								<input type="submit" value="Search">
-							</form>
+							</form>-->
 							<form action="/dashboard" method="GET">
 								<input type="submit" value="Dashboard">
 							</form>
 						</div>
 					</td>
 					<td class="headerDiv">
-						<button id="loginShow" onclick="showCredentials()">Login</button>
 						<div class="loginBox">
 							<form action="/login" method="POST">
 								<label class="textShadow" for="username">Username: </label>

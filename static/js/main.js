@@ -16,7 +16,11 @@ function showCredentials() {
     let loginBox = document.getElementsByClassName('loginBox');
     if (loginBox[0].style.display == 'none') {
         loginBox[0].style.display = 'block';
+        loginBox[0].style.animationName = 'fadeInAnimation'
+        loginBox[0].style.animationDuration = '1s'
     } else {
+        loginBox[0].style.animationName = 'fadeOutAnimation'
+        loginBox[0].style.animationDuration = '1s'
         loginBox[0].style.display = 'none'
     };
 }

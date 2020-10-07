@@ -3,6 +3,11 @@
     to {opacity: 100;}
 }
 
+@keyframes fadeOutAnimation {
+    from {opacity: 100;}
+    to {opacity: 0;}
+}
+
 @keyframes expandTitle {
     from {font-size: 20px;}
     to {font-size: 28px;}
@@ -36,8 +41,8 @@ header {
 
 .headerTitle {
     height: auto;
-    display: block;
-    width: 100%;
+    display: inline-block;
+    width: 90%;
 }
 
 .headerTitle .titleContent {
@@ -62,7 +67,7 @@ header table {
 }
 
 .textShadow {
-    text-shadow: 2px 2px 3px black;
+    text-shadow: 3px 3px 3px black;
 }
 
 .headerDiv div h4 {
@@ -74,7 +79,9 @@ header table {
 
  #loginShow {
     display: inline-block;
-    margin-left: 90%;
+    vertical-align: top;
+    color: white;
+    background-color: black;
  }
 
  .loginBox {
@@ -185,3 +192,25 @@ header table {
 #transDBiframe {
     display: none;
 }
+
+/* Dashboard Child Styles */
+table .dashboardTable {
+    border: 2px solid #FFFFFF;
+    width: 100%;
+    text-align: center;
+    border-collapse: collapse;
+}
+table .dashboardTable td, th {
+    border: 1px solid #b8b8b8;
+    padding: 1px;
+    width: 50%;
+    line-height: 0;
+}
+table .dashboardTable img {
+    padding: 0px;
+    margin: 0px;
+    border: none;
+    max-width: 100%;
+    height: auto;
+}
+
