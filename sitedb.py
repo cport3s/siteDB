@@ -29,6 +29,7 @@ dbname = 'alticedr_sitedb'
 app = Flask(__name__, template_folder='templates', static_folder='static')
 # ----------------------------------------------------------FUNCTIONS----------------------------------------------------------#
 def siteconversion(networkElement):
+    fillChar = ''
     # Function recieves an instance of a class and must populate all of its vars.
     connectr = mysql.connector.connect(user = dbusername, password = dbpassword, host = hostip, database = dbname)
     pointer = connectr.cursor(buffered=True)
@@ -57,19 +58,26 @@ def siteconversion(networkElement):
         networkElement.neName = 'N/A'
     # Complete missing information and validate it exists on the database
     # Check if all functions exists
-    pointer.execute('select * from alticedr_sitedb.gsmcellpara where egbtsname regexp \'^[A-Z]' + str(networkElement.siteID) + '[A-Z]\';')
+    if (len(str(networkElement.siteID)) == 1):
+        # Must add a '00' or '0' because all site id must have 3 digits or more
+        fillChar = '00'
+    elif (len(str(networkElement.siteID)) == 2):
+        fillChar = '0'
+    else:
+        fillChar = ''
+    pointer.execute('select * from alticedr_sitedb.gsmcellpara where egbtsname regexp \'^[A-Z]' + fillChar + str(networkElement.siteID) + '[A-Z]\';')
     querypayload = pointer.fetchall()
     if querypayload:
         networkElement.eGbtsName = querypayload[0][1]
     else:
         networkElement.eGbtsName = 'N/A'
-    pointer.execute('select * from alticedr_sitedb.umtscellpara where unodebname regexp \'^[A-Z]' + str(networkElement.siteID) + '[A-Z]\';')
+    pointer.execute('select * from alticedr_sitedb.umtscellpara where unodebname regexp \'^[A-Z]' + fillChar + str(networkElement.siteID) + '[A-Z]\';')
     querypayload = pointer.fetchall()
     if querypayload:
         networkElement.nodebName = querypayload[0][2]
     else:
         networkElement.nodebName = 'N/A'
-    pointer.execute('select * from alticedr_sitedb.ltecellpara where enbname regexp \'^[A-Z]' + str(networkElement.siteID) + '[A-Z]\';')
+    pointer.execute('select * from alticedr_sitedb.ltecellpara where enbname regexp \'^[A-Z]' + fillChar + str(networkElement.siteID) + '[A-Z]\';')
     querypayload = pointer.fetchall()
     if querypayload:
         networkElement.eNodebName = querypayload[0][8]

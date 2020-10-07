@@ -110,20 +110,13 @@ header table {
     font-size: 16px;
 }
 
-.retgridtable thead {
-  border-bottom: 1px solid #b8b8b8;
-}
-
 .retgridtable thead th {
     font-size: 18px;
     font-weight: bold;
     color: #b8b8b8;
     text-align: center;
-    border-left: 1px solid #b8b8b8;
-}
-
-.retgridtable thead th:first-child {
-    border-left: none;
+    height: auto;
+    width: auto;
 }
 
 .retgridtable tfoot td {
@@ -194,19 +187,19 @@ header table {
 }
 
 /* Dashboard Child Styles */
-table .dashboardTable {
+.dashboardTable {
     border: 2px solid #FFFFFF;
     width: 100%;
     text-align: center;
     border-collapse: collapse;
 }
-table .dashboardTable td, th {
+.dashboardTable td, .dashboardTable th {
     border: 1px solid #b8b8b8;
     padding: 1px;
     width: 50%;
     line-height: 0;
 }
-table .dashboardTable img {
+.dashboardTable img {
     padding: 0px;
     margin: 0px;
     border: none;
