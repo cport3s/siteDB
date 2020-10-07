@@ -11,3 +11,12 @@ function fadeInAnimation() {
     document.body.style.animationName = 'fadeInAnimation';
     document.body.style.animationDuration = '3s'; 
 }
+
+function showCredentials() {
+    let loginBox = document.getElementsByClassName('loginBox');
+    if (loginBox[0].style.display == 'none') {
+        loginBox[0].style.display = 'block';
+    } else {
+        loginBox[0].style.display = 'none'
+    };
+}

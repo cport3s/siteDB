@@ -72,6 +72,15 @@ header table {
     margin-top: 0;
 }
 
+ #loginShow {
+    display: inline-block;
+    margin-left: 90%;
+ }
+
+ .loginBox {
+    display: none;
+ }
+
 .mainbody {
     margin-top: 1px;
 }
