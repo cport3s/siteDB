@@ -56,18 +56,24 @@ def siteconversion(networkElement):
         networkElement.lon = 'N/A'
         networkElement.neName = 'N/A'
     # Complete missing information and validate it exists on the database
-    networkElement.eGbtsName = 'G' + networkElement.neName[1:]
-    networkElement.nodebName = 'U' + networkElement.neName[1:]
-    networkElement.eNodebName = 'L' + networkElement.neName[1:]
-    # Check if all functions exists 
-    pointer.execute('select * from alticedr_sitedb.gsmcellpara where egbtsname = \'' + networkElement.eGbtsName + '\';')
-    if not(pointer.fetchone()):
+    # Check if all functions exists
+    pointer.execute('select * from alticedr_sitedb.gsmcellpara where egbtsname regexp \'^[A-Z]' + str(networkElement.siteID) + '[A-Z]\';')
+    querypayload = pointer.fetchall()
+    if querypayload:
+        networkElement.eGbtsName = querypayload[0][1]
+    else:
         networkElement.eGbtsName = 'N/A'
-    pointer.execute('select * from alticedr_sitedb.umtscellpara where unodebname = \'' + networkElement.nodebName + '\';')
-    if not(pointer.fetchone()):
+    pointer.execute('select * from alticedr_sitedb.umtscellpara where unodebname regexp \'^[A-Z]' + str(networkElement.siteID) + '[A-Z]\';')
+    querypayload = pointer.fetchall()
+    if querypayload:
+        networkElement.nodebName = querypayload[0][2]
+    else:
         networkElement.nodebName = 'N/A'
-    pointer.execute('select * from alticedr_sitedb.ltecellpara where enbname = \'' + networkElement.eNodebName + '\';')
-    if not(pointer.fetchone()):
+    pointer.execute('select * from alticedr_sitedb.ltecellpara where enbname regexp \'^[A-Z]' + str(networkElement.siteID) + '[A-Z]\';')
+    querypayload = pointer.fetchall()
+    if querypayload:
+        networkElement.eNodebName = querypayload[0][8]
+    else:
         networkElement.eNodebName = 'N/A'
     # Search for external UMTS Only BBU
     pointer.execute('select * from ippara where functionname = \'' + networkElement.nodebName + '\';')

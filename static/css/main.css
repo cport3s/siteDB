@@ -79,6 +79,7 @@ header table {
 
  .loginBox {
     display: none;
+    height: auto;
  }
 
 .mainbody {
