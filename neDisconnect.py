@@ -2,9 +2,11 @@
 import os
 import csv
 from datetime import datetime
+import plotly.graph_objects as go
 # ----------------------------------------------------------VARIABLES----------------------------------------------------------#
 currentDate = datetime.now().strftime("%Y%m%d")
 filePath = "D:\\ftproot\\configuration_files\\NBI_FM\\" + currentDate + "\\"
+saveImgPath = "C:\\Apache24\\htdocs\\sitedb_live\\static\\html\\"
 alarmInformationList = []
 # Dictionary to count disconnection causes
 disconnectionCauseCount = {'Port handshake': 0, 'Connection torn down': 0, 'ssl connections': 0, 'Power supply': 0, 'timed out': 0}
@@ -29,4 +31,5 @@ for alarmRow in alarmInformationList:
             # Then increase the count value for the given key in the dictionary
             disconnectionCauseCount[key] += 1
 
-print(disconnectionCauseCount)
+fig = go.Figure([go.Bar(x=list(disconnectionCauseCount.keys()), y=list(disconnectionCauseCount.values()), width=0.3)])
+fig.write_html(saveImgPath + 'neDisconnectedReport.html')
