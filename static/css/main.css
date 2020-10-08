@@ -186,24 +186,27 @@ header table {
     display: none;
 }
 
-/* Dashboard Child Styles */
-.dashboardTable {
-    border: 2px solid #FFFFFF;
+/* Dashboard Template Styles */
+.dashboard_gridBody {
+    /* The display parameter is going to change to "grid" on JS function showGraphGrid */
+    display: none;
     width: 100%;
-    text-align: center;
-    border-collapse: collapse;
+    grid-template: repeat(1, auto) / repeat(2, 50%);
+    gap: 2px 0px;
+    justify-items: center;
 }
-.dashboardTable td, .dashboardTable th {
-    border: 1px solid #b8b8b8;
-    padding: 1px;
-    width: 50%;
-    line-height: 0;
-}
-.dashboardTable img {
-    padding: 0px;
-    margin: 0px;
-    border: none;
-    max-width: 100%;
+
+#dashboard_bscFeGeInt figure img {
     height: auto;
+    width: 100%;
+}
+
+#dashboard_trxUsage figure img {
+    height: 100%;
+    width: 100%;
+}
+
+.twoColumns {
+    grid-column-start: span 2;
 }
 

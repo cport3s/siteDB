@@ -24,3 +24,11 @@ function showCredentials() {
         loginBox[0].style.display = 'none'
     };
 }
+
+function showGraphGrid(graphName) {
+    let dashboard_gridBodyList = document.getElementsByClassName("dashboard_gridBody");
+    for (let i = 0; i < dashboard_gridBodyList.length; i++) {
+        dashboard_gridBodyList[i].style.display = "none";
+    }
+    document.getElementById(graphName).style.display = "grid";
+}

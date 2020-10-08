@@ -1,62 +1,35 @@
 {% extends "Main_Base.html" %}
 {% block dashboard_main_child %}
 <article>
-    <table class="dashboardTable">
-        <tbody>
-			<tr>
-                <th>
-                    <h1>BSC TRX Usage</h1>
-                </th>
-            </tr>
-			<tr>
-                <td>
-                    <figure class="trxUsageGraph">
-                        <img src="/static/images/trx_usage.png">
-                    </figure>
-                </td>
-            </tr>
-            <tr>
-                <th>
-                    <h1>BSC FE/GE Interface</h1>
-                </th>
-            </tr>
-            <tr>
-                <td>
-                    <figure class="intUsageGraph">
-                        <img src="/static/images/BSC_01_RRA_FE-GE_Interface.png">
-                    </figure>
-                </td>
-                <td>
-                    <figure class="intUsageGraph">
-                        <img src="/static/images/BSC_05_RRA_FE-GE_Interface.png">
-                    </figure>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <figure class="intUsageGraph">
-                        <img src="/static/images/BSC_03_VM_FE-GE_Interface.png">
-                    </figure>
-                </td>
-                <td>
-                    <figure class="intUsageGraph">
-                        <img src="/static/images/BSC_04_VM_FE-GE_Interface.png">
-                    </figure>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <figure class="intUsageGraph">
-                        <img src="/static/images/BSC_02_STGO_FE-GE_Interface.png">
-                    </figure>
-                </td>
-                <td>
-                    <figure class="intUsageGraph">
-                        <img src="/static/images/BSC_06_STGO_FE-GE_Interface.png">
-                    </figure>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <select id="dashboard_graphSelect">
+        <option value="dashboard_trxUsage" onclick="showGraphGrid('dashboard_trxUsage');">BSC TRX Utilization</option>
+        <option value="dashboard_bscFeGeInt" onclick="showGraphGrid('dashboard_bscFeGeInt');">BSC FE/GE Interface</option>
+        <option value="dashboard_rncFeGeInt" onclick="showGraphGrid('dashboard_rncFeGeInt');">RNC FE/GE Interface</option>
+    </select>
+    <section class="dashboard_gridBody" id="dashboard_bscFeGeInt">
+        <figure>
+            <img src="/static/images/BSC_01_RRA_FE-GE_Interface.png">
+        </figure>
+        <figure>
+            <img src="/static/images/BSC_05_RRA_FE-GE_Interface.png">
+        </figure>
+        <figure>
+            <img src="/static/images/BSC_03_VM_FE-GE_Interface.png">
+        </figure>
+        <figure>
+            <img src="/static/images/BSC_04_VM_FE-GE_Interface.png">
+        </figure>
+        <figure>
+            <img src="/static/images/BSC_02_STGO_FE-GE_Interface.png">
+        </figure>
+        <figure>
+            <img src="/static/images/BSC_06_STGO_FE-GE_Interface.png">
+        </figure>
+    </section>
+    <section class="dashboard_gridBody" id="dashboard_trxUsage">
+        <figure class="twoColumns">
+            <img src="/static/images/trx_usage.png">
+        </figure>
+    </section>
 </article>
 {% endblock %}
