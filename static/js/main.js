@@ -26,9 +26,9 @@ function showCredentials() {
 }
 
 function showGraphGrid(graphName) {
-    let dashboard_gridBodyList = document.getElementsByClassName("dashboard_gridBody");
+    let dashboard_gridBodyList = document.getElementsByClassName('dashboard_gridBody');
     for (let i = 0; i < dashboard_gridBodyList.length; i++) {
         dashboard_gridBodyList[i].style.display = "none";
-    }
+    };
     document.getElementById(graphName).style.display = "grid";
 }

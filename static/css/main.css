@@ -189,11 +189,18 @@ header table {
 /* Dashboard Template Styles */
 .dashboard_gridBody {
     /* The display parameter is going to change to "grid" on JS function showGraphGrid */
-    display: none;
     width: 100%;
     grid-template: repeat(1, auto) / repeat(2, 50%);
     gap: 2px 0px;
     justify-items: center;
+}
+
+#dashboard_bscFeGeInt {
+    display: none;
+}
+
+#dashboard_trxUsage {
+    display: none;
 }
 
 #dashboard_bscFeGeInt figure img {
