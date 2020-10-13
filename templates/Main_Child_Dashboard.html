@@ -5,6 +5,7 @@
         <option value="dashboard_trxUsage" onclick="showGraphGrid('dashboard_trxUsage');">BSC TRX Utilization</option>
         <option value="dashboard_bscFeGeInt" onclick="showGraphGrid('dashboard_bscFeGeInt');">BSC FE/GE Interface</option>
         <option value="dashboard_rncFeGeInt" onclick="showGraphGrid('dashboard_rncFeGeInt');">RNC FE/GE Interface</option>
+        <option value="dashboard_neDisconnectedReport" onclick="showGraphGrid('dashboard_neDisconnectedReport');">NE OOS Report</option>
     </select>
     <section class="dashboard_gridBody" id="dashboard_bscFeGeInt">
         <figure>
@@ -30,6 +31,9 @@
         <figure class="twoColumns">
             <img src="/static/images/trx_usage.png">
         </figure>
+    </section>
+    <section id="dashboard_neDisconnectedReport">
+        <iframe src="/static/html/neDisconnectedReport.html" frameborder="0" style="width: 100%; height: 1600px;"></iframe>
     </section>
 </article>
 {% endblock %}

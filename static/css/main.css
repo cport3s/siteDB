@@ -203,6 +203,10 @@ header table {
     display: none;
 }
 
+#dashboard_neDisconnectedReport {
+    display: none;
+}
+
 #dashboard_bscFeGeInt figure img {
     height: auto;
     width: 100%;
