@@ -6,7 +6,8 @@ import plotly.graph_objects as go
 # ----------------------------------------------------------VARIABLES----------------------------------------------------------#
 currentDate = datetime.now().strftime("%Y%m%d")
 filePath = "D:\\ftproot\\configuration_files\\NBI_FM\\" + currentDate + "\\"
-saveImgPath = "C:\\Apache24\\htdocs\\sitedb_live\\static\\html\\"
+saveImgPath = "C:\\Apache24\\htdocs\\sitedb_live\\static\\images\\"
+saveHtmlPath = "C:\\Apache24\\htdocs\\sitedb_live\\static\\html\\"
 alarmInformationList = []
 # Dictionary to count disconnection causes
 disconnectionCauseCount = {'Port handshake': 0, 'Connection torn down': 0, 'ssl connections': 0, 'Power supply': 0, 'timed out': 0}
@@ -32,5 +33,5 @@ for alarmRow in alarmInformationList:
             disconnectionCauseCount[key] += 1
 
 fig = go.Figure([go.Bar(x=list(disconnectionCauseCount.keys()), y=list(disconnectionCauseCount.values()), width=0.3)])
-fig.write_image(saveImgPath + 'neDisconnectedReport.jpg', format='jpg')
-fig.write_html(saveImgPath + 'neDisconnectedReport.html')
+fig.write_image(saveImgPath + 'neDisconnectedReport.jpg', format='jpg', width='1280', height='900')
+fig.write_html(saveHtmlPath + 'neDisconnectedReport.html')
