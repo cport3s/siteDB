@@ -30,10 +30,5 @@ function showGraphGrid(graphName) {
     for (let i = 0; i < dashboard_gridBodyList.length; i++) {
         dashboard_gridBodyList[i].style.display = "none";
     };
-    if (graphName == 'dashboard_neDisconnectedReport') {
-        document.getElementById(graphName).style.display = "block";
-        document.getElementById(graphName).style.height = '1000px';
-    } else {
-        document.getElementById(graphName).style.display = "grid";
-    };
+    document.getElementById(graphName).style.display = "grid";
 }

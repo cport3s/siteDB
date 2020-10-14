@@ -32,4 +32,5 @@ for alarmRow in alarmInformationList:
             disconnectionCauseCount[key] += 1
 
 fig = go.Figure([go.Bar(x=list(disconnectionCauseCount.keys()), y=list(disconnectionCauseCount.values()), width=0.3)])
+fig.write_image(saveImgPath + 'neDisconnectedReport.jpg', format='jpg')
 fig.write_html(saveImgPath + 'neDisconnectedReport.html')

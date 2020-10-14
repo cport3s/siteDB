@@ -217,6 +217,11 @@ header table {
     width: 100%;
 }
 
+#dashboard_neDisconnectedReport figure img {
+    height: 100%;
+    width: 100%;
+}
+
 .twoColumns {
     grid-column-start: span 2;
 }
