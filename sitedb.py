@@ -23,7 +23,7 @@ wiki_html = 'Main_Child_Wiki.html'
 # DB Connection Parameters
 dbusername = 'sitedb'
 dbpassword = 'BSCAltice.123'
-hostip = '172.16.121.41'
+hostip = '10.0.115.86'
 dbname = 'alticedr_sitedb'
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
@@ -331,34 +331,34 @@ def site_db_consult():
     connectr.close()
     # Get transDB site info
     transDbData = classes.transDBInfo()
-    response = requests.get('http://transdb/cgi-bin/querysite.py?site_name={}'.format(str(networkElement.siteID)))
-    # Check response status code to see if the information was found on server
-    if int(response.status_code) == 200:
-        # Parse json key 'line' to an array
-        dataList = response.json()['line']
-        # Cycle through the array and search for the especific site id
-        for data in dataList:
-            if data['ran_site_name'] == str(networkElement.siteID):
-                transDbData.ranSiteId = data['ran_site_name']
-                transDbData.transSiteId = data['trans_site_name']
-                transDbData.ptiSiteName = data['pti_site_name']
-                transDbData.address = data['direccion']
-                transDbData.towerTopo = data['Tipo_Torre']
-                transDbData.locationType = data['PTI_estructura']
-                transDbData.txType = data['Transmision']
-                transDbData.manRouter = data['man']
-                transDbData.ibnRouter = data['ibn']
-                break
-            else:
-                transDbData.ranSiteId = 'N/A'
-                transDbData.transSiteId = 'N/A'
-                transDbData.ptiSiteName = 'N/A'
-                transDbData.address = 'N/A'
-                transDbData.towerTopo = 'N/A'
-                transDbData.locationType = 'N/A'
-                transDbData.txType = 'N/A'
-                transDbData.manRouter = 'N/A'
-                transDbData.ibnRouter = 'N/A'
+    #response = requests.get('http://transdb/cgi-bin/querysite.py?site_name={}'.format(str(networkElement.siteID)))
+    ## Check response status code to see if the information was found on server
+    #if int(response.status_code) == 200:
+    #    # Parse json key 'line' to an array
+    #    dataList = response.json()['line']
+    #    # Cycle through the array and search for the especific site id
+    #    for data in dataList:
+    #        if data['ran_site_name'] == str(networkElement.siteID):
+    #            transDbData.ranSiteId = data['ran_site_name']
+    #            transDbData.transSiteId = data['trans_site_name']
+    #            transDbData.ptiSiteName = data['pti_site_name']
+    #            transDbData.address = data['direccion']
+    #            transDbData.towerTopo = data['Tipo_Torre']
+    #            transDbData.locationType = data['PTI_estructura']
+    #            transDbData.txType = data['Transmision']
+    #            transDbData.manRouter = data['man']
+    #            transDbData.ibnRouter = data['ibn']
+    #            break
+    #        else:
+    #            transDbData.ranSiteId = 'N/A'
+    #            transDbData.transSiteId = 'N/A'
+    #            transDbData.ptiSiteName = 'N/A'
+    #            transDbData.address = 'N/A'
+    #            transDbData.towerTopo = 'N/A'
+    #            transDbData.locationType = 'N/A'
+    #            transDbData.txType = 'N/A'
+    #            transDbData.manRouter = 'N/A'
+    #            transDbData.ibnRouter = 'N/A'
     # 'cellnameh' is a variable in the HTML code on Main.html
     return render_template(mainhtml, networkElement = networkElement, transDbDatah = transDbData, ipPara = ipPara, retDeviceh = retdevice, gsmCellh = gsmcell, umtsCellh = umtscell, lteCellh = ltecell)
 
