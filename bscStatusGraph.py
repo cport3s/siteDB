@@ -2,6 +2,7 @@
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
+from dash.dependencies import Input, Output
 import plotly.express as px
 import pandas as pd
 import mysql.connector
@@ -23,26 +24,28 @@ connectr = mysql.connector.connect(user = dbusername, password = dbpassword, hos
 # Connection must be buffered when executing multiple querys on DB before closing connection.
 pointer = connectr.cursor(buffered=True)
 
-pointer.execute('SELECT luupdaterequests, lastupdate FROM ran_pf_data.bsc_performance_data where nename = \'BSC_01_RRA\';')
-queryRaw = pointer.fetchall()
-queryPayload = np.array(queryRaw)
-df = pd.DataFrame({ 'LU Requests':queryPayload[:,0], 'Time':queryPayload[:,1] })
-fig = px.bar(df, x="Time", y="LU Requests")
-
 app.layout = html.Div(children=[
-    html.H1(children='Hello Dash'),
-    html.Div(children='''Dash: A web application framework for Python.'''),
+    html.H1(children='BSC KPIs'),
+    html.Div(children='''Number of LU requests.'''),
     #dcc.Graph(id='example-graph', figure=fig)
-    dcc.Graph(id='live-graph', figure=fig, animate=True),
-    dcc.Interval(id='graph-update', interval=1000, n_intervals=0)
+    dcc.Graph(id='live-graph'),
+    dcc.Interval(id='graph-update', interval=30000, n_intervals=0)
 ])
 
 @app.callback(Output('live-graph', 'figure'), [Input('graph-update', 'n_intervals')])
+def updateGraphData(n):
+    pointer.execute('SELECT luupdaterequests, lastupdate FROM ran_pf_data.bsc_performance_data where nename = \'BSC_01_RRA\';')
+    queryRaw = pointer.fetchall()
+    queryPayload = np.array(queryRaw)
+    df = pd.DataFrame({ 'LU Requests':queryPayload[:,0], 'Time':queryPayload[:,1] })
+    fig = px.bar(df, x="Time", y="LU Requests")
+    queryRaw.clear()
+    return fig
 
-queryRaw.clear()
-# Close DB connection
-pointer.close()
-connectr.close()
+#queryRaw.clear()
+## Close DB connection
+#pointer.close()
+#connectr.close()
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=True, host='0.0.0.0', port='5005')
