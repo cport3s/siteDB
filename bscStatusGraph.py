@@ -7,6 +7,9 @@ import pandas as pd
 import mysql.connector
 import numpy as np
 import time
+from datetime import datetime
+from datetime import timedelta
+
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
@@ -20,23 +23,28 @@ dbname = 'ran_pf_data'
 
 app.layout = html.Div(children=[
     html.H1(children='BSC KPIs'),
-    html.Div(children='''Number of LU requests.'''),
     dcc.Dropdown(
-        options=[{'label':'1 Day', 'value':'1'}, {'label':'3 Days', 'value':'3'}, {'label':'7 Days', 'value':'7'}, {'label':'30 Days', 'value':'30'}], 
-        value='timeFrameDropdown'
+        id='timeFrameDropdown',
+        options=[{'label':'1 Day', 'value':'1'}, {'label':'3 Days', 'value':'3'}, {'label':'7 Days', 'value':'7'}, {'label':'30 Days', 'value':'30'}],
+        # value var is the default value for the drop down.
+        value='7'
     ),
-    #dcc.Graph(id='example-graph', figure=fig)
+    html.Div(children='Number of LU requests'),
     dcc.Graph(id='liveGraph'),
     dcc.Interval(id='upateInterval', interval=300000, n_intervals=0)
 ])
 
-@app.callback(Output('liveGraph', 'figure'), [Input('upateInterval', 'n_intervals')])
-def updateGraphData(n):
+# We pass value from the time frame dropdown because it gets updated everytime you change the seleccion on the drop down.
+@app.callback(Output('liveGraph', 'figure'), [Input('upateInterval', 'n_intervals'), Input('timeFrameDropdown', 'value')])
+def updateGraphData(currentInterval, dropDownValue):
+    daysDelta = int(dropDownValue)
+    # starttime is the current date/time - daysdelta
+    startTime = (datetime.now() - timedelta(days=daysDelta)).strftime("%Y/%m/%d %H:%M:%S")
     # Connect to DB
     connectr = mysql.connector.connect(user = dbusername, password = dbpassword, host = hostip, database = dbname)
     # Connection must be buffered when executing multiple querys on DB before closing connection.
     pointer = connectr.cursor(buffered=True)
-    pointer.execute('SELECT luupdaterequests, lastupdate FROM ran_pf_data.bsc_performance_data where nename = \'BSC_01_RRA\';')
+    pointer.execute('SELECT luupdaterequests, lastupdate FROM ran_pf_data.bsc_performance_data where nename = \'BSC_01_RRA\' and lastupdate >= \'' + startTime + '\';')
     queryRaw = pointer.fetchall()
     queryPayload = np.array(queryRaw)
     df = pd.DataFrame({ 'LU Requests':queryPayload[:,0], 'Time':queryPayload[:,1] })
