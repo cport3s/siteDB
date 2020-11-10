@@ -18,7 +18,7 @@ dbpassword = 'BSCAltice.123'
 hostip = '172.16.121.41'
 dbname = 'ran_pf_data'
 
-graphTitleFontSize = 52
+graphTitleFontSize = 54
 
 app.layout = html.Div(children=[
     html.H1(
@@ -31,21 +31,27 @@ app.layout = html.Div(children=[
         children=[
             dcc.Dropdown(
                 id='timeFrameDropdown',
-                options=[{'label':'1 Day', 'value':'1'}, {'label':'3 Days', 'value':'3'}, {'label':'7 Days', 'value':'7'}, {'label':'30 Days', 'value':'30'}],
+                options=[
+                    {'label':'1 Day', 'value':'1'}, 
+                    {'label':'3 Days', 'value':'3'}, 
+                    {'label':'7 Days', 'value':'7'}, 
+                    {'label':'30 Days', 'value':'30'}
+                    ],
                 # value var is the default value for the drop down.
                 value='3',
-                style={'width': '100%', 'font-size': str(graphTitleFontSize) + 'px'}
+                style={'width': '100%', 'font-size': '54px'}
             ),
             dcc.Dropdown(
                 id='dataTypeDropdown',
                 options=[
-                    {'label':'Call Setup Success Rate', 'value':'Call Setup Success Rate'}, 
-                    {'label':'Drop Call Rate', 'value':'Drop Call Rate'}, 
-                    {'label':'Assignment Success Rate', 'value':'Assignment Success Rate'}, 
-                    {'label':'Location Update Success Rate', 'value':'Location Update Success Rate'}
+                    {'label':'TRX Interface Usage', 'value':'TRX Interface Usage'}, 
+                    {'label':'BSC CS/PS Traffic', 'value':'BSC CS/PS Traffic'}, 
+                    {'label':'BSC Interface Traffic', 'value':'BSC Interface Traffic'},
+                    {'label':'RNC CS/PS Traffic', 'value':'RNC CS/PS Traffic'},
+                    {'label':'RNC Interface Traffic', 'value':'RNC Interface Traffic'},
                     ],
-                value='Call Setup Success Rate',
-                style={'width': '100%', 'font-size': str(graphTitleFontSize) + 'px'}
+                value='TRX Interface Usage',
+                style={'width': '100%', 'font-size': '54px'}
             )
         ]
     ),
@@ -209,4 +215,4 @@ def hideGraph(currentInterval):
         return {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}
 
 if __name__ == '__main__':
-    app.run_server(debug=True, host='0.0.0.0', port='5005')
+    app.run_server(debug=True, host='0.0.0.0', port='5010')
