@@ -18,7 +18,7 @@ dbpassword = 'BSCAltice.123'
 hostip = '172.16.121.41'
 dbname = 'ran_pf_data'
 
-graphTitleFontSize = 54
+graphTitleFontSize = 24
 
 app.layout = html.Div(children=[
     html.H1(
@@ -29,29 +29,30 @@ app.layout = html.Div(children=[
     html.Div(
         className='dropdownFlexContainer',
         children=[
-            dcc.Dropdown(
-                id='timeFrameDropdown',
-                options=[
-                    {'label':'1 Day', 'value':'1'}, 
-                    {'label':'3 Days', 'value':'3'}, 
-                    {'label':'7 Days', 'value':'7'}, 
-                    {'label':'30 Days', 'value':'30'}
-                    ],
-                # value var is the default value for the drop down.
-                value='3',
-                style={'width': '100%', 'font-size': '54px'}
-            ),
+            #dcc.Dropdown(
+            #    id='timeFrameDropdown',
+            #    options=[
+            #        {'label':'1 Day', 'value':'1'}, 
+            #        {'label':'3 Days', 'value':'3'}, 
+            #        {'label':'7 Days', 'value':'7'}, 
+            #        {'label':'30 Days', 'value':'30'}
+            #    ],
+            #    # value var is the default value for the drop down.
+            #    value='3',
+            #    style={'width': '100%', 'font-size': '54px'}
+            #),
             dcc.Dropdown(
                 id='dataTypeDropdown',
                 options=[
                     {'label':'TRX Interface Usage', 'value':'TRX Interface Usage'}, 
+                    {'label':'Top Worst Reports', 'value':'Top Worst Reports'}, 
                     {'label':'BSC CS/PS Traffic', 'value':'BSC CS/PS Traffic'}, 
                     {'label':'BSC Interface Traffic', 'value':'BSC Interface Traffic'},
                     {'label':'RNC CS/PS Traffic', 'value':'RNC CS/PS Traffic'},
                     {'label':'RNC Interface Traffic', 'value':'RNC Interface Traffic'},
-                    ],
+                ],
                 value='TRX Interface Usage',
-                style={'width': '100%', 'font-size': '54px'}
+                style={'width': '100%', 'font-size': str(graphTitleFontSize) + 'px'}
             )
         ]
     ),
@@ -96,6 +97,14 @@ app.layout = html.Div(children=[
             ),
             dcc.Graph(
                 id='rnc07Graph'
+            )
+        ]
+    ),
+    html.Div(
+        className='topWorstFlexContainer',
+        children=[
+            html.Div(
+                children='Top Worst Report'
             )
         ]
     ),
