@@ -110,7 +110,8 @@ def updateGraphData_bsc(currentInterval, dataTypeDropdown):
             # Loop through Ip Pool ID range (10 - 12)
             for ippool in range(10,13):
                 tempDataFrame['neName'].append(ne)
-                tempDataFrame['ipPoolId'].append(ippool)
+                # Must change ippool to string for the bar chart to display in group mode.
+                tempDataFrame['ipPoolId'].append(str(ippool))
                 pointer.execute('SELECT trxqty FROM ran_pf_data.trx_usage_data where lastupdate >= \'' + datetime.now().strftime("%Y/%m/%d") + '\' and nename = \'' + ne + '\' and ippoolid = ' + str(ippool) + ' order by lastupdate desc;')
                 queryPayload = pointer.fetchone()
                 # Must check if query result is empty, to full with 0
