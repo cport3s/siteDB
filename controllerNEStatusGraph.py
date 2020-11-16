@@ -18,6 +18,10 @@ dbpassword = 'BSCAltice.123'
 hostip = '172.16.121.41'
 dbname = 'ran_pf_data'
 
+loopCounter = 1
+bscNameList = ['BSC_01_RRA', 'BSC_02_STGO', 'BSC_03_VM', 'BSC_04_VM', 'BSC_05_RRA', 'BSC_06_STGO']
+rncNameList = ['RNC_01_RRA', 'RNC_02_STGO', 'RNC_03_VM', 'RNC_04_VM', 'RNC_05_RRA', 'RNC_06_STGO', 'RNC_07_VM']
+neOosReportfilePath = "D:\\ftproot\\configuration_files\\NBI_FM\\" + datetime.now().strftime("%Y%m%d") + "\\"
 graphTitleFontSize = 52
 
 app.layout = html.Div(children=[
@@ -30,22 +34,27 @@ app.layout = html.Div(children=[
         className='dropdownFlexContainer',
         children=[
             dcc.Dropdown(
-                id='timeFrameDropdown',
-                options=[{'label':'1 Day', 'value':'1'}, {'label':'3 Days', 'value':'3'}, {'label':'7 Days', 'value':'7'}, {'label':'30 Days', 'value':'30'}],
-                # value var is the default value for the drop down.
-                value='3',
-                style={'width': '100%', 'font-size': str(graphTitleFontSize) + 'px'}
-            ),
-            dcc.Dropdown(
                 id='dataTypeDropdown',
                 options=[
                     {'label':'Call Setup Success Rate', 'value':'Call Setup Success Rate'}, 
                     {'label':'Drop Call Rate', 'value':'Drop Call Rate'}, 
                     {'label':'Assignment Success Rate', 'value':'Assignment Success Rate'}, 
                     {'label':'Location Update Success Rate', 'value':'Location Update Success Rate'}
-                    ],
+                ],
                 value='Call Setup Success Rate',
-                style={'width': '100%', 'font-size': str(graphTitleFontSize) + 'px'}
+                style={'width': '100%', 'font-size': str(graphTitleFontSize) + 'px', 'text-align': 'center'}
+            ),
+            dcc.Dropdown(
+                id='timeFrameDropdown',
+                options=[
+                    {'label':'1 Day', 'value':'1'}, 
+                    {'label':'3 Days', 'value':'3'}, 
+                    {'label':'7 Days', 'value':'7'}, 
+                    {'label':'30 Days', 'value':'30'}
+                ],
+                # value var is the default value for the drop down.
+                value='3',
+                style={'width': '100%', 'font-size': str(graphTitleFontSize) + 'px', 'text-align': 'center'}
             )
         ]
     ),
@@ -93,6 +102,14 @@ app.layout = html.Div(children=[
             )
         ]
     ),
+    html.Div(
+        className='trxGraphFlexContainer',
+        children=[
+            dcc.Graph(
+                id='trxUsageGraph'
+            )
+        ]
+    ),
     dcc.Interval(
         id='dataUpateInterval', 
         interval=300000, 
@@ -119,7 +136,8 @@ app.layout = html.Div(children=[
         Output('rnc04Graph', 'figure'), 
         Output('rnc05Graph', 'figure'), 
         Output('rnc06Graph', 'figure'),
-        Output('rnc07Graph', 'figure')
+        Output('rnc07Graph', 'figure'),
+        Output('trxUsageGraph', 'figure')
     ], 
     [
         # We use the update interval function and both dropdown menus as inputs for the callback
@@ -128,10 +146,8 @@ app.layout = html.Div(children=[
         Input('dataTypeDropdown', 'value')
     ])
 def updateGraphData_bsc(currentInterval, timeFrameDropdown, dataTypeDropdown):
-    bscNameList = ['BSC_01_RRA', 'BSC_02_STGO', 'BSC_03_VM', 'BSC_04_VM', 'BSC_05_RRA', 'BSC_06_STGO']
-    rncNameList = ['RNC_01_RRA', 'RNC_02_STGO', 'RNC_03_VM', 'RNC_04_VM', 'RNC_05_RRA', 'RNC_06_STGO', 'RNC_07_VM']
-    gsmGraphValueConversionDict = {'Call Setup Success Rate':'cssr', 'Drop Call Rate':'dcr', 'Assignment Rate':'assignmentsuccessrate', 'Location Update Success Rate':'luupdatesr'}
-    umtsGraphValueConversionDict = {'Call Setup Success Rate':'csconnectionsuccessrate', 'Drop Call Rate':'csdropcallrate', 'Assignment Rate':'rrcconnectionsuccessrate', 'Location Update Success Rate':'pagingsuccessrate'}
+    gsmGraphValueConversionDict = {'Call Setup Success Rate':'cssr', 'Drop Call Rate':'dcr', 'Assignment Success Rate':'assignmentsuccessrate', 'Location Update Success Rate':'luupdatesr'}
+    umtsGraphValueConversionDict = {'Call Setup Success Rate':'csconnectionsuccessrate', 'Drop Call Rate':'csdropcallrate', 'Assignment Success Rate':'rrcconnectionsuccessrate', 'Location Update Success Rate':'pagingsuccessrate'}
     bscGraphList = []
     rncGraphList = []
     daysDelta = int(timeFrameDropdown)
@@ -150,7 +166,7 @@ def updateGraphData_bsc(currentInterval, timeFrameDropdown, dataTypeDropdown):
         fig = px.bar(df, x="Time", y=dataTypeDropdown, title=bsc)
         # Set Graph background colores & title font size
         fig.update_layout(
-            plot_bgcolor='#000000', 
+            plot_bgcolor='#2F2F2F', 
             paper_bgcolor='#000000', 
             font_color='#FFFFFF', 
             title_font_size=54
@@ -169,7 +185,7 @@ def updateGraphData_bsc(currentInterval, timeFrameDropdown, dataTypeDropdown):
         fig = px.bar(df, x="Time", y=dataTypeDropdown, title=rnc)
         # Set Graph background colores & title font size
         fig.update_layout(
-            plot_bgcolor='#000000', 
+            plot_bgcolor='#2F2F2F', 
             paper_bgcolor='#000000', 
             font_color='#FFFFFF', 
             title_font_size=54
@@ -179,10 +195,34 @@ def updateGraphData_bsc(currentInterval, timeFrameDropdown, dataTypeDropdown):
         # Append the current graph to the graph list
         rncGraphList.append(fig)
         queryRaw.clear()
+    tempDataFrame = {'neName':[], 'ipPoolId':[], 'trxQty':[]}
+    # Loop through BSC Names
+    for ne in bscNameList:
+        # Loop through Ip Pool ID range (10 - 12)
+        for ippool in range(10,13):
+            tempDataFrame['neName'].append(ne)
+            # Must change ippool to string for the bar chart to display in group mode.
+            tempDataFrame['ipPoolId'].append(str(ippool))
+            pointer.execute('SELECT trxqty FROM ran_pf_data.trx_usage_data where lastupdate >= \'' + datetime.now().strftime("%Y/%m/%d") + '\' and nename = \'' + ne + '\' and ippoolid = ' + str(ippool) + ' order by lastupdate desc;')
+            queryPayload = pointer.fetchone()
+            # Must check if query result is empty, to full with 0
+            if queryPayload:
+                # Take the latest value on the DB
+                tempDataFrame['trxQty'].append(queryPayload[0])
+            else:
+                tempDataFrame['trxQty'].append(0)
+    ipPoolReportDf = pd.DataFrame(tempDataFrame, columns = ['neName', 'ipPoolId', 'trxQty'])
+    trxUsageGraph = px.bar(ipPoolReportDf, x='neName', y='trxQty', color='ipPoolId', barmode='group')
+    trxUsageGraph.update_layout(
+            plot_bgcolor='#2F2F2F', 
+            paper_bgcolor='#000000', 
+            font_color='#FFFFFF', 
+            title_font_size=54
+        )
     # Close DB connection
     pointer.close()
     connectr.close()
-    return bscGraphList[0], bscGraphList[1], bscGraphList[2], bscGraphList[3], bscGraphList[4], bscGraphList[5], rncGraphList[0], rncGraphList[1], rncGraphList[2], rncGraphList[3], rncGraphList[4], rncGraphList[5], rncGraphList[6]
+    return bscGraphList[0], bscGraphList[1], bscGraphList[2], bscGraphList[3], bscGraphList[4], bscGraphList[5], rncGraphList[0], rncGraphList[1], rncGraphList[2], rncGraphList[3], rncGraphList[4], rncGraphList[5], rncGraphList[6], trxUsageGraph
 
 @app.callback([
         Output('bsc01Graph', 'style'), 
@@ -197,16 +237,17 @@ def updateGraphData_bsc(currentInterval, timeFrameDropdown, dataTypeDropdown):
         Output('rnc04Graph', 'style'), 
         Output('rnc05Graph', 'style'), 
         Output('rnc06Graph', 'style'), 
-        Output('rnc07Graph', 'style')
-    ], 
-    [
-        Input('graphUpateInterval', 'n_intervals')
-    ])
+        Output('rnc07Graph', 'style'),
+        Output('trxUsageGraph', 'style')
+    ],  
+    Input('graphUpateInterval', 'n_intervals'))
 def hideGraph(currentInterval):
-    if currentInterval%2 == 0:
-        return {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}
-    else:
-        return {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}
+    if currentInterval%3 == 1:
+        return {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}
+    elif currentInterval%3 == 2:
+        return {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'none'}
+    elif currentInterval%3 == 0:
+        return {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'inline'}
 
 if __name__ == '__main__':
-    app.run_server(debug=True, host='0.0.0.0', port='5006')
+    app.run_server(debug=True, host='0.0.0.0', port='5005')

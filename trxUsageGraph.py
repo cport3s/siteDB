@@ -68,7 +68,7 @@ app.layout = html.Div(children=[
             )
         ]
     ),
-    dash_table.DataTable(
+    dcc.DataTable(
         id='topWorstTable'
     ),
     dcc.Interval(
