@@ -209,4 +209,4 @@ def hideGraph(currentInterval):
         return {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}
 
 if __name__ == '__main__':
-    app.run_server(debug=True, host='0.0.0.0', port='5005')
+    app.run_server(debug=True, host='0.0.0.0', port='5006')

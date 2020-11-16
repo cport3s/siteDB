@@ -21,7 +21,8 @@ hostip = '172.16.121.41'
 dbname = 'ran_pf_data'
 
 # NE OOS Report Filepath
-filePath = "D:\\ftproot\\configuration_files\\NBI_FM\\" + datetime.now().strftime("%Y%m%d") + "\\"
+neOosReportfilePath = "D:\\ftproot\\configuration_files\\NBI_FM\\" + datetime.now().strftime("%Y%m%d") + "\\"
+topWorstFilePath = "D:\\ftproot\\BSC\\top_worst_report\\"
 graphTitleFontSize = 24
 bscNameList = ['BSC_01_RRA', 'BSC_02_STGO', 'BSC_03_VM', 'BSC_04_VM', 'BSC_05_RRA', 'BSC_06_STGO']
 rncNameList = ['RNC_01_RRA', 'RNC_02_STGO', 'RNC_03_VM', 'RNC_04_VM', 'RNC_05_RRA', 'RNC_06_STGO', 'RNC_07_VM']
@@ -39,8 +40,8 @@ app.layout = html.Div(children=[
                 id='dataTypeDropdown',
                 options=[
                     {'label':'TRX Interface Usage', 'value':'TRX Interface Usage'}, 
-                    {'label':'NE OOS', 'value':'NE OOS'}
-                    #{'label':'Top Worst Reports', 'value':'Top Worst Reports'}, 
+                    {'label':'NE OOS', 'value':'NE OOS'},
+                    {'label':'Top Worst Reports', 'value':'Top Worst Reports'}
                     #{'label':'BSC CS/PS Traffic', 'value':'BSC CS/PS Traffic'}, 
                     #{'label':'BSC Interface Traffic', 'value':'BSC Interface Traffic'},
                     #{'label':'RNC CS/PS Traffic', 'value':'RNC CS/PS Traffic'},
@@ -66,6 +67,9 @@ app.layout = html.Div(children=[
                 children='Top Worst Report'
             )
         ]
+    ),
+    dash_table.DataTable(
+        id='topWorstTable'
     ),
     dcc.Interval(
         id='dataUpateInterval',
@@ -117,7 +121,7 @@ def updateGraphData_bsc(currentInterval, dataTypeDropdown):
     if dataTypeDropdown == 'NE OOS':
         # Open CSV File with OOS NEs
         # Construct complete filepath with last file on the filePath var
-        currentAlarmFile = filePath + os.listdir(filePath)[-1]
+        currentAlarmFile = neOosReportfilePath + os.listdir(neOosReportfilePath)[-1]
         alarmInformationList = []
         disconnectionCauseDataFrame = {'reason':[], 'reasonQty':[]}
         reasonList = ['Port handshake', 'Connection torn down', 'ssl connections', 'Power supply', 'timed out']
@@ -142,6 +146,13 @@ def updateGraphData_bsc(currentInterval, dataTypeDropdown):
         pointer.close()
         connectr.close()
         return oosNeGraph
+
+# We pass value from the time frame dropdown because it gets updated everytime you change the seleccion on the drop down.
+@app.callback(Output('topWorstTable', 'topWorstTableData'), Input('dataTypeDropdown', 'value'))
+def topWorstCalculator(dataTypeDropdown):
+    if dataTypeDropdown == 'Top Worst Reports':
+        pass
+
 
 if __name__ == '__main__':
     app.run_server(debug=True, host='0.0.0.0', port='5010')
