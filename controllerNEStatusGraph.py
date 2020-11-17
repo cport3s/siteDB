@@ -9,6 +9,8 @@ import numpy as np
 import time
 from datetime import datetime
 from datetime import timedelta
+import os
+import csv
 
 app = dash.Dash(__name__)
 
@@ -107,6 +109,9 @@ app.layout = html.Div(children=[
         children=[
             dcc.Graph(
                 id='trxUsageGraph'
+            ),
+            dcc.Graph(
+                id='oosNeGraph'
             )
         ]
     ),
@@ -137,7 +142,8 @@ app.layout = html.Div(children=[
         Output('rnc05Graph', 'figure'), 
         Output('rnc06Graph', 'figure'),
         Output('rnc07Graph', 'figure'),
-        Output('trxUsageGraph', 'figure')
+        Output('trxUsageGraph', 'figure'),
+        Output('oosNeGraph', 'figure')
     ], 
     [
         # We use the update interval function and both dropdown menus as inputs for the callback
@@ -214,15 +220,50 @@ def updateGraphData_bsc(currentInterval, timeFrameDropdown, dataTypeDropdown):
     ipPoolReportDf = pd.DataFrame(tempDataFrame, columns = ['neName', 'ipPoolId', 'trxQty'])
     trxUsageGraph = px.bar(ipPoolReportDf, x='neName', y='trxQty', color='ipPoolId', barmode='group', template='simple_white')
     trxUsageGraph.update_layout(
-            plot_bgcolor='#000000', 
-            paper_bgcolor='#000000', 
-            font_color='#FFFFFF', 
-            title_font_size=54
-        )
+        plot_bgcolor='#000000', 
+        paper_bgcolor='#000000', 
+        font_color='#FFFFFF', 
+        title_font_size=54,
+        font_size=36,
+        title='TRX Load per Interface'
+    )
+    # Set Y Axes Range
+    trxUsageGraph.update_yaxes(range=[0, 3000])
+    # Open CSV File with OOS NEs
+    # Construct complete filepath with last file on the filePath var
+    currentAlarmFile = neOosReportfilePath + os.listdir(neOosReportfilePath)[-1]
+    alarmInformationList = []
+    disconnectionCauseDataFrame = {'reason':[], 'reasonQty':[]}
+    reasonList = ['Port handshake', 'Connection torn down', 'ssl connections', 'Power supply', 'timed out']
+    with open(currentAlarmFile) as csvfile:
+        lineList = csv.reader(csvfile)
+        for alarmRow in lineList:
+            # Alarm Name field is located on the column 8 of the csv file
+            if alarmRow[8] == 'NE Is Disconnected':
+                # Location information field is located on column 17 of the csv file
+                alarmInformationList.append(alarmRow[17])
+        # Loop through alarm list
+        for alarmRow in alarmInformationList:
+            # Loop through dictionary keys
+            for reason in reasonList:
+                # If the reason is found within the alarm list text
+                if reason in alarmRow:
+                    disconnectionCauseDataFrame['reason'].append(reason)
+                    disconnectionCauseDataFrame['reasonQty'].append(1)
+    OOSdisconnectDf = pd.DataFrame(disconnectionCauseDataFrame, columns = ['reason', 'reasonQty'])
+    oosNeGraph = px.bar(OOSdisconnectDf, x='reason', y='reasonQty')
+    oosNeGraph.update_layout(
+        plot_bgcolor='#000000', 
+        paper_bgcolor='#000000', 
+        font_color='#FFFFFF',
+        title_font_size=54,
+        font_size=36, 
+        title='NE Out of Service'
+    )
     # Close DB connection
     pointer.close()
     connectr.close()
-    return bscGraphList[0], bscGraphList[1], bscGraphList[2], bscGraphList[3], bscGraphList[4], bscGraphList[5], rncGraphList[0], rncGraphList[1], rncGraphList[2], rncGraphList[3], rncGraphList[4], rncGraphList[5], rncGraphList[6], trxUsageGraph
+    return bscGraphList[0], bscGraphList[1], bscGraphList[2], bscGraphList[3], bscGraphList[4], bscGraphList[5], rncGraphList[0], rncGraphList[1], rncGraphList[2], rncGraphList[3], rncGraphList[4], rncGraphList[5], rncGraphList[6], trxUsageGraph, oosNeGraph
 
 @app.callback([
         Output('bsc01Graph', 'style'), 
@@ -238,17 +279,17 @@ def updateGraphData_bsc(currentInterval, timeFrameDropdown, dataTypeDropdown):
         Output('rnc05Graph', 'style'), 
         Output('rnc06Graph', 'style'), 
         Output('rnc07Graph', 'style'),
-        Output('trxUsageGraph', 'style')
+        Output('trxUsageGraph', 'style'),
+        Output('oosNeGraph', 'style')
     ],  
     Input('graphUpateInterval', 'n_intervals'))
 def hideGraph(currentInterval):
     if currentInterval%3 == 1:
-        return {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}
+        return {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}
     elif currentInterval%3 == 2:
-        return {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'none'}
+        return {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'none'}, {'display':'none'}
     elif currentInterval%3 == 0:
-        #return {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'inline'}
-        return {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}
+        return {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'inline'}, {'display':'inline'}
 
 if __name__ == '__main__':
     app.run_server(debug=True, host='0.0.0.0', port='5005')

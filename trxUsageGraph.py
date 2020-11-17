@@ -119,8 +119,11 @@ def updateGraphData_bsc(currentInterval, dataTypeDropdown):
             paper_bgcolor='#000000', 
             font_color='#FFFFFF', 
             title_font_size=54,
-            title='TRX Load per Interface'
+            title='TRX Load per Interface',
+            font_size=36
         )
+        # Set Y Axes Range
+        trxUsageGraph.update_yaxes(range=[0, 3000])
         # Close DB connection
         pointer.close()
         connectr.close()
