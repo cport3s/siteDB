@@ -68,9 +68,9 @@ app.layout = html.Div(children=[
             )
         ]
     ),
-    dcc.DataTable(
-        id='topWorstTable'
-    ),
+    #dcc.DataTable(
+    #    id='topWorstTable'
+    #),
     dcc.Interval(
         id='dataUpateInterval',
         # Interval is in milliseconds unit 
@@ -113,7 +113,14 @@ def updateGraphData_bsc(currentInterval, dataTypeDropdown):
                 else:
                     tempDataFrame['trxQty'].append(0)
         ipPoolReportDf = pd.DataFrame(tempDataFrame, columns = ['neName', 'ipPoolId', 'trxQty'])
-        trxUsageGraph = px.bar(ipPoolReportDf, x='neName', y='trxQty', color='ipPoolId', barmode='group')
+        trxUsageGraph = px.bar(ipPoolReportDf, x='neName', y='trxQty', color='ipPoolId', barmode='group', template='simple_white')
+        trxUsageGraph.update_layout(
+            plot_bgcolor='#000000', 
+            paper_bgcolor='#000000', 
+            font_color='#FFFFFF', 
+            title_font_size=54,
+            title='TRX Load per Interface'
+        )
         # Close DB connection
         pointer.close()
         connectr.close()
@@ -148,10 +155,10 @@ def updateGraphData_bsc(currentInterval, dataTypeDropdown):
         return oosNeGraph
 
 # We pass value from the time frame dropdown because it gets updated everytime you change the seleccion on the drop down.
-@app.callback(Output('topWorstTable', 'topWorstTableData'), Input('dataTypeDropdown', 'value'))
-def topWorstCalculator(dataTypeDropdown):
-    if dataTypeDropdown == 'Top Worst Reports':
-        pass
+#@app.callback(Output('topWorstTable', 'topWorstTableData'), Input('dataTypeDropdown', 'value'))
+#def topWorstCalculator(dataTypeDropdown):
+#    if dataTypeDropdown == 'Top Worst Reports':
+#        pass
 
 
 if __name__ == '__main__':

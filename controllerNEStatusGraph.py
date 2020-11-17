@@ -212,9 +212,9 @@ def updateGraphData_bsc(currentInterval, timeFrameDropdown, dataTypeDropdown):
             else:
                 tempDataFrame['trxQty'].append(0)
     ipPoolReportDf = pd.DataFrame(tempDataFrame, columns = ['neName', 'ipPoolId', 'trxQty'])
-    trxUsageGraph = px.bar(ipPoolReportDf, x='neName', y='trxQty', color='ipPoolId', barmode='group')
+    trxUsageGraph = px.bar(ipPoolReportDf, x='neName', y='trxQty', color='ipPoolId', barmode='group', template='simple_white')
     trxUsageGraph.update_layout(
-            plot_bgcolor='#2F2F2F', 
+            plot_bgcolor='#000000', 
             paper_bgcolor='#000000', 
             font_color='#FFFFFF', 
             title_font_size=54
@@ -247,7 +247,8 @@ def hideGraph(currentInterval):
     elif currentInterval%3 == 2:
         return {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'none'}
     elif currentInterval%3 == 0:
-        return {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'inline'}
+        #return {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'inline'}
+        return {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}
 
 if __name__ == '__main__':
     app.run_server(debug=True, host='0.0.0.0', port='5005')
