@@ -62,7 +62,8 @@ app.layout = html.Div(children=[
         ]
     ),
     html.Div(
-        className='graphFlexContainer',
+        className='bscGraphFlexContainer',
+        id='bscGraphFlexContainer',
         children=[
             dcc.Graph(
                 id='bsc01Graph'
@@ -81,7 +82,13 @@ app.layout = html.Div(children=[
             ),
             dcc.Graph(
                 id='bsc06Graph'
-            ),
+            )
+        ]
+    ),
+    html.Div(
+        className='rncGraphFlexContainer',
+        id='rncGraphFlexContainer',
+        children=[
             dcc.Graph(
                 id='rnc01Graph'
             ),
@@ -269,19 +276,8 @@ def updateGraphData_bsc(currentInterval, timeFrameDropdown, dataTypeDropdown):
     return bscGraphList[0], bscGraphList[1], bscGraphList[2], bscGraphList[3], bscGraphList[4], bscGraphList[5], rncGraphList[0], rncGraphList[1], rncGraphList[2], rncGraphList[3], rncGraphList[4], rncGraphList[5], rncGraphList[6], trxUsageGraph, oosNeGraph
 
 @app.callback([
-        Output('bsc01Graph', 'style'), 
-        Output('bsc02Graph', 'style'), 
-        Output('bsc03Graph', 'style'), 
-        Output('bsc04Graph', 'style'), 
-        Output('bsc05Graph', 'style'), 
-        Output('bsc06Graph', 'style'), 
-        Output('rnc01Graph', 'style'), 
-        Output('rnc02Graph', 'style'), 
-        Output('rnc03Graph', 'style'), 
-        Output('rnc04Graph', 'style'), 
-        Output('rnc05Graph', 'style'), 
-        Output('rnc06Graph', 'style'), 
-        Output('rnc07Graph', 'style'),
+        Output('bscGraphFlexContainer', 'style'),  
+        Output('rncGraphFlexContainer', 'style'), 
         Output('trxUsageGraph', 'style'),
         Output('oosNeGraph', 'style'),
         Output('dropDownContainer', 'style')
@@ -289,11 +285,11 @@ def updateGraphData_bsc(currentInterval, timeFrameDropdown, dataTypeDropdown):
     Input('graphUpateInterval', 'n_intervals'))
 def hideGraph(currentInterval):
     if currentInterval%3 == 1:
-        return {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'flex'}
+        return {'display':'flex'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'flex'}
     elif currentInterval%3 == 2:
-        return {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'none'}, {'display':'none'}, {'display':'flex'}
+        return {'display':'none'}, {'display':'flex'}, {'display':'none'}, {'display':'none'}, {'display':'flex'}
     elif currentInterval%3 == 0:
-        return {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'inline'}, {'display':'inline'}, {'display':'none'}
+        return {'display':'none'}, {'display':'none'}, {'display':'inline'}, {'display':'inline'}, {'display':'none'}
 
 if __name__ == '__main__':
     app.run_server(debug=True, host='0.0.0.0', port='5005')

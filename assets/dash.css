@@ -8,14 +8,26 @@ body {
     margin-top: 0;
 }
 
-.graphFlexContainer {
+.bscGraphFlexContainer {
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
     width: 100%;
 }
 
-.graphFlexContainer div {
+.bscGraphFlexContainer div {
+    width: 50%;
+    height: 50%;
+}
+
+.rncGraphFlexContainer {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    width: 100%;
+}
+
+.rncGraphFlexContainer div {
     width: 50%;
     height: 50%;
 }
