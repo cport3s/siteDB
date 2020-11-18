@@ -134,7 +134,8 @@ def updateGraphData_bsc(currentInterval, dataTypeDropdown):
         currentAlarmFile = neOosReportfilePath + os.listdir(neOosReportfilePath)[-1]
         alarmInformationList = []
         disconnectionCauseDataFrame = {'reason':[], 'reasonQty':[]}
-        reasonList = ['Port handshake', 'Connection torn down', 'ssl connections', 'Power supply', 'timed out']
+        reasonDict = {'Port handshake':'Transmission', 'Connection torn down':'Transmission', 'ssl connections':'Transmission', 'Power supply':'Power', 'timed out':'Transmission'}
+        disconnectionCauseDict = {'Port handshake':0, 'Connection torn down':0, 'ssl connections':0, 'Power supply':0, 'timed out':0}
         with open(currentAlarmFile) as csvfile:
             lineList = csv.reader(csvfile)
             for alarmRow in lineList:
@@ -145,11 +146,12 @@ def updateGraphData_bsc(currentInterval, dataTypeDropdown):
             # Loop through alarm list
             for alarmRow in alarmInformationList:
                 # Loop through dictionary keys
-                for reason in reasonList:
+                for reason in reasonDict.keys():
                     # If the reason is found within the alarm list text
                     if reason in alarmRow:
-                        disconnectionCauseDataFrame['reason'].append(reason)
-                        disconnectionCauseDataFrame['reasonQty'].append(1)
+                        disconnectionCauseDict[reason] += 1
+        disconnectionCauseDataFrame['reason'] = [k for k in disconnectionCauseDict.keys()]
+        disconnectionCauseDataFrame['reasonQty'] = [v for v in disconnectionCauseDict.values()]
         OOSdisconnectDf = pd.DataFrame(disconnectionCauseDataFrame, columns = ['reason', 'reasonQty'])
         oosNeGraph = px.bar(OOSdisconnectDf, x='reason', y='reasonQty')
         # Close DB connection
