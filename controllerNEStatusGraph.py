@@ -34,6 +34,7 @@ app.layout = html.Div(children=[
     ),
     html.Div(
         className='dropdownFlexContainer',
+        id='dropDownContainer',
         children=[
             dcc.Dropdown(
                 id='dataTypeDropdown',
@@ -224,7 +225,7 @@ def updateGraphData_bsc(currentInterval, timeFrameDropdown, dataTypeDropdown):
         paper_bgcolor='#000000', 
         font_color='#FFFFFF', 
         title_font_size=54,
-        font_size=36,
+        font_size=30,
         title='TRX Load per Interface'
     )
     # Set Y Axes Range
@@ -257,7 +258,7 @@ def updateGraphData_bsc(currentInterval, timeFrameDropdown, dataTypeDropdown):
         paper_bgcolor='#000000', 
         font_color='#FFFFFF',
         title_font_size=54,
-        font_size=36, 
+        font_size=30, 
         title='NE Out of Service'
     )
     # Close DB connection
@@ -280,16 +281,17 @@ def updateGraphData_bsc(currentInterval, timeFrameDropdown, dataTypeDropdown):
         Output('rnc06Graph', 'style'), 
         Output('rnc07Graph', 'style'),
         Output('trxUsageGraph', 'style'),
-        Output('oosNeGraph', 'style')
+        Output('oosNeGraph', 'style'),
+        Output('dropDownContainer', 'style')
     ],  
     Input('graphUpateInterval', 'n_intervals'))
 def hideGraph(currentInterval):
     if currentInterval%3 == 1:
-        return {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}
+        return {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'flex'}
     elif currentInterval%3 == 2:
-        return {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'none'}, {'display':'none'}
+        return {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'inline'}, {'display':'none'}, {'display':'none'}, {'display':'flex'}
     elif currentInterval%3 == 0:
-        return {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'inline'}, {'display':'inline'}
+        return {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'inline'}, {'display':'inline'}, {'display':'none'}
 
 if __name__ == '__main__':
     app.run_server(debug=True, host='0.0.0.0', port='5005')
