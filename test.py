@@ -20,4 +20,6 @@
 #    if topWorstCurrentDate and "LTE" in file:
 #        current4GTopWorstFile = file
 #current3GTopWorstDataframe = pd.read_excel(topWorstFilePath + current3GTopWorstFile, index_col='Cell Name')
-#print(current3GTopWorstDataframe['HSDPA CSSR(%)'].nsmallest(10))
+#current3GTopWorstColumns = [{'name': i, 'id': i} for i in current3GTopWorstDataframe.columns]
+##print(current3GTopWorstDataframe['HSDPA CSSR(%)'].nsmallest(10))
+#print(current3GTopWorstColumns)

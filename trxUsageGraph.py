@@ -1,6 +1,7 @@
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
+import dash_table
 from dash.dependencies import Input, Output
 import plotly.express as px
 import pandas as pd
@@ -26,6 +27,23 @@ topWorstFilePath = "D:\\ftproot\\BSC\\top_worst_report\\"
 graphTitleFontSize = 24
 bscNameList = ['BSC_01_RRA', 'BSC_02_STGO', 'BSC_03_VM', 'BSC_04_VM', 'BSC_05_RRA', 'BSC_06_STGO']
 rncNameList = ['RNC_01_RRA', 'RNC_02_STGO', 'RNC_03_VM', 'RNC_04_VM', 'RNC_05_RRA', 'RNC_06_STGO', 'RNC_07_VM']
+
+current2GTopWorstDcrFile = ""
+current2GTopWorstCssrFile = ""
+current3GTopWorstFile = ""
+current4GTopWorstFile = ""
+topWorstCurrentDate = datetime.now().strftime("%Y%m%d")
+for file in os.listdir(topWorstFilePath):
+    if topWorstCurrentDate and "2G" and "CSSR" in file:
+        current2GTopWorstCssrFile = file
+    if topWorstCurrentDate and "2G" and "DCR" in file:
+        current2GTopWorstDcrFile = file
+    if topWorstCurrentDate and "3G" in file:
+        current3GTopWorstFile = file
+    if topWorstCurrentDate and "LTE" in file:
+        current4GTopWorstFile = file
+current3GTopWorstDataframe = pd.read_excel(topWorstFilePath + current3GTopWorstFile, index_col='Cell Name')
+current3GTopWorstColumns = [{'name': i, 'id': i} for i in current3GTopWorstDataframe.columns]
 
 app.layout = html.Div(children=[
     html.H1(
@@ -63,20 +81,19 @@ app.layout = html.Div(children=[
     html.Div(
         className='topWorstFlexContainer',
         children=[
-            html.Div(
-                children='Top Worst Report'
+            dash_table.DataTable(
+                id='topWorstTable',
+                columns=current3GTopWorstColumns
+                #data=[{'a':'a1', 'b':'b1'}, {'b':'b2'}, {'c':'c3'}]
             )
         ]
     ),
-    #dcc.DataTable(
-    #    id='topWorstTable'
-    #),
     dcc.Interval(
         id='dataUpateInterval',
         # Interval is in milliseconds unit 
         interval=3600000, 
         n_intervals=0
-    ),
+    )
 ])
 
 # We pass value from the time frame dropdown because it gets updated everytime you change the seleccion on the drop down.
@@ -159,11 +176,26 @@ def updateGraphData_bsc(currentInterval, dataTypeDropdown):
         connectr.close()
         return oosNeGraph
 
-# We pass value from the time frame dropdown because it gets updated everytime you change the seleccion on the drop down.
-#@app.callback(Output('topWorstTable', 'topWorstTableData'), Input('dataTypeDropdown', 'value'))
+#@app.callback(Output('topWorstTable', 'columns'), Input('dataTypeDropdown', 'value'))
 #def topWorstCalculator(dataTypeDropdown):
 #    if dataTypeDropdown == 'Top Worst Reports':
-#        pass
+#        current2GTopWorstDcrFile = ""
+#        current2GTopWorstCssrFile = ""
+#        current3GTopWorstFile = ""
+#        current4GTopWorstFile = ""
+#        topWorstCurrentDate = datetime.now().strftime("%Y%m%d")
+#        for file in os.listdir(topWorstFilePath):
+#            if topWorstCurrentDate and "2G" and "CSSR" in file:
+#                current2GTopWorstCssrFile = file
+#            if topWorstCurrentDate and "2G" and "DCR" in file:
+#                current2GTopWorstDcrFile = file
+#            if topWorstCurrentDate and "3G" in file:
+#                current3GTopWorstFile = file
+#            if topWorstCurrentDate and "LTE" in file:
+#                current4GTopWorstFile = file
+#        current3GTopWorstDataframe = pd.read_excel(topWorstFilePath + current3GTopWorstFile, index_col='Cell Name')
+#        current3GTopWorstColumns = [{'name': i, 'id': i} for i in current3GTopWorstDataframe.columns]
+#        return current3GTopWorstColumns
 
 
 if __name__ == '__main__':
