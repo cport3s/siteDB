@@ -42,8 +42,19 @@ for file in os.listdir(topWorstFilePath):
         current3GTopWorstFile = file
     if topWorstCurrentDate and "LTE" in file:
         current4GTopWorstFile = file
-current3GTopWorstDataframe = pd.read_excel(topWorstFilePath + current3GTopWorstFile, index_col='Cell Name')
-current3GTopWorstColumns = [{'name': i, 'id': i} for i in current3GTopWorstDataframe.columns]
+
+current3GTopWorstDataframe = pd.read_excel(topWorstFilePath + current3GTopWorstFile)
+topWorst3GHsdpaCssrDataframe = current3GTopWorstDataframe.filter(items=['RNC Name', 'NodeB Name', 'Cell Name', 'HSDPA CSSR(%)'])
+topWorst3GHsdpaCssrDataframe = topWorst3GHsdpaCssrDataframe.nsmallest(10, 'HSDPA CSSR(%)')
+topWorst3GHsdpaCssrColumns = [{'name': i, 'id': i} for i in topWorst3GHsdpaCssrDataframe.columns]
+
+topWorst3GHsupaCssrDataframe = current3GTopWorstDataframe.filter(items=['RNC Name', 'NodeB Name', 'Cell Name', 'HSUPA CSSR(%)'])
+topWorst3GHsupaCssrDataframe = topWorst3GHsupaCssrDataframe.nsmallest(10, 'HSUPA CSSR(%)')
+topWorst3GHsupaCssrColumns = [{'name': i, 'id': i} for i in topWorst3GHsupaCssrDataframe.columns]
+
+topWorst3GUmtsCssrDataframe = current3GTopWorstDataframe.filter(items=['RNC Name', 'NodeB Name', 'Cell Name', 'Speech CSSR'])
+topWorst3GUmtsCssrDataframe = topWorst3GUmtsCssrDataframe.nsmallest(10, 'Speech CSSR')
+topWorst3GUmtsCssrColumns = [{'name': i, 'id': i} for i in topWorst3GUmtsCssrDataframe.columns]
 
 app.layout = html.Div(children=[
     html.H1(
@@ -72,6 +83,7 @@ app.layout = html.Div(children=[
     ),
     html.Div(
         className='trxGraphFlexContainer',
+        style={'display':'flex', 'width':'100%', 'flex-direction':'column'},
         children=[
             dcc.Graph(
                 id='trxUsageGraph'
@@ -80,11 +92,25 @@ app.layout = html.Div(children=[
     ),
     html.Div(
         className='topWorstFlexContainer',
+        style={'width':'100%'},
         children=[
+            'Top Worst HSDPA CSSR',
             dash_table.DataTable(
-                id='topWorstTable',
-                columns=current3GTopWorstColumns
-                #data=[{'a':'a1', 'b':'b1'}, {'b':'b2'}, {'c':'c3'}]
+                id='topWorst3GHsdpaCssrTable',
+                columns=topWorst3GHsdpaCssrColumns,
+                data=topWorst3GHsdpaCssrDataframe.to_dict('records')
+            ),
+            'Top Worst HSUPA CSSR',
+            dash_table.DataTable(
+                id='topWorst3GHsupaCssrTable',
+                columns=topWorst3GHsupaCssrColumns,
+                data=topWorst3GHsupaCssrDataframe.to_dict('records')
+            ),
+            'Top Worst UMTS Speech CSSR',
+            dash_table.DataTable(
+                id='topWorst3GUmtsCssrTable',
+                columns=topWorst3GUmtsCssrColumns,
+                data=topWorst3GUmtsCssrDataframe.to_dict('records')
             )
         ]
     ),
