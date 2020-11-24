@@ -226,7 +226,7 @@ def updateGraphData_bsc(currentInterval, timeFrameDropdown, dataTypeDropdown):
             else:
                 tempDataFrame['trxQty'].append(0)
     ipPoolReportDf = pd.DataFrame(tempDataFrame, columns = ['neName', 'ipPoolId', 'trxQty'])
-    trxUsageGraph = px.bar(ipPoolReportDf, x='neName', y='trxQty', color='ipPoolId', barmode='group', template='simple_white')
+    trxUsageGraph = px.bar(ipPoolReportDf, x='neName', y='trxQty', color='ipPoolId', barmode='group', template='simple_white', height=700)
     trxUsageGraph.update_layout(
         plot_bgcolor='#000000', 
         paper_bgcolor='#000000', 
@@ -261,7 +261,7 @@ def updateGraphData_bsc(currentInterval, timeFrameDropdown, dataTypeDropdown):
     disconnectionCauseDataFrame['reason'] = [k for k in disconnectionCauseDict.keys()]
     disconnectionCauseDataFrame['reasonQty'] = [v for v in disconnectionCauseDict.values()]
     OOSdisconnectDf = pd.DataFrame(disconnectionCauseDataFrame, columns = ['reason', 'reasonQty'])
-    oosNeGraph = px.bar(OOSdisconnectDf, x='reason', y='reasonQty')
+    oosNeGraph = px.bar(OOSdisconnectDf, x='reason', y='reasonQty', height=700)
     oosNeGraph.update_layout(
         plot_bgcolor='#000000', 
         paper_bgcolor='#000000', 
@@ -287,7 +287,7 @@ def hideGraph(currentInterval):
     if currentInterval%3 == 1:
         return {'display':'flex'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'flex'}
     elif currentInterval%3 == 2:
-        return {'display':'none'}, {'display':'flex'}, {'display':'none'}, {'display':'none'}, {'display':'flex'}
+        return {'display':'none'}, {'display':'grid'}, {'display':'none'}, {'display':'none'}, {'display':'flex'}
     elif currentInterval%3 == 0:
         return {'display':'none'}, {'display':'none'}, {'display':'inline'}, {'display':'inline'}, {'display':'none'}
 
