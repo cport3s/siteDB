@@ -13,6 +13,7 @@ import os
 import csv
 
 app = dash.Dash(__name__)
+server = app.server
 
 # DB Connection Parameters
 dbusername = 'sitedb'
