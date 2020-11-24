@@ -44,17 +44,29 @@ for file in os.listdir(topWorstFilePath):
         current4GTopWorstFile = file
 
 current3GTopWorstDataframe = pd.read_excel(topWorstFilePath + current3GTopWorstFile)
-topWorst3GHsdpaCssrDataframe = current3GTopWorstDataframe.filter(items=['RNC Name', 'NodeB Name', 'Cell Name', 'HSDPA CSSR(%)'])
+topWorst3GHsdpaCssrDataframe = current3GTopWorstDataframe.filter(items=['RNC Name', 'NodeB Name', 'Cell Name', 'HSDPA CSSR(%)', 'Date'])
 topWorst3GHsdpaCssrDataframe = topWorst3GHsdpaCssrDataframe.nsmallest(10, 'HSDPA CSSR(%)')
 topWorst3GHsdpaCssrColumns = [{'name': i, 'id': i} for i in topWorst3GHsdpaCssrDataframe.columns]
 
-topWorst3GHsupaCssrDataframe = current3GTopWorstDataframe.filter(items=['RNC Name', 'NodeB Name', 'Cell Name', 'HSUPA CSSR(%)'])
+topWorst3GHsupaCssrDataframe = current3GTopWorstDataframe.filter(items=['RNC Name', 'NodeB Name', 'Cell Name', 'HSUPA CSSR(%)', 'Date'])
 topWorst3GHsupaCssrDataframe = topWorst3GHsupaCssrDataframe.nsmallest(10, 'HSUPA CSSR(%)')
 topWorst3GHsupaCssrColumns = [{'name': i, 'id': i} for i in topWorst3GHsupaCssrDataframe.columns]
 
-topWorst3GUmtsCssrDataframe = current3GTopWorstDataframe.filter(items=['RNC Name', 'NodeB Name', 'Cell Name', 'Speech CSSR'])
+topWorst3GUmtsCssrDataframe = current3GTopWorstDataframe.filter(items=['RNC Name', 'NodeB Name', 'Cell Name', 'Speech CSSR', 'Date'])
 topWorst3GUmtsCssrDataframe = topWorst3GUmtsCssrDataframe.nsmallest(10, 'Speech CSSR')
 topWorst3GUmtsCssrColumns = [{'name': i, 'id': i} for i in topWorst3GUmtsCssrDataframe.columns]
+
+topWorst3GHsdpaDcrDataframe = current3GTopWorstDataframe.filter(items=['RNC Name', 'NodeB Name', 'Cell Name', 'HSDPA DCR(%)', 'Date'])
+topWorst3GHsdpaDcrDataframe = topWorst3GHsdpaDcrDataframe.nlargest(10, 'HSDPA DCR(%)')
+topWorst3GHsdpaDcrColumns = [{'name': i, 'id': i} for i in topWorst3GHsdpaDcrDataframe.columns]
+
+topWorst3GHsupaDcrDataframe = current3GTopWorstDataframe.filter(items=['RNC Name', 'NodeB Name', 'Cell Name', 'HSUPA DCR(%)', 'Date'])
+topWorst3GHsupaDcrDataframe = topWorst3GHsupaDcrDataframe.nlargest(10, 'HSUPA DCR(%)')
+topWorst3GHsupaDcrColumns = [{'name': i, 'id': i} for i in topWorst3GHsupaDcrDataframe.columns]
+
+#topWorst3GUmtsDcrDataframe = current3GTopWorstDataframe.filter(items=['RNC Name', 'NodeB Name', 'Cell Name', 'Speech DCR(%)', 'Date'])
+#topWorst3GUmtsDcrDataframe = topWorst3GUmtsDcrDataframe.nlargest(10, 'Speech DCR(%)')
+#topWorst3GUmtsDcrColumns = [{'name': i, 'id': i} for i in topWorst3GUmtsDcrDataframe.columns]
 
 app.layout = html.Div(children=[
     html.H1(
@@ -94,23 +106,41 @@ app.layout = html.Div(children=[
         className='topWorstFlexContainer',
         style={'width':'100%'},
         children=[
-            'Top Worst HSDPA CSSR',
+            #'Top Worst HSDPA CSSR',
             dash_table.DataTable(
                 id='topWorst3GHsdpaCssrTable',
                 columns=topWorst3GHsdpaCssrColumns,
                 data=topWorst3GHsdpaCssrDataframe.to_dict('records')
             ),
-            'Top Worst HSUPA CSSR',
+            #'Top Worst HSUPA CSSR',
             dash_table.DataTable(
                 id='topWorst3GHsupaCssrTable',
                 columns=topWorst3GHsupaCssrColumns,
                 data=topWorst3GHsupaCssrDataframe.to_dict('records')
             ),
-            'Top Worst UMTS Speech CSSR',
+            #'Top Worst UMTS Speech CSSR',
             dash_table.DataTable(
                 id='topWorst3GUmtsCssrTable',
                 columns=topWorst3GUmtsCssrColumns,
                 data=topWorst3GUmtsCssrDataframe.to_dict('records')
+            ),
+            #'Top Worst HSDPA DCR',
+            dash_table.DataTable(
+                id='topWorst3GHsdpaDcrTable',
+                columns=topWorst3GHsdpaDcrColumns,
+                data=topWorst3GHsdpaDcrDataframe.to_dict('records')
+            ),
+            #'Top Worst HSUPA DCR',
+            dash_table.DataTable(
+                id='topWorst3GHsupaDcrTable',
+                columns=topWorst3GHsupaDcrColumns,
+                data=topWorst3GHsupaDcrDataframe.to_dict('records')
+            #),
+            #'Top Worst UMTS Speech DCR',
+            #dash_table.DataTable(
+            #    id='topWorst3GUmtsDcrTable',
+            #    columns=topWorst3GUmtsDcrColumns,
+            #    data=topWorst3GUmtsDcrDataframe.to_dict('records')
             )
         ]
     ),
