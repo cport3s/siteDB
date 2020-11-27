@@ -49,21 +49,21 @@ app.layout = html.Div(children=[
             ),
             html.Div(
                 className = 'gridElement',
-                id = 'rncGraphContainer',
-                children = [
-                    'RNC Graph',
-                    dcc.Graph(
-                        id = 'rncGraph'
-                    )
-                ]
-            ),
-            html.Div(
-                className = 'gridElement',
                 id = 'oosNeGraphContainer',
                 children = [
                     'NE OOS',
                     dcc.Graph(
                         id = 'oosNeGraph'
+                    )
+                ]
+            ),
+            html.Div(
+                className = 'gridElement',
+                id = 'rncGraphContainer',
+                children = [
+                    'RNC Graph',
+                    dcc.Graph(
+                        id = 'rncGraph'
                     )
                 ]
             ),
@@ -103,10 +103,10 @@ app.layout = html.Div(children=[
         Input('dataUpateInterval', 'n_intervals')
     ])
 def updateGraphData_bsc(currentInterval):
-    dataTypeDropdown = 'Call Setup Success Rate'
-    timeFrameDropdown = '3'
-    gsmGraphValueConversionDict = {'Call Setup Success Rate':'cssr', 'Drop Call Rate':'dcr', 'Assignment Success Rate':'assignmentsuccessrate', 'Location Update Success Rate':'luupdatesr'}
-    umtsGraphValueConversionDict = {'Call Setup Success Rate':'csconnectionsuccessrate', 'Drop Call Rate':'csdropcallrate', 'Assignment Success Rate':'rrcconnectionsuccessrate', 'Location Update Success Rate':'pagingsuccessrate'}
+    dataTypeDropdown = 'PS Drop Call Rate'
+    timeFrameDropdown = '1'
+    gsmGraphValueConversionDict = {'Call Setup Success Rate':'cssr', 'Drop Call Rate':'dcr', 'Assignment Success Rate':'assignmentsuccessrate', 'Location Update Success Rate':'luupdatesr', 'PS Drop Call Rate':'edgedldcr'}
+    umtsGraphValueConversionDict = {'Call Setup Success Rate':'csconnectionsuccessrate', 'Drop Call Rate':'csdropcallrate', 'Assignment Success Rate':'rrcconnectionsuccessrate', 'Location Update Success Rate':'pagingsuccessrate', 'PS Drop Call Rate':'psdropcallrate'}
     daysDelta = int(timeFrameDropdown)
     # starttime is the current date/time - daysdelta
     startTime = (datetime.now() - timedelta(days=daysDelta)).strftime("%Y/%m/%d %H:%M:%S")
@@ -114,6 +114,7 @@ def updateGraphData_bsc(currentInterval):
     connectr = mysql.connector.connect(user = dbusername, password = dbpassword, host = hostip, database = dbname)
     # Connection must be buffered when executing multiple querys on DB before closing connection.
     pointer = connectr.cursor(buffered=True)
+    # Instantiate the plots
     bscfig = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
     rncfig = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
     for bsc in bscNameList:
@@ -122,30 +123,31 @@ def updateGraphData_bsc(currentInterval):
         queryPayload = np.array(queryRaw)
         # Transform the query payload into a dataframe
         df = pd.DataFrame({dataTypeDropdown:queryPayload[:,0], 'Time':queryPayload[:,1]})
-        bscfig.add_trace(go.Scatter(x=df["Time"], y=df[dataTypeDropdown]))
-        # Set Graph background colores & title font size
-        bscfig.update_layout(
-            plot_bgcolor='#2F2F2F', 
-            paper_bgcolor='#000000', 
-            font_color='#FFFFFF', 
-            title_font_size=graphTitleFontSize
-        )
+        # Add trace to the plot
+        bscfig.add_trace(go.Scatter(x=df["Time"], y=df[dataTypeDropdown], name=bsc))
         queryRaw.clear()
+    # Set Graph background colores & title font size
+    bscfig.update_layout(
+        plot_bgcolor='#2F2F2F', 
+        paper_bgcolor='#000000', 
+        font_color='#FFFFFF', 
+        title_font_size=graphTitleFontSize
+    )
     for rnc in rncNameList:
         pointer.execute('SELECT ' + umtsGraphValueConversionDict[dataTypeDropdown] + ', lastupdate FROM ran_pf_data.rnc_performance_data where nename = \'' + rnc + '\' and lastupdate >= \'' + startTime + '\';')
         queryRaw = pointer.fetchall()
         queryPayload = np.array(queryRaw)
         # Transform the query payload into a dataframe
         df = pd.DataFrame({ dataTypeDropdown:queryPayload[:,0], 'Time':queryPayload[:,1] })
-        rncfig.add_trace(go.Scatter(x=df["Time"], y=df[dataTypeDropdown]))
-        # Set Graph background colores & title font size
-        rncfig.update_layout(
-            plot_bgcolor='#2F2F2F', 
-            paper_bgcolor='#000000', 
-            font_color='#FFFFFF', 
-            title_font_size=graphTitleFontSize
-        )
+        rncfig.add_trace(go.Scatter(x=df["Time"], y=df[dataTypeDropdown], name=rnc))
         queryRaw.clear()
+    # Set Graph background colores & title font size
+    rncfig.update_layout(
+        plot_bgcolor='#2F2F2F', 
+        paper_bgcolor='#000000', 
+        font_color='#FFFFFF', 
+        title_font_size=graphTitleFontSize
+    )
     tempDataFrame = {'neName':[], 'ipPoolId':[], 'trxQty':[]}
     # Loop through BSC Names
     for ne in bscNameList:
@@ -198,15 +200,16 @@ def updateGraphData_bsc(currentInterval):
     disconnectionCauseDataFrame['reason'] = [k for k in disconnectionCauseDict.keys()]
     disconnectionCauseDataFrame['reasonQty'] = [v for v in disconnectionCauseDict.values()]
     OOSdisconnectDf = pd.DataFrame(disconnectionCauseDataFrame, columns = ['reason', 'reasonQty'])
-    oosNeGraph = px.bar(OOSdisconnectDf, x='reason', y='reasonQty')
+    oosNeGraph = px.pie(OOSdisconnectDf, names='reason', values='reasonQty')
     oosNeGraph.update_layout(
         plot_bgcolor='#000000', 
         paper_bgcolor='#000000', 
         font_color='#FFFFFF',
-        title_font_size=54,
-        font_size=30, 
+        title_font_size=graphTitleFontSize,
+        font_size=graphTitleFontSize, 
         title='NE Out of Service'
     )
+    oosNeGraph.update_traces(textinfo='value')
     # Close DB connection
     pointer.close()
     connectr.close()
