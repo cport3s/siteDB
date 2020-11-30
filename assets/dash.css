@@ -7,11 +7,20 @@ body {
     background-color: black;
 }
 
-.titleHeader {
-    color: white;
+.titleHeaderContainer {
     margin-bottom: 0;
     margin-top: 0;
-    text-align: center;
+    display: flex;
+    width: 100%;
+}
+
+#dashboardTitle {
+    color: white;
+    width: 30%;
+}
+
+#tabsContainer-parent {
+    width: 70%;
 }
 
 #graphGridContainer {

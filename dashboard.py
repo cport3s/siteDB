@@ -30,9 +30,22 @@ neOosReportfilePath = "D:\\ftproot\\configuration_files\\NBI_FM\\" + datetime.no
 graphTitleFontSize = 18
 
 app.layout = html.Div(children=[
-    html.H1(
-        className = 'titleHeader',
-        children = 'RAN Ops Dashboard'
+    html.Div(
+        className = 'titleHeaderContainer',
+        children = [
+            html.H1(
+                id = 'dashboardTitle',
+                children = 'RAN Ops Dashboard'
+            ),
+            dcc.Tabs(
+                id = 'tabsContainer',
+                value = 'Engineering Dashboard',
+                children = [
+                    dcc.Tab(label = 'Engineering Dashboard', value = 'Engineering Dashboard'),
+                    dcc.Tab(label = 'Top Worst Reports', value = 'Top Worst Reports')
+                ]
+            )
+        ]
     ),
     html.Div(
         id = 'graphGridContainer',
@@ -258,21 +271,12 @@ def updateGraphData_bsc(currentInterval, timeFrameDropdown, dataTypeDropdown):
     connectr.close()
     return bscfig, rncfig, trxUsageGraph, oosNeGraph
 
-#@app.callback([
-#        Output('bscGraphFlexContainer', 'style'),  
-#        Output('rncGraphFlexContainer', 'style'), 
-#        Output('trxUsageGraph', 'style'),
-#        Output('oosNeGraph', 'style'),
-#        Output('dropDownContainer', 'style')
-#    ],  
-#    Input('graphUpateInterval', 'n_intervals'))
-#def hideGraph(currentInterval):
-#    if currentInterval%3 == 1:
-#        return {'display':'flex'}, {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'flex'}
-#    elif currentInterval%3 == 2:
-#        return {'display':'none'}, {'display':'grid'}, {'display':'none'}, {'display':'none'}, {'display':'flex'}
-#    elif currentInterval%3 == 0:
-#        return {'display':'none'}, {'display':'none'}, {'display':'inline'}, {'display':'inline'}, {'display':'none'}
+@app.callback(Output('graphGridContainer', 'style'), Input('tabsContainer', 'value'))
+def showTabContent(currentTab):
+    if currentTab == 'Engineering Dashboard':
+        return {'display':'grid'}
+    else:
+        return {'display':'none'}
 
 if __name__ == '__main__':
     app.run_server(debug=True, host='0.0.0.0', port='5006')
