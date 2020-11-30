@@ -38,6 +38,49 @@ app.layout = html.Div(children=[
         id = 'graphGridContainer',
         children = [
             html.Div(
+                id = 'dataTypeDropdownGridElement',
+                children = [
+                    dcc.Dropdown(
+                        id = 'dataTypeDropdown',
+                        options = [
+                            {'label':'CS Call Setup Success Rate', 'value':'CS Call Setup Success Rate'}, 
+                            {'label':'PS Call Setup Success Rate', 'value':'PS Call Setup Success Rate'}, 
+                            {'label':'CS Drop Call Rate', 'value':'CS Drop Call Rate'}, 
+                            {'label':'PS Drop Call Rate', 'value':'PS Drop Call Rate'}, 
+                            {'label':'Assignment Success Rate', 'value':'Assignment Success Rate'}, 
+                            {'label':'Location Update Success Rate', 'value':'Location Update Success Rate'}
+                        ],
+                        value = 'CS Call Setup Success Rate',
+                        style = {
+                            'width': '100%', 
+                            'font-size': str(graphTitleFontSize) + 'px', 
+                            'text-align': 'center'
+                        }
+                    )
+                ]
+            ),
+            html.Div(
+                id = 'timeFrameDropdownGridElement',
+                children = [
+                    dcc.Dropdown(
+                        id='timeFrameDropdown',
+                        options=[
+                            {'label':'1 Day', 'value':'1'}, 
+                            {'label':'3 Days', 'value':'3'}, 
+                            {'label':'7 Days', 'value':'7'}, 
+                            {'label':'30 Days', 'value':'30'}
+                        ],
+                        # value var is the default value for the drop down.
+                        value='1',
+                        style={
+                            'width': '100%', 
+                            'font-size': str(graphTitleFontSize) + 'px', 
+                            'text-align': 'center'
+                        }
+                    )
+                ]
+            ),
+            html.Div(
                 className = 'gridElement',
                 id = 'bscGraphContainer',
                 children = [
@@ -100,13 +143,13 @@ app.layout = html.Div(children=[
     ], 
     [
         # We use the update interval function and both dropdown menus as inputs for the callback
-        Input('dataUpateInterval', 'n_intervals')
+        Input('dataUpateInterval', 'n_intervals'), 
+        Input('timeFrameDropdown', 'value'), 
+        Input('dataTypeDropdown', 'value')
     ])
-def updateGraphData_bsc(currentInterval):
-    dataTypeDropdown = 'PS Drop Call Rate'
-    timeFrameDropdown = '1'
-    gsmGraphValueConversionDict = {'Call Setup Success Rate':'cssr', 'Drop Call Rate':'dcr', 'Assignment Success Rate':'assignmentsuccessrate', 'Location Update Success Rate':'luupdatesr', 'PS Drop Call Rate':'edgedldcr'}
-    umtsGraphValueConversionDict = {'Call Setup Success Rate':'csconnectionsuccessrate', 'Drop Call Rate':'csdropcallrate', 'Assignment Success Rate':'rrcconnectionsuccessrate', 'Location Update Success Rate':'pagingsuccessrate', 'PS Drop Call Rate':'psdropcallrate'}
+def updateGraphData_bsc(currentInterval, timeFrameDropdown, dataTypeDropdown):
+    gsmGraphValueConversionDict = {'CS Call Setup Success Rate':'cssr', 'PS Call Setup Success Rate':'edgedlssr', 'CS Drop Call Rate':'dcr', 'PS Drop Call Rate':'edgedldcr', 'Assignment Success Rate':'assignmentsuccessrate', 'Location Update Success Rate':'luupdatesr'}
+    umtsGraphValueConversionDict = {'CS Call Setup Success Rate':'csconnectionsuccessrate', 'PS Call Setup Success Rate':'psrtsuccessrate', 'CS Drop Call Rate':'csdropcallrate', 'PS Drop Call Rate':'psdropcallrate', 'Assignment Success Rate':'rrcconnectionsuccessrate', 'Location Update Success Rate':'pagingsuccessrate'}
     daysDelta = int(timeFrameDropdown)
     # starttime is the current date/time - daysdelta
     startTime = (datetime.now() - timedelta(days=daysDelta)).strftime("%Y/%m/%d %H:%M:%S")
