@@ -46,9 +46,19 @@ for file in os.listdir(topWorstFilePath):
     if topWorstCurrentDate and "LTE" in file:
         current4GTopWorstFile = file
 
+current4GTopWorstDcrDataframe = pd.read_excel(topWorstFilePath + current4GTopWorstFile, sheet_name = 'TOP 50 Drop LTE')
+current4GTopWorsteRabSrDataframe = pd.read_excel(topWorstFilePath + current4GTopWorstFile, sheet_name = 'TOP 50 E-RAB Setup')
 current3GTopWorstDataframe = pd.read_excel(topWorstFilePath + current3GTopWorstFile)
 current2GTopWorstCssrDataframe = pd.read_excel(topWorstFilePath + current2GTopWorstCssrFile)
 current2GTopWorstDcrDataframe = pd.read_excel(topWorstFilePath + current2GTopWorstDcrFile)
+
+topWorst4GeRabSrDataframe = current4GTopWorsteRabSrDataframe.filter(items = ['eNodeB Name', 'Cell FDD TDD Indication', 'Cell Name', 'E-RAB Setup Success Rate (ALL)[%](%)', 'Date'])
+topWorst4GeRabSrDataframe = topWorst4GeRabSrDataframe.nsmallest(10, 'E-RAB Setup Success Rate (ALL)[%](%)')
+topWorst4GeRabSrColumns = [{'name': i, 'id': i} for i in topWorst4GeRabSrDataframe.columns]
+
+topWorst4GDcrDataframe = current4GTopWorstDcrDataframe.filter(items = ['eNodeB Name', 'Cell FDD TDD Indication', 'Cell Name', 'Call Drop Rate (All)[%]', 'Date'])
+topWorst4GDcrDataframe = topWorst4GDcrDataframe.nlargest(10, 'Call Drop Rate (All)[%]')
+topWorst4GDcrColumns = [{'name': i, 'id': i} for i in topWorst4GDcrDataframe.columns]
 
 topWorst3GHsdpaCssrDataframe = current3GTopWorstDataframe.filter(items = ['RNC Name', 'NodeB Name', 'Cell Name', 'HSDPA CSSR(%)', 'Date'])
 topWorst3GHsdpaCssrDataframe = topWorst3GHsdpaCssrDataframe.nsmallest(10, 'HSDPA CSSR(%)')
@@ -94,8 +104,24 @@ app.layout = html.Div(children=[
                 id = 'tabsContainer',
                 value = 'Engineering Dashboard',
                 children = [
-                    dcc.Tab(label = 'Engineering Dashboard', value = 'Engineering Dashboard'),
-                    dcc.Tab(label = 'Top Worst Reports', value = 'Top Worst Reports')
+                    dcc.Tab(
+                        label = 'Engineering Dashboard', 
+                        value = 'Engineering Dashboard', 
+                        style = {'background-color': 'black', 'color': 'white', 'border-bottom-color': 'black'},
+                        selected_style = {'background-color': 'grey', 'color': 'white', 'border-bottom-color': 'black', 'border-top-color': 'white'}
+                    ),
+                    dcc.Tab(
+                        label = 'Top Worst Reports', 
+                        value = 'Top Worst Reports', 
+                        style = {'background-color': 'black', 'color': 'white', 'border-bottom-color': 'black'},
+                        selected_style = {'background-color': 'grey', 'color': 'white', 'border-bottom-color': 'black', 'border-top-color': 'white'}
+                    ),
+                    dcc.Tab(
+                        label = 'Network Check', 
+                        value = 'Network Check', 
+                        style = {'background-color': 'black', 'color': 'white', 'border-bottom-color': 'black'},
+                        selected_style = {'background-color': 'grey', 'color': 'white', 'border-bottom-color': 'black', 'border-top-color': 'white'}
+                    )
                 ]
             )
         ]
@@ -191,6 +217,28 @@ app.layout = html.Div(children=[
     html.Div(
         id = 'datatableGridContainer', 
         children = [
+            html.Div(
+                className = 'datatableGridElement',
+                children = [
+                    html.H3('Top Worst LTE eRAB SR'),
+                    dash_table.DataTable(
+                        id = 'topWorst4GeRabSrTable',
+                        columns = topWorst4GeRabSrColumns,
+                        data = topWorst4GeRabSrDataframe.to_dict('records')
+                    )
+                ]
+            ),
+            html.Div(
+                className = 'datatableGridElement',
+                children = [
+                    html.H3('Top Worst LTE DCR'),
+                    dash_table.DataTable(
+                        id='topWorst4GDcrTable',
+                        columns=topWorst4GDcrColumns,
+                        data=topWorst4GDcrDataframe.to_dict('records')
+                    )
+                ]
+            ),
             html.Div(
                 className = 'datatableGridElement',
                 children = [
