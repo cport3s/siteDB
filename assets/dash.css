@@ -57,3 +57,18 @@ body {
     grid-column: 3 / 5;
     grid-row: 3 / 4;
 }
+
+#datatableGridContainer {
+    display: grid;
+    grid-template: repeat(2, 1fr) / repeat(2, 1fr);
+    width: 100%;
+}
+
+.datatableGridElement {
+    padding: 2px;
+}
+
+.datatableGridElement h3 {
+    text-align: center;
+    color: white;
+}
