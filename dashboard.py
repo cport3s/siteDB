@@ -25,12 +25,21 @@ hostip = '172.16.121.41'
 dbname = 'ran_pf_data'
 
 loopCounter = 1
+graphTitleFontSize = 18
 bscNameList = ['BSC_01_RRA', 'BSC_02_STGO', 'BSC_03_VM', 'BSC_04_VM', 'BSC_05_RRA', 'BSC_06_STGO']
 rncNameList = ['RNC_01_RRA', 'RNC_02_STGO', 'RNC_03_VM', 'RNC_04_VM', 'RNC_05_RRA', 'RNC_06_STGO', 'RNC_07_VM']
+# RAN Report Variables
+ranReportFilepath = "D:\\ftproot\\BSC\\ran_report\\"
+latestRanReport = ranReportFilepath + os.listdir(ranReportFilepath)[0]
+ranReportLteTable = pd.read_excel(latestRanReport, sheet_name='4G Table')
+ranReportUmtsTable = pd.read_excel(latestRanReport, sheet_name='3G Table')
+ranReportGsmTable = pd.read_excel(latestRanReport, sheet_name='2G Table')
+ranReportLteColumns = [{'name': i, 'id': i} for i in ranReportLteTable.columns]
+ranReportUmtsColumns = [{'name': i, 'id': i} for i in ranReportUmtsTable.columns]
+ranReportGsmColumns = [{'name': i, 'id': i} for i in ranReportGsmTable.columns]
+# Top Worst Reports Variables
 neOosReportfilePath = "D:\\ftproot\\configuration_files\\NBI_FM\\" + datetime.now().strftime("%Y%m%d") + "\\"
 topWorstFilePath = "D:\\ftproot\\BSC\\top_worst_report\\"
-graphTitleFontSize = 18
-
 current2GTopWorstDcrFile = ""
 current2GTopWorstCssrFile = ""
 current3GTopWorstFile = ""
@@ -329,6 +338,22 @@ app.layout = html.Div(children=[
             )
         ]
     ),
+    html.Div(
+        id = 'networkCheckGridContainer',
+        children = [
+            html.H3('LTE General Network KPI'), 
+            html.Div(
+                className = 'networkCheckGridElement',
+                children = [
+                    dash_table.DataTable(
+                        id = 'ranReportLteTable',
+                        columns = ranReportLteColumns,
+                        data = ranReportLteTable.to_dict('records')
+                    )
+                ]
+            )
+        ]
+    ),
     dcc.Interval(
         id='dataUpateInterval', 
         interval=300000, 
@@ -467,15 +492,18 @@ def updateGraphData_bsc(currentInterval, timeFrameDropdown, dataTypeDropdown):
 
 @app.callback([
     Output('graphGridContainer', 'style'),
-    Output('datatableGridContainer', 'style')
+    Output('datatableGridContainer', 'style'), 
+    Output('networkCheckGridContainer', 'style')
     ], 
     Input('tabsContainer', 'value')
     )
 def showTabContent(currentTab):
     if currentTab == 'Engineering Dashboard':
-        return {'display':'grid'}, {'display':'none'}
+        return {'display':'grid'}, {'display':'none'}, {'display':'none'}
+    elif currentTab == 'Top Worst Reports':
+        return {'display':'none'}, {'display':'grid'}, {'display':'none'}
     else:
-        return {'display':'none'}, {'display':'grid'}
+        return {'display':'none'}, {'display':'none'}, {'display':'grid'}
 
 if __name__ == '__main__':
     app.run_server(debug=True, host='0.0.0.0', port='5006')
