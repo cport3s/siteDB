@@ -38,13 +38,13 @@ ranReportLteColumns = [{'name': i, 'id': i} for i in ranReportLteTable.columns]
 ranReportUmtsColumns = [{'name': i, 'id': i} for i in ranReportUmtsTable.columns]
 ranReportGsmColumns = [{'name': i, 'id': i} for i in ranReportGsmTable.columns]
 # Top Worst Reports Variables
-neOosReportfilePath = "D:\\ftproot\\configuration_files\\NBI_FM\\" + datetime.now().strftime("%Y%m%d") + "\\"
+neOosReportfilePath = "D:\\ftproot\\configuration_files\\NBI_FM\\" + str(datetime.now().strftime('%Y%m%d')) + "\\"
 topWorstFilePath = "D:\\ftproot\\BSC\\top_worst_report\\"
 current2GTopWorstDcrFile = ""
 current2GTopWorstCssrFile = ""
 current3GTopWorstFile = ""
 current4GTopWorstFile = ""
-topWorstCurrentDate = datetime.now().strftime("%Y%m%d")
+topWorstCurrentDate = str(datetime.now().strftime('%Y%m%d'))
 for file in os.listdir(topWorstFilePath):
     if topWorstCurrentDate and "2G" and "CSSR" in file:
         current2GTopWorstCssrFile = file
@@ -349,6 +349,28 @@ app.layout = html.Div(children=[
                         id = 'ranReportLteTable',
                         columns = ranReportLteColumns,
                         data = ranReportLteTable.to_dict('records')
+                    )
+                ]
+            ),
+            html.H3('UMTS General Network KPI'), 
+            html.Div(
+                className = 'networkCheckGridElement',
+                children = [
+                    dash_table.DataTable(
+                        id = 'ranReportUmtsTable',
+                        columns = ranReportUmtsColumns,
+                        data = ranReportUmtsTable.to_dict('records')
+                    )
+                ]
+            ),
+            html.H3('GSM General Network KPI'), 
+            html.Div(
+                className = 'networkCheckGridElement',
+                children = [
+                    dash_table.DataTable(
+                        id = 'ranReportGsmTable',
+                        columns = ranReportGsmColumns,
+                        data = ranReportGsmTable.to_dict('records')
                     )
                 ]
             )

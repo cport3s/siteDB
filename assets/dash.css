@@ -29,10 +29,6 @@ body {
     width: 100%;
 }
 
-.gridElement {
-    /*justify-self: safe center;*/
-}
-
 #dataTypeDropdownGridElement {
     grid-column: 1 / 2;
     grid-row: 1 / 2;
@@ -64,11 +60,17 @@ body {
     width: 100%;
 }
 
+#networkCheckGridContainer {
+    display: grid;
+    grid-template: repeat(2, 1fr) / repeat(2, 1fr);
+    width: 100%;
+}
+
 .datatableGridElement {
     padding: 2px;
 }
 
-.datatableGridElement h3 {
+.datatableGridElement h3{
     text-align: center;
     color: rgb(112, 100, 100);
 }
