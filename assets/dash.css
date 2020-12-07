@@ -62,7 +62,7 @@ body {
 
 #networkCheckGridContainer {
     display: grid;
-    grid-template: repeat(2, 1fr) / repeat(2, 1fr);
+    grid-template: repeat(1, 1fr) / repeat(3, 1fr);
     width: 100%;
 }
 
@@ -70,7 +70,16 @@ body {
     padding: 2px;
 }
 
+.networkCheckGridElement {
+    padding: 2px;
+}
+
 .datatableGridElement h3{
+    text-align: center;
+    color: rgb(112, 100, 100);
+}
+
+.networkCheckGridElement h3{
     text-align: center;
     color: rgb(112, 100, 100);
 }

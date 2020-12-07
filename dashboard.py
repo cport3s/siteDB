@@ -130,6 +130,12 @@ app.layout = html.Div(children=[
                         value = 'Network Check', 
                         style = {'background-color': 'black', 'color': 'white', 'border-bottom-color': 'black'},
                         selected_style = {'background-color': 'grey', 'color': 'white', 'border-bottom-color': 'black', 'border-top-color': 'white'}
+                    ),
+                    dcc.Tab(
+                        label = 'Graph Insight', 
+                        value = 'Graph Insight', 
+                        style = {'background-color': 'black', 'color': 'white', 'border-bottom-color': 'black'},
+                        selected_style = {'background-color': 'grey', 'color': 'white', 'border-bottom-color': 'black', 'border-top-color': 'white'}
                     )
                 ]
             )
@@ -340,11 +346,11 @@ app.layout = html.Div(children=[
     ),
     html.Div(
         id = 'networkCheckGridContainer',
-        children = [
-            html.H3('LTE General Network KPI'), 
+        children = [ 
             html.Div(
                 className = 'networkCheckGridElement',
                 children = [
+                    html.H3('LTE General Network KPI'),
                     dash_table.DataTable(
                         id = 'ranReportLteTable',
                         columns = ranReportLteColumns,
@@ -352,21 +358,21 @@ app.layout = html.Div(children=[
                     )
                 ]
             ),
-            html.H3('UMTS General Network KPI'), 
             html.Div(
                 className = 'networkCheckGridElement',
                 children = [
+                    html.H3('UMTS General Network KPI'), 
                     dash_table.DataTable(
                         id = 'ranReportUmtsTable',
                         columns = ranReportUmtsColumns,
                         data = ranReportUmtsTable.to_dict('records')
                     )
                 ]
-            ),
-            html.H3('GSM General Network KPI'), 
+            ), 
             html.Div(
                 className = 'networkCheckGridElement',
                 children = [
+                    html.H3('GSM General Network KPI'),
                     dash_table.DataTable(
                         id = 'ranReportGsmTable',
                         columns = ranReportGsmColumns,
