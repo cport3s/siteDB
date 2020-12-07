@@ -382,6 +382,42 @@ app.layout = html.Div(children=[
             )
         ]
     ),
+    html.Div(
+        id = 'graphInsightContainer',
+        children = [
+            html.Div(
+                id = 'graphInsightDropdownContainer',
+                children = [
+                    dcc.Dropdown(
+                        id = 'graphInsightRat',
+                        options = [
+                            {'BSC':'BSC'},
+                            {'RNC':'RNC'}
+                        ],
+                        value = 'BSC'
+                    ),
+                    dcc.Dropdown(
+                        id = 'graphInsightDataType',
+                        options = [
+                            {'CS DCR':'CS DCR'},
+                            {'PS DCR':'PS DCR'},
+                            {'CS CSSR':'CS CSSR'},
+                            {'PS CSSR':'PS CSSR'}
+                        ],
+                        value = 'CS DCR'
+                    )
+                ]
+            ),
+            html.Div(
+                id = 'graphInsightGraphContainer',
+                children = [
+                    dcc.Graph(
+                        id = 'graphInsightgraph'
+                    )
+                ]
+            )
+        ]
+    ),
     dcc.Interval(
         id='dataUpateInterval', 
         interval=300000, 
@@ -521,17 +557,20 @@ def updateGraphData_bsc(currentInterval, timeFrameDropdown, dataTypeDropdown):
 @app.callback([
     Output('graphGridContainer', 'style'),
     Output('datatableGridContainer', 'style'), 
-    Output('networkCheckGridContainer', 'style')
+    Output('networkCheckGridContainer', 'style'),
+    Output('graphInsightContainer', 'style')
     ], 
     Input('tabsContainer', 'value')
     )
 def showTabContent(currentTab):
     if currentTab == 'Engineering Dashboard':
-        return {'display':'grid'}, {'display':'none'}, {'display':'none'}
+        return {'display':'grid'}, {'display':'none'}, {'display':'none'}, {'display':'none'}
     elif currentTab == 'Top Worst Reports':
-        return {'display':'none'}, {'display':'grid'}, {'display':'none'}
+        return {'display':'none'}, {'display':'grid'}, {'display':'none'}, {'display':'none'}
+    elif currentTab == 'Network Check':
+        return {'display':'none'}, {'display':'none'}, {'display':'grid'}, {'display':'none'}
     else:
-        return {'display':'none'}, {'display':'none'}, {'display':'grid'}
+        return {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'inline'}
 
 if __name__ == '__main__':
     app.run_server(debug=True, host='0.0.0.0', port='5006')
