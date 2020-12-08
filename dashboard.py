@@ -387,22 +387,25 @@ app.layout = html.Div(children=[
         children = [
             html.Div(
                 id = 'graphInsightDropdownContainer',
+                style = {'display': 'flex', 'width':'100%'},
                 children = [
                     dcc.Dropdown(
                         id = 'graphInsightRat',
+                        style = {'width': '100%'},
                         options = [
-                            {'BSC':'BSC'},
-                            {'RNC':'RNC'}
+                            {'label':'BSC', 'value':'BSC'},
+                            {'label':'RNC', 'value':'RNC'}
                         ],
                         value = 'BSC'
                     ),
                     dcc.Dropdown(
                         id = 'graphInsightDataType',
+                        style = {'width': '100%'},
                         options = [
-                            {'CS DCR':'CS DCR'},
-                            {'PS DCR':'PS DCR'},
-                            {'CS CSSR':'CS CSSR'},
-                            {'PS CSSR':'PS CSSR'}
+                            {'label':'CS DCR', 'value':'CS DCR'},
+                            {'label':'PS DCR', 'value':'PS DCR'},
+                            {'label':'CS CSSR', 'value':'CS CSSR'},
+                            {'label':'PS CSSR', 'value':'PS CSSR'}
                         ],
                         value = 'CS DCR'
                     )
