@@ -34,9 +34,11 @@ latestRanReport = ranReportFilepath + os.listdir(ranReportFilepath)[0]
 ranReportLteTable = pd.read_excel(latestRanReport, sheet_name='4G Table')
 ranReportUmtsTable = pd.read_excel(latestRanReport, sheet_name='3G Table')
 ranReportGsmTable = pd.read_excel(latestRanReport, sheet_name='2G Table')
+#ranReportLteReport = pd.read_excel(latestRanReport, sheet_name='4G Report')
 ranReportLteColumns = [{'name': i, 'id': i} for i in ranReportLteTable.columns]
 ranReportUmtsColumns = [{'name': i, 'id': i} for i in ranReportUmtsTable.columns]
 ranReportGsmColumns = [{'name': i, 'id': i} for i in ranReportGsmTable.columns]
+
 # Top Worst Reports Variables
 neOosReportfilePath = "D:\\ftproot\\configuration_files\\NBI_FM\\" + str(datetime.now().strftime('%Y%m%d')) + "\\"
 topWorstFilePath = "D:\\ftproot\\BSC\\top_worst_report\\"
@@ -44,7 +46,8 @@ current2GTopWorstDcrFile = ""
 current2GTopWorstCssrFile = ""
 current3GTopWorstFile = ""
 current4GTopWorstFile = ""
-topWorstCurrentDate = str(datetime.now().strftime('%Y%m%d'))
+#topWorstCurrentDate = str(datetime.now().strftime('%Y%m%d'))
+topWorstCurrentDate = str((datetime.now() - timedelta(days=1)).strftime('%Y%m%d'))
 for file in os.listdir(topWorstFilePath):
     if topWorstCurrentDate and "2G" and "CSSR" in file:
         current2GTopWorstCssrFile = file
@@ -379,6 +382,15 @@ app.layout = html.Div(children=[
                         data = ranReportGsmTable.to_dict('records')
                     )
                 ]
+            ),
+            html.Div(
+                className = 'networkCheckGridElement',
+                id = 'cssrNetworkWideGraphGridElement',
+                children = [
+                    dcc.Graph(
+                        id = 'cssrNetworkWideGraph'
+                    )
+                ]
             )
         ]
     ),
@@ -438,7 +450,8 @@ app.layout = html.Div(children=[
         Output('bscGraph', 'figure'), 
         Output('rncGraph', 'figure'), 
         Output('trxUsageGraph', 'figure'),
-        Output('oosNeGraph', 'figure')
+        Output('oosNeGraph', 'figure'),
+        Output('cssrNetworkWideGraph', 'figure')
     ], 
     [
         # We use the update interval function and both dropdown menus as inputs for the callback
@@ -552,10 +565,13 @@ def updateGraphData_bsc(currentInterval, timeFrameDropdown, dataTypeDropdown):
         title='NE Out of Service'
     )
     oosNeGraph.update_traces(textinfo='value')
+    ranReportLteReport = pd.read_excel(latestRanReport, sheet_name='4G Report')
+    cssrNetworkWideGraph = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
+
     # Close DB connection
     pointer.close()
     connectr.close()
-    return bscfig, rncfig, trxUsageGraph, oosNeGraph
+    return bscfig, rncfig, trxUsageGraph, oosNeGraph, cssrNetworkWideGraph
 
 @app.callback([
     Output('graphGridContainer', 'style'),
