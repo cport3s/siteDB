@@ -154,3 +154,11 @@ class LTECell():
         self.txmode.clear()
         self.tac.clear()
         self.cellrad.clear()
+
+#Database credentiales
+class dbCredentials():
+    dbUsername = 'sitedb'
+    dbPassword = 'BSCAltice.123'
+    dbServerIp = '172.16.121.41'
+    dataTable = 'alticedr_sitedb'
+    performanceTable = 'ran_pf_data'

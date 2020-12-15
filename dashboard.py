@@ -14,15 +14,13 @@ from datetime import datetime
 from datetime import timedelta
 import os
 import csv
+import classes 
 
 app = dash.Dash(__name__)
 server = app.server
 
 # DB Connection Parameters
-dbusername = 'sitedb'
-dbpassword = 'BSCAltice.123'
-hostip = '172.16.121.41'
-dbname = 'ran_pf_data'
+dbPara = classes.dbCredentials()
 
 loopCounter = 1
 graphTitleFontSize = 18
@@ -466,7 +464,7 @@ def updateGraphData_bsc(currentInterval, timeFrameDropdown, dataTypeDropdown):
     # starttime is the current date/time - daysdelta
     startTime = (datetime.now() - timedelta(days=daysDelta)).strftime("%Y/%m/%d %H:%M:%S")
     # Connect to DB
-    connectr = mysql.connector.connect(user = dbusername, password = dbpassword, host = hostip, database = dbname)
+    connectr = mysql.connector.connect(user = dbPara.dbUsername, password = dbPara.dbPassword, host = dbPara.dbServerIp , database = dbPara.dataTable)
     # Connection must be buffered when executing multiple querys on DB before closing connection.
     pointer = connectr.cursor(buffered=True)
     # Instantiate the plots
