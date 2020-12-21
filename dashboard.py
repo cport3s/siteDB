@@ -54,7 +54,7 @@ app.layout = html.Div(children=[
             ),
             dcc.Tabs(
                 id = 'tabsContainer',
-                value = 'Top Worst Reports',
+                value = 'Engineering Dashboard',
                 children = [
                     dcc.Tab(
                         label = 'Engineering Dashboard', 
@@ -100,7 +100,7 @@ app.layout = html.Div(children=[
                             {'label':'Assignment Success Rate', 'value':'Assignment Success Rate'}, 
                             {'label':'Location Update Success Rate', 'value':'Location Update Success Rate'}
                         ],
-                        value = 'CS Call Setup Success Rate',
+                        value = 'PS Drop Call Rate',
                         style = {
                             'width': '100%', 
                             'font-size': str(graphTitleFontSize) + 'px', 
@@ -585,7 +585,7 @@ def refreshTopWorstTableContent(currentTab):
         topWorst2GSpeechDcrColumns = [{'name': i, 'id': i} for i in topWorst2GSpeechDcrDataframe.columns]
         return topWorst4GeRabSrColumns, topWorst4GeRabSrDataframe.to_dict('records'), topWorst4GDcrColumns, topWorst4GDcrDataframe.to_dict('records'), topWorst3GHsdpaCssrColumns, topWorst3GHsdpaCssrDataframe.to_dict('records'), topWorst3GHsupaCssrColumns, topWorst3GHsupaCssrDataframe.to_dict('records'), topWorst3GUmtsCssrColumns, topWorst3GUmtsCssrDataframe.to_dict('records'), topWorst3GHsdpaDcrColumns, topWorst3GHsdpaDcrDataframe.to_dict('records'), topWorst3GHsupaDcrColumns, topWorst3GHsupaDcrDataframe.to_dict('records'), topWorst2GSpeechCssrColumns, topWorst2GSpeechCssrDataframe.to_dict('records'), topWorst2GSpeechDcrColumns, topWorst2GSpeechDcrDataframe.to_dict('records')
     else:
-        pass
+        return [{'name':'', 'id':''}], [{}], [{'name':'', 'id':''}], [{}], [{'name':'', 'id':''}], [{}], [{'name':'', 'id':''}], [{}], [{'name':'', 'id':''}], [{}], [{'name':'', 'id':''}], [{}], [{'name':'', 'id':''}], [{}], [{'name':'', 'id':''}], [{}], [{'name':'', 'id':''}], [{}]
 
 # Callback to hide/display selected tab
 @app.callback([
