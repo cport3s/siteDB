@@ -28,8 +28,13 @@ bscNameList = ['BSC_01_RRA', 'BSC_02_STGO', 'BSC_03_VM', 'BSC_04_VM', 'BSC_05_RR
 rncNameList = ['RNC_01_RRA', 'RNC_02_STGO', 'RNC_03_VM', 'RNC_04_VM', 'RNC_05_RRA', 'RNC_06_STGO', 'RNC_07_VM']
 # RAN Report Variables
 ranReportFilepath = "D:\\ftproot\\BSC\\ran_report\\"
+currentDateTime = str(datetime.now().strftime('%Y%m%d%H%M'))
+if int(currentDateTime[-2:]) < 30:
+    currentDateTime = str(int(currentDateTime[:-2]) - 1)
+else:
+    currentDateTime = currentDateTime[:-2]
 for file in os.listdir(ranReportFilepath):
-    if datetime.now().strftime('%Y%m%d%H') in file:
+    if currentDateTime in file:
         latestRanReport = ranReportFilepath + file
 
 ranReportLteTable = pd.read_excel(latestRanReport, sheet_name='4G Table')
@@ -496,9 +501,9 @@ def updateGraphData_bsc(currentInterval, timeFrameDropdown, dataTypeDropdown):
     #pointer.execute('SELECT time, ltecellgroup, erabssr FROM ran_pf_data.ran_report_4g_report_network_wide where time = \'' + datetime.now().strftime("%m/%d/%Y %H") + ':00' +'\';')
     #queryRaw = pointer.fetchall()
     #queryPayload = np.array(queryRaw)
-    # Transform the query payload into a dataframe
+    ## Transform the query payload into a dataframe
     #cssrNetworkWideDataframe = pd.DataFrame(queryPayload, columns=['ltecellgroup', 'erabssr'])
-    cssrNetworkWideGraph = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
+    #cssrNetworkWideGraph = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
     #cssrNetworkWideGraph.add_trace(go.Scatter(x=cssrNetworkWideDataframe["Time"], y=cssrNetworkWideDataframe['ltecellgroup'], name='4G eRAB Success Rate'))
 
     # Close DB connection

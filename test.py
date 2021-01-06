@@ -1,11 +1,14 @@
 #import os
-#import csv
 #from datetime import datetime
-#import pandas as pd
 #
 #ranReportFilepath = "D:\\ftproot\\BSC\\ran_report\\"
-#latestRanReport = ranReportFilepath + os.listdir(ranReportFilepath)[0]
-#ranReportLteTable = pd.read_excel(latestRanReport, sheet_name='4G Table')
-#ranReportUmtsTable = pd.read_excel(latestRanReport, sheet_name='3G Table')
-#ranReportGsmTable = pd.read_excel(latestRanReport, sheet_name='2G Table')
-#print(ranReportLteTable['KPI\Object'])
+#for file in os.listdir(ranReportFilepath):
+#    print(file)
+#    currentDateTime = str(datetime.now().strftime('%Y%m%d%H%M'))
+#    if int(currentDateTime[-2:]) < 30:
+#        currentDateTime = str(int(currentDateTime[:-2]) - 1)
+#    else:
+#        currentDateTime = currentDateTime[:-2]
+#    if currentDateTime in file:
+#        latestRanReport = ranReportFilepath + file
+#        print(latestRanReport)
