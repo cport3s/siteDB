@@ -26,6 +26,7 @@ loopCounter = 1
 graphTitleFontSize = 18
 bscNameList = ['BSC_01_RRA', 'BSC_02_STGO', 'BSC_03_VM', 'BSC_04_VM', 'BSC_05_RRA', 'BSC_06_STGO']
 rncNameList = ['RNC_01_RRA', 'RNC_02_STGO', 'RNC_03_VM', 'RNC_04_VM', 'RNC_05_RRA', 'RNC_06_STGO', 'RNC_07_VM']
+lteBandList = ['Network Band=2', 'Network Band=5', 'Network Band=4', 'Network Band=42', 'Network Band=8']
 # RAN Report Variables
 ranReportFilepath = "D:\\ftproot\\BSC\\ran_report\\"
 currentDateTime = str(datetime.now().strftime('%Y%m%d%H%M'))
@@ -498,7 +499,6 @@ def updateGraphData_bsc(currentInterval, timeFrameDropdown, dataTypeDropdown):
     oosNeGraph.update_traces(textinfo='value')
 
     # Network Wide Graph
-    lteBandList = ['Network Band=2', 'Network Band=5', 'Network Band=4', 'Network Band=42', 'Network Band=8']
     cssrNetworkWideGraph = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
     for band in lteBandList:
         pointer.execute('SELECT time,erabssr FROM ran_pf_data.ran_report_4g_report_network_wide where ltecellgroup = \'' + band + '\' and time > ' + str(datetime.now().strftime('%Y-%m-%d')) + ';')
@@ -508,6 +508,13 @@ def updateGraphData_bsc(currentInterval, timeFrameDropdown, dataTypeDropdown):
         cssrNetworkWideDataframe = pd.DataFrame(queryPayload, columns=['time', 'erabssr'])
         cssrNetworkWideGraph.add_trace(go.Scatter(x=cssrNetworkWideDataframe['time'], y=cssrNetworkWideDataframe['erabssr'], name=band))
         queryRaw.clear()
+    cssrNetworkWideGraph.update_layout(
+        plot_bgcolor='#2F2F2F', 
+        paper_bgcolor='#000000', 
+        font_color='#FFFFFF', 
+        title_font_size=graphTitleFontSize,
+        title='4G eRAB SSR'
+    )
 
     # Close DB connection
     pointer.close()
