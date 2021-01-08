@@ -75,11 +75,11 @@ body {
 }
 
 .datatableGridElement {
-    padding: 2px;
+    padding: 0px;
 }
 
 .networkCheckGridElement {
-    padding: 2px;
+    padding: 0px;
 }
 
 .datatableGridElement h3 {
@@ -94,5 +94,10 @@ body {
 
 #cssrNetworkWideGraphGridElement {
     grid-row-start: 2;
+    grid-column-start: span 3;
+}
+
+#dcrNetworkWideGraphGridElement {
+    grid-row-start: 3;
     grid-column-start: span 3;
 }

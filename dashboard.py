@@ -14,7 +14,7 @@ from datetime import datetime
 from datetime import timedelta
 import os
 import csv
-import classes 
+import classes
 
 app = dash.Dash(__name__)
 server = app.server
@@ -26,19 +26,24 @@ loopCounter = 1
 graphTitleFontSize = 18
 bscNameList = ['BSC_01_RRA', 'BSC_02_STGO', 'BSC_03_VM', 'BSC_04_VM', 'BSC_05_RRA', 'BSC_06_STGO']
 rncNameList = ['RNC_01_RRA', 'RNC_02_STGO', 'RNC_03_VM', 'RNC_04_VM', 'RNC_05_RRA', 'RNC_06_STGO', 'RNC_07_VM']
+lteBandList = ['Network Band=2', 'Network Band=5', 'Network Band=4', 'Network Band=42', 'Network Band=8']
 # RAN Report Variables
 ranReportFilepath = "D:\\ftproot\\BSC\\ran_report\\"
+currentDateTime = str(datetime.now().strftime('%Y%m%d%H%M'))
+if int(currentDateTime[-2:]) < 30:
+    currentDateTime = str(int(currentDateTime[:-2]) - 1)
+else:
+    currentDateTime = currentDateTime[:-2]
 for file in os.listdir(ranReportFilepath):
-    if str(datetime.now().strftime('%Y%m%d%H')) in file:
+    if currentDateTime in file:
         latestRanReport = ranReportFilepath + file
-#latestRanReport = ranReportFilepath + os.listdir(ranReportFilepath)[0]
+
 ranReportLteTable = pd.read_excel(latestRanReport, sheet_name='4G Table')
 ranReportLteTable['Threshold'] = ['< 0.13%', '>= 99.00%', '>= 99%', '', '>= 6500.0000', '', '', '', '', '', '']
 ranReportUmtsTable = pd.read_excel(latestRanReport, sheet_name='3G Table')
 ranReportUmtsTable['Threshold'] = ['< 0.17%', '>= 99.87%', '', '', '', '', '<= 0.30%', '<= 0.30%', '>= 99%', '>= 99%', '', '', '']
 ranReportGsmTable = pd.read_excel(latestRanReport, sheet_name='2G Table')
 ranReportGsmTable['Threshold'] = ['>= 99.87%', '>= 99.87%', '', '', '', '']
-#ranReportLteReport = pd.read_excel(latestRanReport, sheet_name='4G Report')
 ranReportLteColumns = [{'name': i, 'id': i} for i in ranReportLteTable.columns]
 ranReportUmtsColumns = [{'name': i, 'id': i} for i in ranReportUmtsTable.columns]
 ranReportGsmColumns = [{'name': i, 'id': i} for i in ranReportGsmTable.columns]
@@ -314,6 +319,15 @@ app.layout = html.Div(children=[
                         id = 'cssrNetworkWideGraph'
                     )
                 ]
+            ),
+            html.Div(
+                className = 'networkCheckGridElement',
+                id = 'dcrNetworkWideGraphGridElement',
+                children = [
+                    dcc.Graph(
+                        id = 'dcrNetworkWideGraph'
+                    )
+                ]
             )
         ]
     ),
@@ -374,7 +388,8 @@ app.layout = html.Div(children=[
         Output('rncGraph', 'figure'), 
         Output('trxUsageGraph', 'figure'),
         Output('oosNeGraph', 'figure'),
-        Output('cssrNetworkWideGraph', 'figure')
+        Output('cssrNetworkWideGraph', 'figure'),
+        Output('dcrNetworkWideGraph', 'figure')
     ], 
     [
         # We use the update interval function and both dropdown menus as inputs for the callback
@@ -427,6 +442,8 @@ def updateGraphData_bsc(currentInterval, timeFrameDropdown, dataTypeDropdown):
         font_color='#FFFFFF', 
         title_font_size=graphTitleFontSize
     )
+
+    # TRX Utilization Graph
     tempDataFrame = {'neName':[], 'ipPoolId':[], 'trxQty':[]}
     # Loop through BSC Names
     for ne in bscNameList:
@@ -455,6 +472,7 @@ def updateGraphData_bsc(currentInterval, timeFrameDropdown, dataTypeDropdown):
     )
     # Set Y Axes Range
     trxUsageGraph.update_yaxes(range=[0, 3000])
+
     # Open CSV File with OOS NEs
     # Construct complete filepath with last file on the filePath var
     currentAlarmFile = neOosReportfilePath + os.listdir(neOosReportfilePath)[-1]
@@ -489,13 +507,45 @@ def updateGraphData_bsc(currentInterval, timeFrameDropdown, dataTypeDropdown):
         title='NE Out of Service'
     )
     oosNeGraph.update_traces(textinfo='value')
-    ranReportLteReport = pd.read_excel(latestRanReport, sheet_name='4G Report')
+
+    # Network Wide Graph
     cssrNetworkWideGraph = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
+    dcrNetworkWideGraph = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
+    startTimeNetworkWide = (datetime.now()-timedelta(days=3)).strftime("%Y-%m-%d")
+    for band in lteBandList:
+        pointer.execute('SELECT time,erabssr FROM ran_pf_data.ran_report_4g_report_network_wide where ltecellgroup = \'' + band + '\' and time > ' + str(startTimeNetworkWide) + ';')
+        queryRaw = pointer.fetchall()
+        queryPayload = np.array(queryRaw)
+        # Transform the query payload into a dataframe
+        cssrNetworkWideDataframe = pd.DataFrame(queryPayload, columns=['time', 'erabssr'])
+        cssrNetworkWideGraph.add_trace(go.Scatter(x=cssrNetworkWideDataframe['time'], y=cssrNetworkWideDataframe['erabssr'], name=band))
+        queryRaw.clear()
+        pointer.execute('SELECT time,dcr FROM ran_pf_data.ran_report_4g_report_network_wide where ltecellgroup = \'' + band + '\' and time > ' + str(startTimeNetworkWide) + ';')
+        queryRaw = pointer.fetchall()
+        queryPayload = np.array(queryRaw)
+        # Transform the query payload into a dataframe
+        dcrNetworkWideDataframe = pd.DataFrame(queryPayload, columns=['time', 'dcr'])
+        dcrNetworkWideGraph.add_trace(go.Scatter(x=dcrNetworkWideDataframe['time'], y=dcrNetworkWideDataframe['dcr'], name=band))
+        queryRaw.clear()
+    cssrNetworkWideGraph.update_layout(
+        plot_bgcolor='#2F2F2F', 
+        paper_bgcolor='#000000', 
+        font_color='#FFFFFF', 
+        title_font_size=graphTitleFontSize,
+        title='4G eRAB SSR'
+    )
+    dcrNetworkWideGraph.update_layout(
+        plot_bgcolor='#2F2F2F', 
+        paper_bgcolor='#000000', 
+        font_color='#FFFFFF', 
+        title_font_size=graphTitleFontSize,
+        title='4G DCR'
+    )
 
     # Close DB connection
     pointer.close()
     connectr.close()
-    return bscfig, rncfig, trxUsageGraph, oosNeGraph, cssrNetworkWideGraph
+    return bscfig, rncfig, trxUsageGraph, oosNeGraph, cssrNetworkWideGraph, dcrNetworkWideGraph
 
 # Callback to update top worst data tables
 @app.callback([
