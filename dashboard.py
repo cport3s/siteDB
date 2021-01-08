@@ -501,12 +501,12 @@ def updateGraphData_bsc(currentInterval, timeFrameDropdown, dataTypeDropdown):
     lteBandList = ['Network Band=2', 'Network Band=5', 'Network Band=4', 'Network Band=42', 'Network Band=8']
     cssrNetworkWideGraph = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
     for band in lteBandList:
-        pointer.execute('SELECT time,erabssr FROM ran_pf_data.ran_report_4g_report_network_wide where ltecellgroup = \'' + band + '\' and time > \'' + str(datetime.now().strftime('%Y-%m-%d')) + '\';')
+        pointer.execute('SELECT time,erabssr FROM ran_pf_data.ran_report_4g_report_network_wide where ltecellgroup = \'' + band + '\' and time > ' + str(datetime.now().strftime('%Y-%m-%d')) + ';')
         queryRaw = pointer.fetchall()
         queryPayload = np.array(queryRaw)
         # Transform the query payload into a dataframe
         cssrNetworkWideDataframe = pd.DataFrame(queryPayload, columns=['time', 'erabssr'])
-        cssrNetworkWideGraph.add_trace(go.Scatter(x=cssrNetworkWideDataframe['time'], y=cssrNetworkWideDataframe['erabssr'], name='4G eRAB Success Rate'))
+        cssrNetworkWideGraph.add_trace(go.Scatter(x=cssrNetworkWideDataframe['time'], y=cssrNetworkWideDataframe['erabssr'], name=band))
         queryRaw.clear()
 
     # Close DB connection
