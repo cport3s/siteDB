@@ -97,7 +97,17 @@ body {
     grid-column-start: span 3;
 }
 
-#dcrNetworkWideGraphGridElement {
+#volteDssrNetworkWideGraphGridElement {
     grid-row-start: 3;
+    grid-column-start: span 3;
+}
+
+#dcrNetworkWideGraphGridElement {
+    grid-row-start: 4;
+    grid-column-start: span 3;
+}
+
+#volteDcrNetworkWideGraphGridElement {
+    grid-row-start: 5;
     grid-column-start: span 3;
 }

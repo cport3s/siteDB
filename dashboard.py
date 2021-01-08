@@ -322,10 +322,28 @@ app.layout = html.Div(children=[
             ),
             html.Div(
                 className = 'networkCheckGridElement',
+                id = 'volteCssrNetworkWideGraphGridElement',
+                children = [
+                    dcc.Graph(
+                        id = 'volteCssrNetworkWideGraph'
+                    )
+                ]
+            ),
+            html.Div(
+                className = 'networkCheckGridElement',
                 id = 'dcrNetworkWideGraphGridElement',
                 children = [
                     dcc.Graph(
                         id = 'dcrNetworkWideGraph'
+                    )
+                ]
+            ),
+            html.Div(
+                className = 'networkCheckGridElement',
+                id = 'volteDcrNetworkWideGraphGridElement',
+                children = [
+                    dcc.Graph(
+                        id = 'volteDcrNetworkWideGraph'
                     )
                 ]
             )
@@ -389,7 +407,9 @@ app.layout = html.Div(children=[
         Output('trxUsageGraph', 'figure'),
         Output('oosNeGraph', 'figure'),
         Output('cssrNetworkWideGraph', 'figure'),
-        Output('dcrNetworkWideGraph', 'figure')
+        Output('volteCssrNetworkWideGraph', 'figure'),
+        Output('dcrNetworkWideGraph', 'figure'),
+        Output('volteDcrNetworkWideGraph', 'figure')
     ], 
     [
         # We use the update interval function and both dropdown menus as inputs for the callback
@@ -510,7 +530,9 @@ def updateGraphData_bsc(currentInterval, timeFrameDropdown, dataTypeDropdown):
 
     # Network Wide Graph
     cssrNetworkWideGraph = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
+    volteCssrNetworkWideGraph = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
     dcrNetworkWideGraph = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
+    volteDcrNetworkWideGraph = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
     startTimeNetworkWide = (datetime.now()-timedelta(days=3)).strftime("%Y-%m-%d")
     for band in lteBandList:
         pointer.execute('SELECT time,erabssr FROM ran_pf_data.ran_report_4g_report_network_wide where ltecellgroup = \'' + band + '\' and time > ' + str(startTimeNetworkWide) + ';')
@@ -520,6 +542,14 @@ def updateGraphData_bsc(currentInterval, timeFrameDropdown, dataTypeDropdown):
         cssrNetworkWideDataframe = pd.DataFrame(queryPayload, columns=['time', 'erabssr'])
         cssrNetworkWideGraph.add_trace(go.Scatter(x=cssrNetworkWideDataframe['time'], y=cssrNetworkWideDataframe['erabssr'], name=band))
         queryRaw.clear()
+        if band != 'Network Band=42':
+            pointer.execute('SELECT time,volteerabssr FROM ran_pf_data.ran_report_4g_report_network_wide where ltecellgroup = \'' + band + '\' and time > ' + str(startTimeNetworkWide) + ';')
+            queryRaw = pointer.fetchall()
+            queryPayload = np.array(queryRaw)
+            # Transform the query payload into a dataframe
+            volteCssrNetworkWideDataframe = pd.DataFrame(queryPayload, columns=['time', 'volteerabssr'])
+            volteCssrNetworkWideGraph.add_trace(go.Scatter(x=volteCssrNetworkWideDataframe['time'], y=volteCssrNetworkWideDataframe['volteerabssr'], name=band))
+            queryRaw.clear()
         pointer.execute('SELECT time,dcr FROM ran_pf_data.ran_report_4g_report_network_wide where ltecellgroup = \'' + band + '\' and time > ' + str(startTimeNetworkWide) + ';')
         queryRaw = pointer.fetchall()
         queryPayload = np.array(queryRaw)
@@ -527,25 +557,46 @@ def updateGraphData_bsc(currentInterval, timeFrameDropdown, dataTypeDropdown):
         dcrNetworkWideDataframe = pd.DataFrame(queryPayload, columns=['time', 'dcr'])
         dcrNetworkWideGraph.add_trace(go.Scatter(x=dcrNetworkWideDataframe['time'], y=dcrNetworkWideDataframe['dcr'], name=band))
         queryRaw.clear()
+        pointer.execute('SELECT time,voltedcr FROM ran_pf_data.ran_report_4g_report_network_wide where ltecellgroup = \'' + band + '\' and time > ' + str(startTimeNetworkWide) + ';')
+        queryRaw = pointer.fetchall()
+        queryPayload = np.array(queryRaw)
+        # Transform the query payload into a dataframe
+        volteDcrNetworkWideDataframe = pd.DataFrame(queryPayload, columns=['time', 'voltedcr'])
+        volteDcrNetworkWideGraph.add_trace(go.Scatter(x=volteDcrNetworkWideDataframe['time'], y=volteDcrNetworkWideDataframe['voltedcr'], name=band))
+        queryRaw.clear()
     cssrNetworkWideGraph.update_layout(
         plot_bgcolor='#2F2F2F', 
         paper_bgcolor='#000000', 
         font_color='#FFFFFF', 
         title_font_size=graphTitleFontSize,
-        title='4G eRAB SSR'
+        title='4G Data eRAB SSR'
+    )
+    volteCssrNetworkWideGraph.update_layout(
+        plot_bgcolor='#2F2F2F', 
+        paper_bgcolor='#000000', 
+        font_color='#FFFFFF', 
+        title_font_size=graphTitleFontSize,
+        title='4G VoLTE eRAB SSR'
     )
     dcrNetworkWideGraph.update_layout(
         plot_bgcolor='#2F2F2F', 
         paper_bgcolor='#000000', 
         font_color='#FFFFFF', 
         title_font_size=graphTitleFontSize,
-        title='4G DCR'
+        title='4G Data DCR'
+    )
+    volteDcrNetworkWideGraph.update_layout(
+        plot_bgcolor='#2F2F2F', 
+        paper_bgcolor='#000000', 
+        font_color='#FFFFFF', 
+        title_font_size=graphTitleFontSize,
+        title='4G VoLTE DCR'
     )
 
     # Close DB connection
     pointer.close()
     connectr.close()
-    return bscfig, rncfig, trxUsageGraph, oosNeGraph, cssrNetworkWideGraph, dcrNetworkWideGraph
+    return bscfig, rncfig, trxUsageGraph, oosNeGraph, cssrNetworkWideGraph, volteCssrNetworkWideGraph, dcrNetworkWideGraph, volteDcrNetworkWideGraph
 
 # Callback to update top worst data tables
 @app.callback([
