@@ -540,7 +540,9 @@ def updateGraphData_bsc(currentInterval, timeFrameDropdown, dataTypeDropdown):
         queryPayload = np.array(queryRaw)
         # Transform the query payload into a dataframe
         cssrNetworkWideDataframe = pd.DataFrame(queryPayload, columns=['time', 'erabssr'])
-        cssrNetworkWideGraph.add_trace(go.Scatter(x=cssrNetworkWideDataframe['time'], y=cssrNetworkWideDataframe['erabssr'], name=band))
+        queryRaw.clear()
+        # PENDING: Insert top site query here
+        cssrNetworkWideGraph.add_trace(go.Scatter(x=cssrNetworkWideDataframe['time'], y=cssrNetworkWideDataframe['erabssr'], name=band, text=['M001S', 'M002S', 'M003S']))
         queryRaw.clear()
         if band != 'Network Band=42':
             pointer.execute('SELECT time,volteerabssr FROM ran_pf_data.ran_report_4g_report_network_wide where ltecellgroup = \'' + band + '\' and time > ' + str(startTimeNetworkWide) + ';')
