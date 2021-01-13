@@ -540,10 +540,15 @@ def updateGraphData_bsc(currentInterval, timeFrameDropdown, dataTypeDropdown):
         queryPayload = np.array(queryRaw)
         # Transform the query payload into a dataframe
         cssrNetworkWideDataframe = pd.DataFrame(queryPayload, columns=['time', 'erabssr'])
+        queryRaw.clear()
         # Query TOP site from DB and insert into graph
-        pointer.execute('SELECT cellname FROM ran_pf_data.ran_report_4g_report_specific where time >= ' + str(startTimeNetworkWide) + ' order by dlcongestion desc limit 0,1;')
-        topSite = pointer.fetchone()
-        cssrNetworkWideGraph.add_trace(go.Scatter(x=cssrNetworkWideDataframe['time'], y=cssrNetworkWideDataframe['erabssr'], name=band, text=topSite))
+        #pointer.execute('SELECT time,cellname,voltetraffic FROM ran_pf_data.ran_report_4g_report_specific where time >= ' + str(startTimeNetworkWide) + ';')
+        #queryRaw = pointer.fetchall()
+        #queryPayload = np.array(queryRaw)
+        #topWorst4GDcrPerHourDataFrame = pd.DataFrame(queryPayload, columns=['time', 'cellname', 'voltetraffic'])
+        #topWorst4GDcrPerHourDataFrame = topWorst4GDcrPerHourDataFrame.groupby('time')
+
+        cssrNetworkWideGraph.add_trace(go.Scatter(x=cssrNetworkWideDataframe['time'], y=cssrNetworkWideDataframe['erabssr'], name=band))
         queryRaw.clear()
         if band != 'Network Band=42':
             pointer.execute('SELECT time,volteerabssr FROM ran_pf_data.ran_report_4g_report_network_wide where ltecellgroup = \'' + band + '\' and time > ' + str(startTimeNetworkWide) + ';')
