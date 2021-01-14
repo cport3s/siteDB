@@ -13,7 +13,7 @@ pointer = connectr.cursor(buffered=True)
 
 startTimeNetworkWide = (datetime.now()-timedelta(days=1)).strftime("%Y-%m-%d")
 
-pointer.execute('SELECT time,cellname,pstraffic FROM ran_pf_data.ran_report_4g_report_specific where time > ' + str(startTimeNetworkWide) + ';')
+pointer.execute('SELECT time,cesllname,pstraffic FROM ran_pf_data.ran_report_4g_report_specific where time > ' + str(startTimeNetworkWide) + ';')
 queryRaw = pointer.fetchall()
 queryPayload = np.array(queryRaw)
 
@@ -22,6 +22,10 @@ pointer.close()
 connectr.close()
 
 topWorst4GDcrPerHourDataFrame = pd.DataFrame(queryPayload, columns=['time', 'cellname', 'pstraffic'])
-topWorst4GDcrPerHourDataFrame = topWorst4GDcrPerHourDataFrame.groupby(['time', 'cellname']).max()
+tempTimeList = set(topWorst4GDcrPerHourDataFrame['time'])
+tempTopList = []
+for time in tempTimeList:
+    if topWorst4GDcrPerHourDataFrame['time'] == time:
+
 
 print(topWorst4GDcrPerHourDataFrame)
