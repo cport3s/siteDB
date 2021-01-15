@@ -346,6 +346,60 @@ app.layout = html.Div(children=[
                         id = 'volteDcrNetworkWideGraph'
                     )
                 ]
+            ),
+            html.Div(
+                className = 'networkCheckGridElement',
+                id = 'hsdpaCssrNetworkWideGraphGridElement',
+                children = [
+                    dcc.Graph(
+                        id = 'hsdpaCssrNetworkWideGraph'
+                    )
+                ]
+            ),
+            html.Div(
+                className = 'networkCheckGridElement',
+                id = 'hsupaCssrNetworkWideGraphGridElement',
+                children = [
+                    dcc.Graph(
+                        id = 'hsupaCssrNetworkWideGraph'
+                    )
+                ]
+            ),
+            html.Div(
+                className = 'networkCheckGridElement',
+                id = 'csCssrNetworkWideGraphGridElement',
+                children = [
+                    dcc.Graph(
+                        id = 'csCssrNetworkWideGraph'
+                    )
+                ]
+            ),
+            html.Div(
+                className = 'networkCheckGridElement',
+                id = 'hsdpaDcrNetworkWideGraphGridElement',
+                children = [
+                    dcc.Graph(
+                        id = 'hsdpaDcrNetworkWideGraph'
+                    )
+                ]
+            ),
+            html.Div(
+                className = 'networkCheckGridElement',
+                id = 'hsupaDcrNetworkWideGraphGridElement',
+                children = [
+                    dcc.Graph(
+                        id = 'hsupaDcrNetworkWideGraph'
+                    )
+                ]
+            ),
+            html.Div(
+                className = 'networkCheckGridElement',
+                id = 'csDcrNetworkWideGraphGridElement',
+                children = [
+                    dcc.Graph(
+                        id = 'csDcrNetworkWideGraph'
+                    )
+                ]
             )
         ]
     ),
@@ -535,7 +589,7 @@ def updateGraphData_bsc(currentInterval, timeFrameDropdown, dataTypeDropdown):
     volteDcrNetworkWideGraph = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
     startTimeNetworkWide = (datetime.now()-timedelta(days=3)).strftime("%Y-%m-%d")
     for band in lteBandList:
-        pointer.execute('SELECT time,erabssr FROM ran_pf_data.ran_report_4g_report_network_wide where ltecellgroup = \'' + band + '\' and time > ' + str(startTimeNetworkWide) + ';')
+        pointer.execute('SELECT time,erabssr FROM ran_pf_data.ran_report_4g_report_network_wide where ltecellgroup = \'' + band + '\' and time > \'' + str(startTimeNetworkWide) + '\';')
         queryRaw = pointer.fetchall()
         queryPayload = np.array(queryRaw)
         # Transform the query payload into a dataframe
@@ -551,21 +605,21 @@ def updateGraphData_bsc(currentInterval, timeFrameDropdown, dataTypeDropdown):
         cssrNetworkWideGraph.add_trace(go.Scatter(x=cssrNetworkWideDataframe['time'], y=cssrNetworkWideDataframe['erabssr'], name=band))
         queryRaw.clear()
         if band != 'Network Band=42':
-            pointer.execute('SELECT time,volteerabssr FROM ran_pf_data.ran_report_4g_report_network_wide where ltecellgroup = \'' + band + '\' and time > ' + str(startTimeNetworkWide) + ';')
+            pointer.execute('SELECT time,volteerabssr FROM ran_pf_data.ran_report_4g_report_network_wide where ltecellgroup = \'' + band + '\' and time > \'' + str(startTimeNetworkWide) + '\';')
             queryRaw = pointer.fetchall()
             queryPayload = np.array(queryRaw)
             # Transform the query payload into a dataframe
             volteCssrNetworkWideDataframe = pd.DataFrame(queryPayload, columns=['time', 'volteerabssr'])
             volteCssrNetworkWideGraph.add_trace(go.Scatter(x=volteCssrNetworkWideDataframe['time'], y=volteCssrNetworkWideDataframe['volteerabssr'], name=band))
             queryRaw.clear()
-        pointer.execute('SELECT time,dcr FROM ran_pf_data.ran_report_4g_report_network_wide where ltecellgroup = \'' + band + '\' and time > ' + str(startTimeNetworkWide) + ';')
+        pointer.execute('SELECT time,dcr FROM ran_pf_data.ran_report_4g_report_network_wide where ltecellgroup = \'' + band + '\' and time > \'' + str(startTimeNetworkWide) + '\';')
         queryRaw = pointer.fetchall()
         queryPayload = np.array(queryRaw)
         # Transform the query payload into a dataframe
         dcrNetworkWideDataframe = pd.DataFrame(queryPayload, columns=['time', 'dcr'])
         dcrNetworkWideGraph.add_trace(go.Scatter(x=dcrNetworkWideDataframe['time'], y=dcrNetworkWideDataframe['dcr'], name=band))
         queryRaw.clear()
-        pointer.execute('SELECT time,voltedcr FROM ran_pf_data.ran_report_4g_report_network_wide where ltecellgroup = \'' + band + '\' and time > ' + str(startTimeNetworkWide) + ';')
+        pointer.execute('SELECT time,voltedcr FROM ran_pf_data.ran_report_4g_report_network_wide where ltecellgroup = \'' + band + '\' and time > \'' + str(startTimeNetworkWide) + '\';')
         queryRaw = pointer.fetchall()
         queryPayload = np.array(queryRaw)
         # Transform the query payload into a dataframe
