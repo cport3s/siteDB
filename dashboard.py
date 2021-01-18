@@ -367,10 +367,10 @@ app.layout = html.Div(children=[
             ),
             html.Div(
                 className = 'networkCheckGridElement',
-                id = 'csCssrNetworkWideGraphGridElement',
+                id = 'umtsCssrNetworkWideGraphGridElement',
                 children = [
                     dcc.Graph(
-                        id = 'csCssrNetworkWideGraph'
+                        id = 'umtsCssrNetworkWideGraph'
                     )
                 ]
             ),
@@ -394,10 +394,10 @@ app.layout = html.Div(children=[
             ),
             html.Div(
                 className = 'networkCheckGridElement',
-                id = 'csDcrNetworkWideGraphGridElement',
+                id = 'umtsDcrNetworkWideGraphGridElement',
                 children = [
                     dcc.Graph(
-                        id = 'csDcrNetworkWideGraph'
+                        id = 'umtsDcrNetworkWideGraph'
                     )
                 ]
             )
@@ -463,7 +463,13 @@ app.layout = html.Div(children=[
         Output('cssrNetworkWideGraph', 'figure'),
         Output('volteCssrNetworkWideGraph', 'figure'),
         Output('dcrNetworkWideGraph', 'figure'),
-        Output('volteDcrNetworkWideGraph', 'figure')
+        Output('volteDcrNetworkWideGraph', 'figure'),
+        Output('hsdpaCssrNetworkWideGraph', 'figure'),
+        Output('hsupaCssrNetworkWideGraph', 'figure'),
+        Output('umtsCssrNetworkWideGraph', 'figure'),
+        Output('hsdpaDcrNetworkWideGraph', 'figure'),
+        Output('hsupaDcrNetworkWideGraph', 'figure'),
+        Output('umtsDcrNetworkWideGraph', 'figure')
     ], 
     [
         # We use the update interval function and both dropdown menus as inputs for the callback
@@ -582,7 +588,7 @@ def updateGraphData_bsc(currentInterval, timeFrameDropdown, dataTypeDropdown):
     )
     oosNeGraph.update_traces(textinfo='value')
 
-    # Network Wide Graph
+    # LTE Network Wide Graph
     cssrNetworkWideGraph = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
     volteCssrNetworkWideGraph = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
     dcrNetworkWideGraph = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
@@ -601,7 +607,6 @@ def updateGraphData_bsc(currentInterval, timeFrameDropdown, dataTypeDropdown):
         #queryPayload = np.array(queryRaw)
         #topWorst4GDcrPerHourDataFrame = pd.DataFrame(queryPayload, columns=['time', 'cellname', 'voltetraffic'])
         #topWorst4GDcrPerHourDataFrame = topWorst4GDcrPerHourDataFrame.groupby('time')
-
         cssrNetworkWideGraph.add_trace(go.Scatter(x=cssrNetworkWideDataframe['time'], y=cssrNetworkWideDataframe['erabssr'], name=band))
         queryRaw.clear()
         if band != 'Network Band=42':
@@ -655,10 +660,31 @@ def updateGraphData_bsc(currentInterval, timeFrameDropdown, dataTypeDropdown):
         title='4G VoLTE DCR'
     )
 
+    # UMTS Network Wide Graph
+    hsdpaCssrNetworkWideGraph = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
+    hsupaCssrNetworkWideGraph = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
+    umtsCssrNetworkWideGraph = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
+    hsdpaDcrNetworkWideGraph = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
+    hsupaDcrNetworkWideGraph = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
+    umtsDcrNetworkWideGraph = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
+    rncTempList = ['RNC_03_VM']
+    for rnc in rncTempList:
+        pointer.execute('SELECT time,hsdpadcr,hsupadcr,csdcr,hsdpacssr,hsupacssr,cscssr FROM ran_pf_data.ran_report_3g_report_network_wide where rncname = \'' + rnc + '\' and time > \'' + str(startTimeNetworkWide) + '\';')
+        queryRaw = pointer.fetchall()
+        queryPayload = np.array(queryRaw)
+        # Transform the query payload into a dataframe
+        umtsDataDataframe = pd.DataFrame(queryPayload, columns=['time', 'hsdpadcr', 'hsupadcr', 'csdcr', 'hsdpacssr', 'hsupacssr', 'cscssr'])
+        hsdpaCssrNetworkWideGraph.add_trace(go.Scatter(x=umtsDataDataframe['time'], y=umtsDataDataframe['hsdpacssr'], name=rnc))
+        hsupaCssrNetworkWideGraph.add_trace(go.Scatter(x=umtsDataDataframe['time'], y=umtsDataDataframe['hsupacssr'], name=rnc))
+        umtsCssrNetworkWideGraph.add_trace(go.Scatter(x=umtsDataDataframe['time'], y=umtsDataDataframe['cscssr'], name=rnc))
+        hsdpaDcrNetworkWideGraph.add_trace(go.Scatter(x=umtsDataDataframe['time'], y=umtsDataDataframe['hsdpadcr'], name=rnc))
+        hsupaDcrNetworkWideGraph.add_trace(go.Scatter(x=umtsDataDataframe['time'], y=umtsDataDataframe['hsupadcr'], name=rnc))
+        umtsDcrNetworkWideGraph.add_trace(go.Scatter(x=umtsDataDataframe['time'], y=umtsDataDataframe['csdcr'], name=rnc))
+        queryRaw.clear()
     # Close DB connection
     pointer.close()
     connectr.close()
-    return bscfig, rncfig, trxUsageGraph, oosNeGraph, cssrNetworkWideGraph, volteCssrNetworkWideGraph, dcrNetworkWideGraph, volteDcrNetworkWideGraph
+    return bscfig, rncfig, trxUsageGraph, oosNeGraph, cssrNetworkWideGraph, volteCssrNetworkWideGraph, dcrNetworkWideGraph, volteDcrNetworkWideGraph, hsdpaCssrNetworkWideGraph, hsupaCssrNetworkWideGraph, umtsCssrNetworkWideGraph, hsdpaDcrNetworkWideGraph, hsupaDcrNetworkWideGraph, umtsDcrNetworkWideGraph
 
 # Callback to update top worst data tables
 @app.callback([
