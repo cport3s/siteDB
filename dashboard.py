@@ -53,6 +53,7 @@ neOosReportfilePath = "D:\\ftproot\\configuration_files\\NBI_FM\\" + str(datetim
 topWorstFilePath = "D:\\ftproot\\BSC\\top_worst_report\\"
 
 app.layout = html.Div(children=[
+    # Header & tabbed menu
     html.Div(
         className = 'titleHeaderContainer',
         children = [
@@ -92,6 +93,7 @@ app.layout = html.Div(children=[
             )
         ]
     ),
+    # Engineering Dashboard Tab
     html.Div(
         id = 'graphGridContainer',
         children = [
@@ -180,6 +182,7 @@ app.layout = html.Div(children=[
             ),
         ]
     ),
+    # Top Worst Reports Tab
     html.Div(
         id = 'datatableGridContainer', 
         children = [
@@ -275,6 +278,7 @@ app.layout = html.Div(children=[
             )
         ]
     ),
+    # Network Check Tab
     html.Div(
         id = 'networkCheckGridContainer',
         children = [ 
@@ -400,9 +404,37 @@ app.layout = html.Div(children=[
                         id = 'umtsDcrNetworkWideGraph'
                     )
                 ]
+            ),
+            html.Div(
+                className = 'networkCheckGridElement',
+                id = 'gsmCsCssrNetworkWideGraphGridElement',
+                children = [
+                    dcc.Graph(
+                        id = 'gsmCsCssrNetworkWideGraph'
+                    )
+                ]
+            ),
+            html.Div(
+                className = 'networkCheckGridElement',
+                id = 'gsmPsDcrNetworkWideGraphGridElement',
+                children = [
+                    dcc.Graph(
+                        id = 'gsmPsCssrNetworkWideGraph'
+                    )
+                ]
+            ),
+            html.Div(
+                className = 'networkCheckGridElement',
+                id = 'gsmCsDcrNetworkWideGraphGridElement',
+                children = [
+                    dcc.Graph(
+                        id = 'gsmCsDcrNetworkWideGraph'
+                    )
+                ]
             )
         ]
     ),
+    # Graph Insight Tab (WIP)
     html.Div(
         id = 'graphInsightContainer',
         children = [
@@ -469,7 +501,10 @@ app.layout = html.Div(children=[
         Output('umtsCssrNetworkWideGraph', 'figure'),
         Output('hsdpaDcrNetworkWideGraph', 'figure'),
         Output('hsupaDcrNetworkWideGraph', 'figure'),
-        Output('umtsDcrNetworkWideGraph', 'figure')
+        Output('umtsDcrNetworkWideGraph', 'figure'),
+        Output('gsmCsCssrNetworkWideGraph', 'figure'),
+        Output('gsmCsDcrNetworkWideGraph', 'figure'),
+        Output('gsmPsCssrNetworkWideGraph', 'figure')
     ], 
     [
         # We use the update interval function and both dropdown menus as inputs for the callback
@@ -667,8 +702,7 @@ def updateGraphData_bsc(currentInterval, timeFrameDropdown, dataTypeDropdown):
     hsdpaDcrNetworkWideGraph = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
     hsupaDcrNetworkWideGraph = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
     umtsDcrNetworkWideGraph = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
-    rncTempList = ['RNC_03_VM']
-    for rnc in rncTempList:
+    for rnc in rncNameList:
         pointer.execute('SELECT time,hsdpadcr,hsupadcr,csdcr,hsdpacssr,hsupacssr,cscssr FROM ran_pf_data.ran_report_3g_report_network_wide where rncname = \'' + rnc + '\' and time > \'' + str(startTimeNetworkWide) + '\';')
         queryRaw = pointer.fetchall()
         queryPayload = np.array(queryRaw)
@@ -681,10 +715,88 @@ def updateGraphData_bsc(currentInterval, timeFrameDropdown, dataTypeDropdown):
         hsupaDcrNetworkWideGraph.add_trace(go.Scatter(x=umtsDataDataframe['time'], y=umtsDataDataframe['hsupadcr'], name=rnc))
         umtsDcrNetworkWideGraph.add_trace(go.Scatter(x=umtsDataDataframe['time'], y=umtsDataDataframe['csdcr'], name=rnc))
         queryRaw.clear()
+    hsdpaCssrNetworkWideGraph.update_layout(
+        plot_bgcolor='#2F2F2F', 
+        paper_bgcolor='#000000', 
+        font_color='#FFFFFF', 
+        title_font_size=graphTitleFontSize,
+        title='HSDPA CSSR'
+    )
+    hsupaCssrNetworkWideGraph.update_layout(
+        plot_bgcolor='#2F2F2F', 
+        paper_bgcolor='#000000', 
+        font_color='#FFFFFF', 
+        title_font_size=graphTitleFontSize,
+        title='HSUPA CSSR'
+    )
+    umtsCssrNetworkWideGraph.update_layout(
+        plot_bgcolor='#2F2F2F', 
+        paper_bgcolor='#000000', 
+        font_color='#FFFFFF', 
+        title_font_size=graphTitleFontSize,
+        title='CS CSSR'
+    )
+    hsdpaDcrNetworkWideGraph.update_layout(
+        plot_bgcolor='#2F2F2F', 
+        paper_bgcolor='#000000', 
+        font_color='#FFFFFF', 
+        title_font_size=graphTitleFontSize,
+        title='HSDPA DCR'
+    )
+    hsupaDcrNetworkWideGraph.update_layout(
+        plot_bgcolor='#2F2F2F', 
+        paper_bgcolor='#000000', 
+        font_color='#FFFFFF', 
+        title_font_size=graphTitleFontSize,
+        title='HSUPA DCR'
+    )
+    umtsDcrNetworkWideGraph.update_layout(
+        plot_bgcolor='#2F2F2F', 
+        paper_bgcolor='#000000', 
+        font_color='#FFFFFF', 
+        title_font_size=graphTitleFontSize,
+        title='CS DCR'
+    )
+
+    # GSM Network Wide Graph
+    gsmCsCssrNetworkWideGraph = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
+    gsmPsCssrNetworkWideGraph = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
+    gsmCsDcrNetworkWideGraph = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
+    for bsc in bscNameList:
+        pointer.execute('SELECT time,cscssr,csdcr,pscssr FROM ran_pf_data.ran_report_2g_report_network_wide where gbsc = \'' + bsc + '\' and time > \'' + str(startTimeNetworkWide) + '\';')
+        queryRaw = pointer.fetchall()
+        queryPayload = np.array(queryRaw)
+        # Transform the query payload into a dataframe
+        gsmDataDataframe = pd.DataFrame(queryPayload, columns=['time', 'cscssr', 'csdcr', 'pscssr'])
+        gsmCsCssrNetworkWideGraph.add_trace(go.Scatter(x=gsmDataDataframe['time'], y=gsmDataDataframe['cscssr'], name=bsc))
+        gsmPsCssrNetworkWideGraph.add_trace(go.Scatter(x=gsmDataDataframe['time'], y=gsmDataDataframe['pscssr'], name=bsc))
+        gsmCsDcrNetworkWideGraph.add_trace(go.Scatter(x=gsmDataDataframe['time'], y=gsmDataDataframe['csdcr'], name=bsc))
+        queryRaw.clear()
+    gsmCsCssrNetworkWideGraph.update_layout(
+        plot_bgcolor='#2F2F2F', 
+        paper_bgcolor='#000000', 
+        font_color='#FFFFFF', 
+        title_font_size=graphTitleFontSize,
+        title='2G CS CSSR'
+    )
+    gsmPsCssrNetworkWideGraph.update_layout(
+        plot_bgcolor='#2F2F2F', 
+        paper_bgcolor='#000000', 
+        font_color='#FFFFFF', 
+        title_font_size=graphTitleFontSize,
+        title='2G PS CSSR'
+    )
+    gsmCsDcrNetworkWideGraph.update_layout(
+        plot_bgcolor='#2F2F2F', 
+        paper_bgcolor='#000000', 
+        font_color='#FFFFFF', 
+        title_font_size=graphTitleFontSize,
+        title='2G CS DCR'
+    )
     # Close DB connection
     pointer.close()
     connectr.close()
-    return bscfig, rncfig, trxUsageGraph, oosNeGraph, cssrNetworkWideGraph, volteCssrNetworkWideGraph, dcrNetworkWideGraph, volteDcrNetworkWideGraph, hsdpaCssrNetworkWideGraph, hsupaCssrNetworkWideGraph, umtsCssrNetworkWideGraph, hsdpaDcrNetworkWideGraph, hsupaDcrNetworkWideGraph, umtsDcrNetworkWideGraph
+    return bscfig, rncfig, trxUsageGraph, oosNeGraph, cssrNetworkWideGraph, volteCssrNetworkWideGraph, dcrNetworkWideGraph, volteDcrNetworkWideGraph, hsdpaCssrNetworkWideGraph, hsupaCssrNetworkWideGraph, umtsCssrNetworkWideGraph, hsdpaDcrNetworkWideGraph, hsupaDcrNetworkWideGraph, umtsDcrNetworkWideGraph, gsmCsCssrNetworkWideGraph, gsmCsDcrNetworkWideGraph, gsmPsCssrNetworkWideGraph
 
 # Callback to update top worst data tables
 @app.callback([

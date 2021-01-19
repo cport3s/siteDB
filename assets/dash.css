@@ -111,3 +111,33 @@ body {
     grid-row-start: 5;
     grid-column-start: span 3;
 }
+
+#hsdpaCssrNetworkWideGraphGridElement {
+    grid-row-start: 6;
+    grid-column-start: span 3;
+}
+
+#hsupaCssrNetworkWideGraphGridElement {
+    grid-row-start: 7;
+    grid-column-start: span 3;
+}
+
+#umtsCssrNetworkWideGraphGridElement {
+    grid-row-start: 8;
+    grid-column-start: span 3;
+}
+
+#hsdpaDcrNetworkWideGraphGridElement {
+    grid-row-start: 9;
+    grid-column-start: span 3;
+}
+
+#hsupaDcrNetworkWideGraphGridElement {
+    grid-row-start: 10;
+    grid-column-start: span 3;
+}
+
+#umtsDcrNetworkWideGraphGridElement {
+    grid-row-start: 11;
+    grid-column-start: span 3;
+}
