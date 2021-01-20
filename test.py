@@ -12,16 +12,26 @@
 #pointer = connectr.cursor(buffered=True)
 #
 #startTimeNetworkWide = (datetime.now()-timedelta(days=1)).strftime("%Y-%m-%d")
-#
-#pointer.execute('SELECT time,cesllname,pstraffic FROM ran_pf_data.ran_report_4g_report_specific where time > ' + str(startTimeNetworkWide) + ';')
+##print('test')
+#pointer.execute('SELECT time,cellname,pstraffic FROM ran_pf_data.ran_report_4g_report_specific where time > \'' + str(startTimeNetworkWide) + '\';')
 #queryRaw = pointer.fetchall()
 #queryPayload = np.array(queryRaw)
+#
 #
 ## Close DB connection
 #pointer.close()
 #connectr.close()
 #
 #topWorst4GDcrPerHourDataFrame = pd.DataFrame(queryPayload, columns=['time', 'cellname', 'pstraffic'])
+##print(topWorst4GDcrPerHourDataFrame.index())
+#topWorst4GDcrPerHourDataFrameTemp = topWorst4GDcrPerHourDataFrame.groupby(['time']).max()
+#for i,j in topWorst4GDcrPerHourDataFrameTemp['time', 'pstraffic']:
+#    print(topWorst4GDcrPerHourDataFrame.loc[topWorst4GDcrPerHourDataFrame['time']==i, topWorst4GDcrPerHourDataFrame['pstraffic']==j, 'cellname'])
+#print(topWorst4GDcrPerHourDataFrameTemp)
+
+
+
+
 #tempTimeList = set(topWorst4GDcrPerHourDataFrame['time'])
 #tempTopList = []
 #for time in tempTimeList:

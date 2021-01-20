@@ -141,3 +141,7 @@ body {
     grid-row-start: 11;
     grid-column-start: span 3;
 }
+
+#gsmCsCssrNetworkWideGraphGridElement, #gsmPsDcrNetworkWideGraphGridElement, #gsmCsDcrNetworkWideGraphGridElement {
+    grid-row-start: 12;
+}
