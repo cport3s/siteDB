@@ -629,21 +629,21 @@ def updateGraphData_bsc(currentInterval, timeFrameDropdown, dataTypeDropdown):
     dcrNetworkWideGraph = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
     volteDcrNetworkWideGraph = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
     startTimeNetworkWide = (datetime.now()-timedelta(days=3)).strftime("%Y-%m-%d")
+    # Query TOP site from DB and insert into graph
+    pointer.execute('select b.time,b.cellname, b.datadcr from (select a.time,a.cellname,a.datadcr,row_number() over (partition by a.time order by a.datadcr desc) as rn from ran_pf_data.ran_report_4g_report_specific a where a.time >= \'' + str(startTimeNetworkWide) + '\') b where b.rn = 1')
+    queryRaw = pointer.fetchall()
+    queryPayload = np.array(queryRaw)
+    topWorst4GDcrPerHourDataFrame = pd.DataFrame(queryPayload, columns=['time', 'cellname', 'datadcr'])
     for band in lteBandList:
         pointer.execute('SELECT time,erabssr,dcr FROM ran_pf_data.ran_report_4g_report_network_wide where ltecellgroup = \'' + band + '\' and time > \'' + str(startTimeNetworkWide) + '\';')
         queryRaw = pointer.fetchall()
         queryPayload = np.array(queryRaw)
         # Transform the query payload into a dataframe
         lteDataDataframe = pd.DataFrame(queryPayload, columns=['time', 'erabssr', 'dcr'])
-        # Query TOP site from DB and insert into graph
-        #pointer.execute('SELECT time,cellname,voltetraffic FROM ran_pf_data.ran_report_4g_report_specific where time >= ' + str(startTimeNetworkWide) + ';')
-        #queryRaw = pointer.fetchall()
-        #queryPayload = np.array(queryRaw)
-        #topWorst4GDcrPerHourDataFrame = pd.DataFrame(queryPayload, columns=['time', 'cellname', 'voltetraffic'])
-        #topWorst4GDcrPerHourDataFrame = topWorst4GDcrPerHourDataFrame.groupby('time')
         cssrNetworkWideGraph.add_trace(go.Scatter(x=lteDataDataframe['time'], y=lteDataDataframe['erabssr'], name=band))
-        dcrNetworkWideGraph.add_trace(go.Scatter(x=lteDataDataframe['time'], y=lteDataDataframe['dcr'], name=band))
+        dcrNetworkWideGraph.add_trace(go.Scatter(x=lteDataDataframe['time'], y=lteDataDataframe['dcr'], name=band, text=topWorst4GDcrPerHourDataFrame['cellname']))
         queryRaw.clear()
+        # Since there's no VoLTE on B42, we must skip it from the VolTE graphs
         if band != 'Network Band=42':
             pointer.execute('SELECT time,volteerabssr,voltedcr FROM ran_pf_data.ran_report_4g_report_network_wide where ltecellgroup = \'' + band + '\' and time > \'' + str(startTimeNetworkWide) + '\';')
             queryRaw = pointer.fetchall()
