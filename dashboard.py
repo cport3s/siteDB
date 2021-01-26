@@ -630,41 +630,29 @@ def updateGraphData_bsc(currentInterval, timeFrameDropdown, dataTypeDropdown):
     volteDcrNetworkWideGraph = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
     startTimeNetworkWide = (datetime.now()-timedelta(days=3)).strftime("%Y-%m-%d")
     for band in lteBandList:
-        pointer.execute('SELECT time,erabssr FROM ran_pf_data.ran_report_4g_report_network_wide where ltecellgroup = \'' + band + '\' and time > \'' + str(startTimeNetworkWide) + '\';')
+        pointer.execute('SELECT time,erabssr,dcr FROM ran_pf_data.ran_report_4g_report_network_wide where ltecellgroup = \'' + band + '\' and time > \'' + str(startTimeNetworkWide) + '\';')
         queryRaw = pointer.fetchall()
         queryPayload = np.array(queryRaw)
         # Transform the query payload into a dataframe
-        cssrNetworkWideDataframe = pd.DataFrame(queryPayload, columns=['time', 'erabssr'])
-        queryRaw.clear()
+        lteDataDataframe = pd.DataFrame(queryPayload, columns=['time', 'erabssr', 'dcr'])
         # Query TOP site from DB and insert into graph
         #pointer.execute('SELECT time,cellname,voltetraffic FROM ran_pf_data.ran_report_4g_report_specific where time >= ' + str(startTimeNetworkWide) + ';')
         #queryRaw = pointer.fetchall()
         #queryPayload = np.array(queryRaw)
         #topWorst4GDcrPerHourDataFrame = pd.DataFrame(queryPayload, columns=['time', 'cellname', 'voltetraffic'])
         #topWorst4GDcrPerHourDataFrame = topWorst4GDcrPerHourDataFrame.groupby('time')
-        cssrNetworkWideGraph.add_trace(go.Scatter(x=cssrNetworkWideDataframe['time'], y=cssrNetworkWideDataframe['erabssr'], name=band))
+        cssrNetworkWideGraph.add_trace(go.Scatter(x=lteDataDataframe['time'], y=lteDataDataframe['erabssr'], name=band))
+        dcrNetworkWideGraph.add_trace(go.Scatter(x=lteDataDataframe['time'], y=lteDataDataframe['dcr'], name=band))
         queryRaw.clear()
         if band != 'Network Band=42':
-            pointer.execute('SELECT time,volteerabssr FROM ran_pf_data.ran_report_4g_report_network_wide where ltecellgroup = \'' + band + '\' and time > \'' + str(startTimeNetworkWide) + '\';')
+            pointer.execute('SELECT time,volteerabssr,voltedcr FROM ran_pf_data.ran_report_4g_report_network_wide where ltecellgroup = \'' + band + '\' and time > \'' + str(startTimeNetworkWide) + '\';')
             queryRaw = pointer.fetchall()
             queryPayload = np.array(queryRaw)
             # Transform the query payload into a dataframe
-            volteCssrNetworkWideDataframe = pd.DataFrame(queryPayload, columns=['time', 'volteerabssr'])
-            volteCssrNetworkWideGraph.add_trace(go.Scatter(x=volteCssrNetworkWideDataframe['time'], y=volteCssrNetworkWideDataframe['volteerabssr'], name=band))
+            wttxDataDataframe = pd.DataFrame(queryPayload, columns=['time', 'volteerabssr', 'voltedcr'])
+            volteCssrNetworkWideGraph.add_trace(go.Scatter(x=wttxDataDataframe['time'], y=wttxDataDataframe['volteerabssr'], name=band))
+            volteDcrNetworkWideGraph.add_trace(go.Scatter(x=wttxDataDataframe['time'], y=wttxDataDataframe['voltedcr'], name=band))
             queryRaw.clear()
-        pointer.execute('SELECT time,dcr FROM ran_pf_data.ran_report_4g_report_network_wide where ltecellgroup = \'' + band + '\' and time > \'' + str(startTimeNetworkWide) + '\';')
-        queryRaw = pointer.fetchall()
-        queryPayload = np.array(queryRaw)
-        # Transform the query payload into a dataframe
-        dcrNetworkWideDataframe = pd.DataFrame(queryPayload, columns=['time', 'dcr'])
-        dcrNetworkWideGraph.add_trace(go.Scatter(x=dcrNetworkWideDataframe['time'], y=dcrNetworkWideDataframe['dcr'], name=band))
-        queryRaw.clear()
-        pointer.execute('SELECT time,voltedcr FROM ran_pf_data.ran_report_4g_report_network_wide where ltecellgroup = \'' + band + '\' and time > \'' + str(startTimeNetworkWide) + '\';')
-        queryRaw = pointer.fetchall()
-        queryPayload = np.array(queryRaw)
-        # Transform the query payload into a dataframe
-        volteDcrNetworkWideDataframe = pd.DataFrame(queryPayload, columns=['time', 'voltedcr'])
-        volteDcrNetworkWideGraph.add_trace(go.Scatter(x=volteDcrNetworkWideDataframe['time'], y=volteDcrNetworkWideDataframe['voltedcr'], name=band))
         queryRaw.clear()
     cssrNetworkWideGraph.update_layout(
         plot_bgcolor='#2F2F2F', 
