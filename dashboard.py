@@ -16,7 +16,7 @@ import os
 import csv
 import classes
 
-app = dash.Dash(__name__)
+app = dash.Dash(__name__, title='RAN Ops Dashboard')
 server = app.server
 
 # DB Connection Parameters
@@ -30,6 +30,7 @@ lteBandList = ['Network Band=2', 'Network Band=5', 'Network Band=4', 'Network Ba
 # RAN Report Variables
 ranReportFilepath = "D:\\ftproot\\BSC\\ran_report\\"
 currentDateTime = str(datetime.now().strftime('%Y%m%d%H%M'))
+# If current time minutes is less than 30 minutes, set currentDateTime to the last hour. Reports are generated every 30 minutes past the hour
 if int(currentDateTime[-2:]) < 30:
     currentDateTime = str(int(currentDateTime[:-2]) - 1)
 else:
@@ -64,6 +65,7 @@ app.layout = html.Div(children=[
             dcc.Tabs(
                 id = 'tabsContainer',
                 value = 'Engineering Dashboard',
+                style = {'height':'45px'},
                 children = [
                     dcc.Tab(
                         label = 'Engineering Dashboard', 
@@ -191,7 +193,15 @@ app.layout = html.Div(children=[
                 children = [
                     html.H3('Top Worst LTE eRAB SR'),
                     dash_table.DataTable(
-                        id = 'topWorst4GeRabSrTable'
+                        id = 'topWorst4GeRabSrTable',
+                        style_header = {
+                            'backgroundColor':'black',
+                            'color':'white'
+                            },
+                        style_cell = {
+                            'backgroundColor':'black',
+                            'color':'white'
+                        }
                     )
                 ]
             ),
@@ -200,7 +210,15 @@ app.layout = html.Div(children=[
                 children = [
                     html.H3('Top Worst LTE DCR'),
                     dash_table.DataTable(
-                        id='topWorst4GDcrTable'
+                        id='topWorst4GDcrTable',
+                        style_header = {
+                            'backgroundColor':'black',
+                            'color':'white'
+                            },
+                        style_cell = {
+                            'backgroundColor':'black',
+                            'color':'white'
+                        }
                     )
                 ]
             ),
@@ -209,7 +227,15 @@ app.layout = html.Div(children=[
                 children = [
                     html.H3('Top Worst HSDPA CSSR'),
                     dash_table.DataTable(
-                        id = 'topWorst3GHsdpaCssrTable'
+                        id = 'topWorst3GHsdpaCssrTable',
+                        style_header = {
+                            'backgroundColor':'black',
+                            'color':'white'
+                            },
+                        style_cell = {
+                            'backgroundColor':'black',
+                            'color':'white'
+                        }
                     )
                 ]
             ),
@@ -218,7 +244,15 @@ app.layout = html.Div(children=[
                 children = [
                     html.H3('Top Worst HSUPA CSSR'),
                     dash_table.DataTable(
-                        id='topWorst3GHsupaCssrTable'
+                        id='topWorst3GHsupaCssrTable',
+                        style_header = {
+                            'backgroundColor':'black',
+                            'color':'white'
+                            },
+                        style_cell = {
+                            'backgroundColor':'black',
+                            'color':'white'
+                        }
                     )
                 ]
             ),
@@ -227,7 +261,15 @@ app.layout = html.Div(children=[
                 children = [
                     html.H3('Top Worst UMTS CSSR'),
                     dash_table.DataTable(
-                        id='topWorst3GUmtsCssrTable'
+                        id='topWorst3GUmtsCssrTable',
+                        style_header = {
+                            'backgroundColor':'black',
+                            'color':'white'
+                            },
+                        style_cell = {
+                            'backgroundColor':'black',
+                            'color':'white'
+                        }
                     )
                 ]
             ),
@@ -236,7 +278,15 @@ app.layout = html.Div(children=[
                 children = [
                     html.H3('Top Worst HSDPA DCR'),
                     dash_table.DataTable(
-                        id='topWorst3GHsdpaDcrTable'
+                        id='topWorst3GHsdpaDcrTable',
+                        style_header = {
+                            'backgroundColor':'black',
+                            'color':'white'
+                            },
+                        style_cell = {
+                            'backgroundColor':'black',
+                            'color':'white'
+                        }
                     )
                 ]
             ),
@@ -245,7 +295,15 @@ app.layout = html.Div(children=[
                 children = [
                     html.H3('Top Worst HSUPA DCR'),
                     dash_table.DataTable(
-                        id='topWorst3GHsupaDcrTable'
+                        id='topWorst3GHsupaDcrTable',
+                        style_header = {
+                            'backgroundColor':'black',
+                            'color':'white'
+                            },
+                        style_cell = {
+                            'backgroundColor':'black',
+                            'color':'white'
+                        }
                     )
                 ]
             ),
@@ -254,7 +312,15 @@ app.layout = html.Div(children=[
                 children = [
                     html.H3('Top Worst UMTS DCR'),
                     dash_table.DataTable(
-                        id='topWorst3GUmtsDcrTable'
+                        id='topWorst3GUmtsDcrTable',
+                        style_header = {
+                            'backgroundColor':'black',
+                            'color':'white'
+                            },
+                        style_cell = {
+                            'backgroundColor':'black',
+                            'color':'white'
+                        }
                     )
                 ]
             ),
@@ -263,7 +329,15 @@ app.layout = html.Div(children=[
                 children = [
                     html.H3('Top Worst GSM CSSR'),
                     dash_table.DataTable(
-                        id='topWorst2GSpeechCssrTable'
+                        id='topWorst2GSpeechCssrTable',
+                        style_header = {
+                            'backgroundColor':'black',
+                            'color':'white'
+                            },
+                        style_cell = {
+                            'backgroundColor':'black',
+                            'color':'white'
+                        }
                     )
                 ]
             ),
@@ -272,7 +346,15 @@ app.layout = html.Div(children=[
                 children = [
                     html.H3('Top Worst GSM DCR'),
                     dash_table.DataTable(
-                        id='topWorst2GSpeechDcrTable'
+                        id='topWorst2GSpeechDcrTable',
+                        style_header = {
+                            'backgroundColor':'black',
+                            'color':'white'
+                            },
+                        style_cell = {
+                            'backgroundColor':'black',
+                            'color':'white'
+                        }
                     )
                 ]
             )
@@ -300,7 +382,7 @@ app.layout = html.Div(children=[
                         },
                         style_cell_conditional = [
                             {
-                                'if':{'column_id':'KPI\Object'},
+                                'if':{'column_id':'KPI\\Object'},
                                 'textAlign':'left'
                             }
                             ],
@@ -342,7 +424,7 @@ app.layout = html.Div(children=[
                         },
                         style_cell_conditional = [
                             {
-                                'if':{'column_id':'KPI\Object'},
+                                'if':{'column_id':'KPI\\Object'},
                                 'textAlign':'left'
                             }
                             ],
@@ -399,7 +481,7 @@ app.layout = html.Div(children=[
                         },
                         style_cell_conditional = [
                             {
-                                'if':{'column_id':'KPI\Object'},
+                                'if':{'column_id':'KPI\\Object'},
                                 'textAlign':'left'
                             }
                             ],
