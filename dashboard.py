@@ -289,7 +289,38 @@ app.layout = html.Div(children=[
                     dash_table.DataTable(
                         id = 'ranReportLteTable',
                         columns = ranReportLteColumns,
-                        data = ranReportLteTable.to_dict('records')
+                        data = ranReportLteTable.to_dict('records'),
+                        style_header = {
+                            'backgroundColor':'black',
+                            'color':'white'
+                            },
+                        style_cell = {
+                            'backgroundColor':'black',
+                            'color':'white'
+                        },
+                        style_cell_conditional = [
+                            {
+                                'if':{'column_id':'KPI\Object'},
+                                'textAlign':'left'
+                            }
+                            ],
+                        style_data_conditional = [
+                            {
+                                # LTE DCR style rule
+                                'if':{'column_id':'Whole Network', 'row_index':0, 'filter_query':'{Whole Network} >= 0.13'},
+                                'backgroundColor':'red'
+                            },
+                            {
+                                # LTE RRC SSR style rule
+                                'if':{'column_id':'Whole Network', 'row_index':1, 'filter_query':'{Whole Network} < 99'},
+                                'backgroundColor':'red'
+                            },
+                            {
+                                # LTE eRAB SSR style rule
+                                'if':{'column_id':'Whole Network', 'row_index':2, 'filter_query':'{Whole Network} < 99'},
+                                'backgroundColor':'red'
+                            }
+                        ]
                     )
                 ]
             ),
@@ -300,7 +331,53 @@ app.layout = html.Div(children=[
                     dash_table.DataTable(
                         id = 'ranReportUmtsTable',
                         columns = ranReportUmtsColumns,
-                        data = ranReportUmtsTable.to_dict('records')
+                        data = ranReportUmtsTable.to_dict('records'),
+                        style_header = {
+                            'backgroundColor':'black',
+                            'color':'white'
+                            },
+                        style_cell = {
+                            'backgroundColor':'black',
+                            'color':'white'
+                        },
+                        style_cell_conditional = [
+                            {
+                                'if':{'column_id':'KPI\Object'},
+                                'textAlign':'left'
+                            }
+                            ],
+                        style_data_conditional = [
+                            {
+                                # UMTS DCR style rule
+                                'if':{'column_id':'Whole Network', 'row_index':0, 'filter_query':'{Whole Network} >= 0.17'},
+                                'backgroundColor':'red'
+                            },
+                            {
+                                # UMTS CSSR style rule
+                                'if':{'column_id':'Whole Network', 'row_index':1, 'filter_query':'{Whole Network} < 99.87'},
+                                'backgroundColor':'red'
+                            },
+                            {
+                                # HSDPA DCR style rule
+                                'if':{'column_id':'Whole Network', 'row_index':6, 'filter_query':'{Whole Network} > 0.30'},
+                                'backgroundColor':'red'
+                            },
+                            {
+                                # HSUPA DCR style rule
+                                'if':{'column_id':'Whole Network', 'row_index':7, 'filter_query':'{Whole Network} > 0.30'},
+                                'backgroundColor':'red'
+                            },
+                            {
+                                # HSDPA CSSR style rule
+                                'if':{'column_id':'Whole Network', 'row_index':8, 'filter_query':'{Whole Network} < 99'},
+                                'backgroundColor':'red'
+                            },
+                            {
+                                # HSUPA CSSR style rule
+                                'if':{'column_id':'Whole Network', 'row_index':9, 'filter_query':'{Whole Network} < 99'},
+                                'backgroundColor':'red'
+                            },
+                        ]
                     )
                 ]
             ), 
@@ -311,7 +388,33 @@ app.layout = html.Div(children=[
                     dash_table.DataTable(
                         id = 'ranReportGsmTable',
                         columns = ranReportGsmColumns,
-                        data = ranReportGsmTable.to_dict('records')
+                        data = ranReportGsmTable.to_dict('records'),
+                        style_header = {
+                            'backgroundColor':'black',
+                            'color':'white'
+                            },
+                        style_cell = {
+                            'backgroundColor':'black',
+                            'color':'white'
+                        },
+                        style_cell_conditional = [
+                            {
+                                'if':{'column_id':'KPI\Object'},
+                                'textAlign':'left'
+                            }
+                            ],
+                        style_data_conditional = [
+                            {
+                                # GSM CS DCR style rule
+                                'if':{'column_id':'Whole Network', 'row_index':0, 'filter_query':'{Whole Network} >= 0.3'},
+                                'backgroundColor':'red'
+                            },
+                            {
+                                # GSM CS CSSR style rule
+                                'if':{'column_id':'Whole Network', 'row_index':1, 'filter_query':'{Whole Network} < 99.87'},
+                                'backgroundColor':'red'
+                            }
+                        ]
                     )
                 ]
             ),
