@@ -366,6 +366,7 @@ app.layout = html.Div(children=[
         children = [ 
             html.Div(
                 className = 'networkCheckGridElement',
+                id = 'lteGeneralKPITable',
                 children = [
                     html.H3('LTE General Network KPI'),
                     dash_table.DataTable(
@@ -408,6 +409,7 @@ app.layout = html.Div(children=[
             ),
             html.Div(
                 className = 'networkCheckGridElement',
+                id = 'umtsGeneralKPITable',
                 children = [
                     html.H3('UMTS General Network KPI'), 
                     dash_table.DataTable(
@@ -465,6 +467,7 @@ app.layout = html.Div(children=[
             ), 
             html.Div(
                 className = 'networkCheckGridElement',
+                id = 'gsmGeneralKPITable',
                 children = [
                     html.H3('GSM General Network KPI'),
                     dash_table.DataTable(
@@ -1117,4 +1120,4 @@ def showTabContent(currentTab):
         return {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'inline'}
 
 if __name__ == '__main__':
-    app.run_server(debug=True, host='0.0.0.0', port='5006')
+    app.run_server(debug=True, host='0.0.0.0', port='5007')

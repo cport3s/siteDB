@@ -93,6 +93,11 @@ body {
     color: rgb(112, 100, 100);
 }
 
+#gsmGeneralKPITable, #umtsGeneralKPITable, #lteGeneralKPITable {
+    grid-row-start: 1;
+    grid-column-start: span 1;
+}
+
 #cssrNetworkWideGraphGridElement {
     grid-row-start: 2;
     grid-column-start: span 3;
