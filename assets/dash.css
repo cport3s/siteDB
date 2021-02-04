@@ -31,7 +31,7 @@ body {
 
 #graphGridContainer {
     display: grid;
-    grid-template: auto repeat(2, 1fr) / repeat(4, 1fr);
+    grid-template: auto repeat(4, 1fr) / repeat(4, 1fr);
     width: 100%;
     border: 1px solid white;
 }
@@ -43,7 +43,7 @@ body {
 
 #mmePieGraphGridContainer { 
     grid-column: 1 / 5;
-    grid-row: 2 / 3;
+    grid-row: 2 / 7;
 }
 
 #bscGraphContainer {

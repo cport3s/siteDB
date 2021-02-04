@@ -13,17 +13,20 @@ pointer = connectr.cursor(buffered=True)
 
 startTime = (datetime.now() - timedelta(hours=1)).strftime("%Y/%m/%d %H:%M:%S")
 #print('test')
-pointer.execute('select Times,Details from mme_logs.session_event where Times > \'' + str(startTime) + '\';')
-queryRaw = pointer.fetchall()
-queryPayload = np.array(queryRaw)
-
+pointer.execute('select APN_Used from mme_logs.session_event where Times > \'' + str(startTime) + '\';')
+queryRaw = list(set(pointer.fetchall()))
+apnList = []
+apnDict = {}
+for apn in queryRaw:
+    current = str(apn)[2:-3]
+    print(current + " " + str(len(current)))
+    if len(current) < 1:
+        apnList.append('NULL')
+    else:
+        apnList.append(str(apn)[2:-3])
 
 # Close DB connection
 pointer.close()
 connectr.close()
 
-mmeSessionEventsDataframe = pd.DataFrame(queryPayload, columns = ['Times','Details'])
-mmeSessionEventsDataframe = mmeSessionEventsDataframe.groupby('Details').count()
-#mmeSessionEventsDataframe = mmeSessionEventsDataframe.groupby('Details').count().transform('count')
-
-print(mmeSessionEventsDataframe)
+print(apnList)
