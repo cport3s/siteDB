@@ -169,4 +169,3 @@ class coreDbCredentials():
     dbPassword = 'Changeme_123'
     dbServerIp = '172.17.102.75'
     schema = 'mme_logs'
-    dataTable = 'session_event'
