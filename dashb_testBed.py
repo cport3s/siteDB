@@ -188,7 +188,8 @@ def updateGraphData_bsc(currentInterval, selectedTab, timeFrameDropdown, dataTyp
         font_size=graphTitleFontSize, 
         title='MME Event Logs',
         legend=dict(orientation='h'),
-        height=1200
+        height=1200,
+        margin=dict(l=10, r=10, t=10, b=10)
     )
     mmeSessionEventsPie.update_traces(textinfo='value')
     # Close DB connection

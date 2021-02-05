@@ -12,7 +12,6 @@
 #pointer = connectr.cursor(buffered=True)
 #
 #startTime = (datetime.now() - timedelta(hours=1)).strftime("%Y/%m/%d %H:%M:%S")
-##print('test')
 #pointer.execute('select APN_Used from mme_logs.session_event where Times > \'' + str(startTime) + '\';')
 #queryRaw = list(set(pointer.fetchall()))
 #apnList = []
@@ -24,6 +23,7 @@
 #    else:
 #        apnList.append(str(apn)[2:-3])
 #apnDict = [{'label':i, 'value':i} for i in apnList]
+#apnDict.append({'label':'All', 'value':'All'})
 #
 ## Close DB connection
 #pointer.close()
