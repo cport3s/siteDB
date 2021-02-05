@@ -33,8 +33,19 @@ connectr = mysql.connector.connect(user=dbPara.dbUsername, password=dbPara.dbPas
 pointer = connectr.cursor(buffered=True)
 tempStartTime = (datetime.now() - timedelta(hours=24)).strftime("%Y/%m/%d %H:%M:%S")
 pointer.execute('select APN_Used from mme_logs.session_event where Times >= \'' + str(tempStartTime) + '\';')
-queryRaw = pointer.fetchone()
-existingAPN = set(queryRaw)
+queryRaw = list(set(pointer.fetchall()))
+apnList = []
+for apn in queryRaw:
+    current = str(apn)[2:-3]
+    #print(current + " " + str(len(current)))
+    if len(current) < 1:
+        apnList.append('NULL')
+    else:
+        apnList.append(str(apn)[2:-3])
+# Parse into an Options Dictionary Format for the drop down
+apnDict = [{'label':i, 'value':i} for i in apnList]
+# Add the "All" apn option to the dictionary
+apnDict.append({'label':'All', 'value':'All'})
 # Close DB connection
 pointer.close()
 connectr.close()
@@ -73,15 +84,8 @@ app.layout = html.Div(
                     children = [
                         dcc.Dropdown(
                             id = 'dataTypeDropdown',
-                            options = [
-                                {'label':'CS Call Setup Success Rate', 'value':'CS Call Setup Success Rate'}, 
-                                {'label':'PS Call Setup Success Rate', 'value':'PS Call Setup Success Rate'}, 
-                                {'label':'CS Drop Call Rate', 'value':'CS Drop Call Rate'}, 
-                                {'label':'PS Drop Call Rate', 'value':'PS Drop Call Rate'}, 
-                                {'label':'Assignment Success Rate', 'value':'Assignment Success Rate'}, 
-                                {'label':'Location Update Success Rate', 'value':'Location Update Success Rate'}
-                            ],
-                            value = 'PS Drop Call Rate',
+                            options = apnDict,
+                            value = 'All',
                             style = {
                                 'width': '100%', 
                                 'font-size': str(graphTitleFontSize) + 'px', 
@@ -158,16 +162,19 @@ app.layout = html.Div(
     ]
 )
 def updateGraphData_bsc(currentInterval, selectedTab, timeFrameDropdown, dataTypeDropdown):
-    #gsmGraphValueConversionDict = {'CS Call Setup Success Rate':'cssr', 'PS Call Setup Success Rate':'edgedlssr', 'CS Drop Call Rate':'dcr', 'PS Drop Call Rate':'edgedldcr', 'Assignment Success Rate':'assignmentsuccessrate', 'Location Update Success Rate':'luupdatesr'}
-    #umtsGraphValueConversionDict = {'CS Call Setup Success Rate':'csconnectionsuccessrate', 'PS Call Setup Success Rate':'psrtsuccessrate', 'CS Drop Call Rate':'csdropcallrate', 'PS Drop Call Rate':'psdropcallrate', 'Assignment Success Rate':'rrcconnectionsuccessrate', 'Location Update Success Rate':'pagingsuccessrate'}
     hoursDelta = int(timeFrameDropdown)
+    # Replace "All" keyword with "*" for the query
+    if dataTypeDropdown == 'All':
+        apnQuery = ""
+    else:
+        apnQuery = 'APN_Used = \'' + str(dataTypeDropdown) + '\' and'
     # starttime is the current date/time - daysdelta
     startTime = (datetime.now() - timedelta(hours=hoursDelta)).strftime("%Y/%m/%d %H:%M:%S")
     # Connect to DB
     connectr = mysql.connector.connect(user=dbPara.dbUsername, password=dbPara.dbPassword, host=dbPara.dbServerIp, database=dbPara.schema)
     # Connection must be buffered when executing multiple querys on DB before closing connection.
     pointer = connectr.cursor(buffered=True)
-    pointer.execute('select Times,Details from mme_logs.session_event where Times > \'' + str(startTime) + '\';')
+    pointer.execute('select Times,Details from mme_logs.session_event where ' + apnQuery + ' Times > \'' + str(startTime) + '\';')
     queryRaw = pointer.fetchall()
     queryPayload = np.array(queryRaw)
     mmeSessionEventsDataframe = pd.DataFrame(queryPayload, columns = ['Times', 'Details'])
