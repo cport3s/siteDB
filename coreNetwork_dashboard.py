@@ -59,45 +59,45 @@ app.layout = html.Div(
                 )
             ]
         ),
+        html.Div(
+            id = 'dataTypeDropdownGridElement',
+            children = [
+                dcc.Dropdown(
+                    id = 'dataTypeDropdown',
+                    value = 'All',
+                    style = {
+                        'width': '100%', 
+                        'font-size': str(graphTitleFontSize) + 'px', 
+                        'text-align': 'center'
+                    }
+                )
+            ]
+        ),
+        html.Div(
+            id = 'timeFrameDropdownGridElement',
+            children = [
+                dcc.Dropdown(
+                    id='timeFrameDropdown',
+                    options=[
+                        {'label':'1 Hour', 'value':'1'}, 
+                        {'label':'3 Hours', 'value':'3'}, 
+                        {'label':'8 Hours', 'value':'8'}, 
+                        {'label':'24 Hours', 'value':'24'}
+                    ],
+                    # value var is the default value for the drop down.
+                    value='1',
+                    style={
+                        'width': '100%', 
+                        'font-size': str(graphTitleFontSize) + 'px', 
+                        'text-align': 'center'
+                    }
+                )
+            ]
+        ),
         # MME Event Log
         html.Div(
             id = 'graphGridContainer',
             children = [
-                html.Div(
-                    id = 'dataTypeDropdownGridElement',
-                    children = [
-                        dcc.Dropdown(
-                            id = 'dataTypeDropdown',
-                            value = 'All',
-                            style = {
-                                'width': '100%', 
-                                'font-size': str(graphTitleFontSize) + 'px', 
-                                'text-align': 'center'
-                            }
-                        )
-                    ]
-                ),
-                html.Div(
-                    id = 'timeFrameDropdownGridElement',
-                    children = [
-                        dcc.Dropdown(
-                            id='timeFrameDropdown',
-                            options=[
-                                {'label':'1 Hour', 'value':'1'}, 
-                                {'label':'3 Hours', 'value':'3'}, 
-                                {'label':'8 Hours', 'value':'8'}, 
-                                {'label':'24 Hours', 'value':'24'}
-                            ],
-                            # value var is the default value for the drop down.
-                            value='1',
-                            style={
-                                'width': '100%', 
-                                'font-size': str(graphTitleFontSize) + 'px', 
-                                'text-align': 'center'
-                            }
-                        )
-                    ]
-                ),
                 # Graphs
                 html.Div(
                     className = 'gridElement',
@@ -155,9 +155,13 @@ def updateGraphData_bsc(currentInterval, selectedTab, timeFrameDropdown, dataTyp
     connectr = mysql.connector.connect(user=dbPara.dbUsername, password=dbPara.dbPassword, host=dbPara.dbServerIp, database=dbPara.schema)
     # Connection must be buffered when executing multiple querys on DB before closing connection.
     pointer = connectr.cursor(buffered=True)
+    # APN list must be independent from selected tab
+    apnDict = coreNetwork_functions.getApnDropdownList(pointer, startTime)
     if selectedTab == 'MME Event Logs':
         # Call the graph and dropdown dictionary function
-        apnDict, mmeSessionEventsPie = coreNetwork_functions.logEventDistributionQuery(pointer, graphTitleFontSize, dataTypeDropdown, startTime)
+        mmeSessionEventsPie = coreNetwork_functions.logEventDistributionQuery(pointer, graphTitleFontSize, dataTypeDropdown, startTime)
+    if selectedTab == 'Top Events':
+        pass
     # Close DB connection
     pointer.close()
     connectr.close()

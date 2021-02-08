@@ -16,6 +16,24 @@ import os
 import csv
 import classes
 
+# Function to query APN list
+def getApnDropdownList(pointer, startTime):
+    # Get APN Dropdown List
+    pointer.execute('select APN_Used from mme_logs.session_event where Times >= \'' + str(startTime) + '\';')
+    queryRaw = list(set(pointer.fetchall()))
+    apnList = []
+    for apn in queryRaw:
+        current = str(apn)[2:-3]
+        if len(current) < 1:
+            apnList.append('NULL')
+        else:
+            apnList.append(str(apn)[2:-3])
+    # Parse into an Options Dictionary Format for the drop down
+    apnDict = [{'label':i, 'value':i} for i in apnList]
+    # Add the "All" apn option to the dictionary
+    apnDict.append({'label':'All', 'value':'All'})
+    return apnDict
+
 # This function generates the pie chart and the APN dropdown list.
 def logEventDistributionQuery(pointer, graphTitleFontSize, dataTypeDropdown, startTime):
     apnQuery = ""
@@ -41,18 +59,7 @@ def logEventDistributionQuery(pointer, graphTitleFontSize, dataTypeDropdown, sta
         margin=dict(l=10, r=10, t=10, b=10)
     )
     mmeSessionEventsPie.update_traces(textinfo='value')
-    # Get APN Dropdown List
-    pointer.execute('select APN_Used from mme_logs.session_event where Times >= \'' + str(startTime) + '\';')
-    queryRaw = list(set(pointer.fetchall()))
-    apnList = []
-    for apn in queryRaw:
-        current = str(apn)[2:-3]
-        if len(current) < 1:
-            apnList.append('NULL')
-        else:
-            apnList.append(str(apn)[2:-3])
-    # Parse into an Options Dictionary Format for the drop down
-    apnDict = [{'label':i, 'value':i} for i in apnList]
-    # Add the "All" apn option to the dictionary
-    apnDict.append({'label':'All', 'value':'All'})
-    return apnDict, mmeSessionEventsPie
+    return mmeSessionEventsPie
+
+def topEventsQuery(pointer, dataTypeDropdown, startTime):
+    pass
