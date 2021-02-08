@@ -27,28 +27,28 @@ graphTitleFontSize = 14
 tabbedMenuStyle = {'background-color': 'black', 'color': 'white', 'border-bottom-color': 'black'}
 tabbedMenuSelectedStyle = {'background-color': 'grey', 'color': 'white', 'border-bottom-color': 'black', 'border-top-color': 'white'}
 
-# Get APN list
-connectr = mysql.connector.connect(user=dbPara.dbUsername, password=dbPara.dbPassword, host=dbPara.dbServerIp, database=dbPara.schema)
-# Connection must be buffered when executing multiple querys on DB before closing connection.
-pointer = connectr.cursor(buffered=True)
-tempStartTime = (datetime.now() - timedelta(hours=24)).strftime("%Y/%m/%d %H:%M:%S")
-pointer.execute('select APN_Used from mme_logs.session_event where Times >= \'' + str(tempStartTime) + '\';')
-queryRaw = list(set(pointer.fetchall()))
-apnList = []
-for apn in queryRaw:
-    current = str(apn)[2:-3]
-    #print(current + " " + str(len(current)))
-    if len(current) < 1:
-        apnList.append('NULL')
-    else:
-        apnList.append(str(apn)[2:-3])
-# Parse into an Options Dictionary Format for the drop down
-apnDict = [{'label':i, 'value':i} for i in apnList]
-# Add the "All" apn option to the dictionary
-apnDict.append({'label':'All', 'value':'All'})
-# Close DB connection
-pointer.close()
-connectr.close()
+## Get APN list
+#connectr = mysql.connector.connect(user=dbPara.dbUsername, password=dbPara.dbPassword, host=dbPara.dbServerIp, database=dbPara.schema)
+## Connection must be buffered when executing multiple querys on DB before closing connection.
+#pointer = connectr.cursor(buffered=True)
+#tempStartTime = (datetime.now() - timedelta(hours=24)).strftime("%Y/%m/%d %H:%M:%S")
+#pointer.execute('select APN_Used from mme_logs.session_event where Times >= \'' + str(tempStartTime) + '\';')
+#queryRaw = list(set(pointer.fetchall()))
+#apnList = []
+#for apn in queryRaw:
+#    current = str(apn)[2:-3]
+#    #print(current + " " + str(len(current)))
+#    if len(current) < 1:
+#        apnList.append('NULL')
+#    else:
+#        apnList.append(str(apn)[2:-3])
+## Parse into an Options Dictionary Format for the drop down
+#apnDict = [{'label':i, 'value':i} for i in apnList]
+## Add the "All" apn option to the dictionary
+#apnDict.append({'label':'All', 'value':'All'})
+## Close DB connection
+#pointer.close()
+#connectr.close()
 
 app.layout = html.Div(
     children=[
@@ -84,7 +84,7 @@ app.layout = html.Div(
                     children = [
                         dcc.Dropdown(
                             id = 'dataTypeDropdown',
-                            options = apnDict,
+                            #options = apnDict,
                             value = 'All',
                             style = {
                                 'width': '100%', 
@@ -151,7 +151,10 @@ app.layout = html.Div(
 
 # We pass value from the time frame dropdown because it gets updated everytime you change the seleccion on the drop down.
 @app.callback(
-        Output('mmeSessionEventsPie', 'figure')
+    [
+        Output('mmeSessionEventsPie', 'figure'),
+        Output('dataTypeDropdown', 'options')
+    ]
     , 
     [
         # We use the update interval function and tabbed menu to trigger callback
@@ -164,9 +167,8 @@ app.layout = html.Div(
 def updateGraphData_bsc(currentInterval, selectedTab, timeFrameDropdown, dataTypeDropdown):
     hoursDelta = int(timeFrameDropdown)
     # Replace "All" keyword with "*" for the query
-    if dataTypeDropdown == 'All':
-        apnQuery = ""
-    else:
+    apnQuery = ""
+    if dataTypeDropdown != 'All':
         apnQuery = 'APN_Used = \'' + str(dataTypeDropdown) + '\' and'
     # starttime is the current date/time - daysdelta
     startTime = (datetime.now() - timedelta(hours=hoursDelta)).strftime("%Y/%m/%d %H:%M:%S")
@@ -174,6 +176,7 @@ def updateGraphData_bsc(currentInterval, selectedTab, timeFrameDropdown, dataTyp
     connectr = mysql.connector.connect(user=dbPara.dbUsername, password=dbPara.dbPassword, host=dbPara.dbServerIp, database=dbPara.schema)
     # Connection must be buffered when executing multiple querys on DB before closing connection.
     pointer = connectr.cursor(buffered=True)
+    # Fetch Details from db
     pointer.execute('select Times,Details from mme_logs.session_event where ' + apnQuery + ' Times > \'' + str(startTime) + '\';')
     queryRaw = pointer.fetchall()
     queryPayload = np.array(queryRaw)
@@ -187,15 +190,29 @@ def updateGraphData_bsc(currentInterval, selectedTab, timeFrameDropdown, dataTyp
         title_font_size=graphTitleFontSize,
         font_size=graphTitleFontSize, 
         title='MME Event Logs',
-        legend=dict(orientation='h'),
-        height=1200,
+        #legend=dict(orientation='h'),
+        height=1000,
         margin=dict(l=10, r=10, t=10, b=10)
     )
     mmeSessionEventsPie.update_traces(textinfo='value')
+    # Get APN Dropdown List
+    pointer.execute('select APN_Used from mme_logs.session_event where Times >= \'' + str(startTime) + '\';')
+    queryRaw = list(set(pointer.fetchall()))
+    apnList = []
+    for apn in queryRaw:
+        current = str(apn)[2:-3]
+        if len(current) < 1:
+            apnList.append('NULL')
+        else:
+            apnList.append(str(apn)[2:-3])
+    # Parse into an Options Dictionary Format for the drop down
+    apnDict = [{'label':i, 'value':i} for i in apnList]
+    # Add the "All" apn option to the dictionary
+    apnDict.append({'label':'All', 'value':'All'})
     # Close DB connection
     pointer.close()
     connectr.close()
-    return mmeSessionEventsPie
+    return mmeSessionEventsPie, apnDict
 
 # Callback to hide/display selected tab
 #@app.callback([
