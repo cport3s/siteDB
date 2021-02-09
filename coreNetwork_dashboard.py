@@ -178,6 +178,8 @@ def updateGraphData_bsc(currentInterval, selectedTab, timeFrameDropdown, dataTyp
     pointer = connectr.cursor(buffered=True)
     # APN list must be independent from selected tab
     apnDict = coreNetwork_functions.getApnDropdownList(pointer, startTime)
+    mmeSessionEventsPie = {}
+    eventDict = {"Gateway Selection error":[{"":""}]}
     if selectedTab == 'MME Event Logs':
         # Call the graph and dropdown dictionary function
         mmeSessionEventsPie = coreNetwork_functions.logEventDistributionQuery(pointer, graphTitleFontSize, dataTypeDropdown, startTime)
@@ -186,7 +188,7 @@ def updateGraphData_bsc(currentInterval, selectedTab, timeFrameDropdown, dataTyp
     # Close DB connection
     pointer.close()
     connectr.close()
-    return mmeSessionEventsPie, apnDict, [{'name':'apntest', 'id':'apntest'}], 
+    return mmeSessionEventsPie, apnDict, [{'name':'apntest', 'id':'apntest'}], eventDict['Gateway Selection error']
 
 # Callback to hide/display selected tab
 @app.callback([

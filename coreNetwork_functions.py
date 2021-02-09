@@ -74,9 +74,10 @@ def topEventsQuery(pointer, dataTypeDropdown, startTime):
             eventList.append(str(event)[2:-3])
     # Now, get top 10 APNs from every detail
     eventDict = {}
+    # loop through the list containing all the different events on the timeframe
     for event in eventList:
         pointer.execute('select APN_Used,count(*) from mme_logs.session_event where Details = \'' + event + '\' and Times > \'' + startTime + '\' group by APN_Used order by count(*) desc limit 10;')
         queryRaw = pointer.fetchall()
-        eventDict[event] = queryRaw
-    
+        for i in range(len(queryRaw[0])):
+            eventDict[event].append({queryRaw[0][i]:queryRaw[1][i]})
     return eventDict
