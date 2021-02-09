@@ -54,7 +54,6 @@ def logEventDistributionQuery(pointer, graphTitleFontSize, dataTypeDropdown, sta
         title_font_size=graphTitleFontSize,
         font_size=graphTitleFontSize, 
         title='MME Event Logs',
-        #legend=dict(orientation='h'),
         height=1000,
         margin=dict(l=10, r=10, t=10, b=10)
     )
@@ -62,4 +61,22 @@ def logEventDistributionQuery(pointer, graphTitleFontSize, dataTypeDropdown, sta
     return mmeSessionEventsPie
 
 def topEventsQuery(pointer, dataTypeDropdown, startTime):
-    pass
+    # First, get the whole Details list inside the time frame
+    pointer.execute('select Details from mme_logs.session_event where Times > \'' + startTime + '\';')
+    # Then, create a dropdown with the list of details
+    queryRaw = list(set(pointer.fetchall()))
+    eventList = []
+    for event in queryRaw:
+        current = str(event)[2:-3]
+        if len(current) < 1:
+            eventList.append('NULL')
+        else:
+            eventList.append(str(event)[2:-3])
+    # Now, get top 10 APNs from every detail
+    eventDict = {}
+    for event in eventList:
+        pointer.execute('select APN_Used,count(*) from mme_logs.session_event where Details = \'' + event + '\' and Times > \'' + startTime + '\' group by APN_Used order by count(*) desc limit 10;')
+        queryRaw = pointer.fetchall()
+        eventDict[event] = queryRaw
+    
+    return eventDict

@@ -113,7 +113,26 @@ app.layout = html.Div(
         ),
         # Top Worst Reports Tab
         html.Div(
-            id = 'datatableGridContainer'
+            id = 'datatableGridContainer',
+            children = [
+                html.Div(
+                    className = 'datatableGridElement',
+                    children = [
+                        html.H3('Test'),
+                        dash_table.DataTable(
+                            id = 'testTable',
+                            style_header = {
+                                'backgroundColor':'black',
+                                'color':'white'
+                                },
+                            style_cell = {
+                                'backgroundColor':'black',
+                                'color':'white'
+                            }
+                        )
+                    ]
+                )
+            ]
         ),
         # Network Check Tab
         html.Div(
@@ -136,7 +155,9 @@ app.layout = html.Div(
 @app.callback(
     [
         Output('mmeSessionEventsPie', 'figure'),
-        Output('dataTypeDropdown', 'options')
+        Output('dataTypeDropdown', 'options'),
+        Output('testTable', 'columns'),
+        Output('testTable', 'data')
     ]
     , 
     [
@@ -161,11 +182,11 @@ def updateGraphData_bsc(currentInterval, selectedTab, timeFrameDropdown, dataTyp
         # Call the graph and dropdown dictionary function
         mmeSessionEventsPie = coreNetwork_functions.logEventDistributionQuery(pointer, graphTitleFontSize, dataTypeDropdown, startTime)
     if selectedTab == 'Top Events':
-        pass
+        eventDict = coreNetwork_functions.topEventsQuery(pointer, dataTypeDropdown, startTime)
     # Close DB connection
     pointer.close()
     connectr.close()
-    return mmeSessionEventsPie, apnDict
+    return mmeSessionEventsPie, apnDict, [{'name':'apntest', 'id':'apntest'}], 
 
 # Callback to hide/display selected tab
 @app.callback([
@@ -179,7 +200,7 @@ def updateGraphData_bsc(currentInterval, selectedTab, timeFrameDropdown, dataTyp
 def showTabContent(currentTab):
     if currentTab == 'MME Event Logs':
         return {'display':'grid'}, {'display':'none'}, {'display':'none'}, {'display':'none'}
-    elif currentTab == 'Top Worst Reports':
+    elif currentTab == 'Top Events':
         return {'display':'none'}, {'display':'grid'}, {'display':'none'}, {'display':'none'}
     elif currentTab == 'Network Check':
         return {'display':'none'}, {'display':'none'}, {'display':'grid'}, {'display':'none'}
