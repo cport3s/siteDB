@@ -176,19 +176,22 @@ def updateGraphData_bsc(currentInterval, selectedTab, timeFrameDropdown, dataTyp
     connectr = mysql.connector.connect(user=dbPara.dbUsername, password=dbPara.dbPassword, host=dbPara.dbServerIp, database=dbPara.schema)
     # Connection must be buffered when executing multiple querys on DB before closing connection.
     pointer = connectr.cursor(buffered=True)
-    # APN list must be independent from selected tab
-    apnDict = coreNetwork_functions.getApnDropdownList(pointer, startTime)
+    dropDownDict = {}
     mmeSessionEventsPie = {}
     eventDict = {"Gateway Selection error":[{"":""}]}
     if selectedTab == 'MME Event Logs':
-        # Call the graph and dropdown dictionary function
+        # Dropdown list is generated based upon the selected tab from the tabbed menu
+        dropDownDict = coreNetwork_functions.getApnDropdownList(pointer, startTime)
+        # Call the graph function
         mmeSessionEventsPie = coreNetwork_functions.logEventDistributionQuery(pointer, graphTitleFontSize, dataTypeDropdown, startTime)
     if selectedTab == 'Top Events':
-        eventDict = coreNetwork_functions.topEventsQuery(pointer, dataTypeDropdown, startTime)
+        # Dropdown list is generated based upon the selected tab from the tabbed menu
+        dropDownDict, eventList = coreNetwork_functions.getEventDropdownList(pointer, startTime)
+        #eventDict = coreNetwork_functions.topEventsQuery(pointer, dataTypeDropdown, startTime, eventList)
     # Close DB connection
     pointer.close()
     connectr.close()
-    return mmeSessionEventsPie, apnDict, [{'name':'apntest', 'id':'apntest'}], eventDict['Gateway Selection error']
+    return mmeSessionEventsPie, dropDownDict, [{'name':'apntest', 'id':'apntest'}], eventDict['Gateway Selection error']
 
 # Callback to hide/display selected tab
 @app.callback([
