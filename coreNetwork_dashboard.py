@@ -118,9 +118,9 @@ app.layout = html.Div(
                 html.Div(
                     className = 'datatableGridElement',
                     children = [
-                        html.H3('Test'),
+                        html.H3('Top APN per Event'),
                         dash_table.DataTable(
-                            id = 'testTable',
+                            id = 'eventDataTable',
                             style_header = {
                                 'backgroundColor':'black',
                                 'color':'white'
@@ -156,8 +156,8 @@ app.layout = html.Div(
     [
         Output('mmeSessionEventsPie', 'figure'),
         Output('dataTypeDropdown', 'options'),
-        Output('testTable', 'columns'),
-        Output('testTable', 'data')
+        Output('eventDataTable', 'columns'),
+        Output('eventDataTable', 'data')
     ]
     , 
     [
@@ -178,7 +178,7 @@ def updateGraphData_bsc(currentInterval, selectedTab, timeFrameDropdown, dataTyp
     pointer = connectr.cursor(buffered=True)
     dropDownDict = {}
     mmeSessionEventsPie = {}
-    eventDict = {"Gateway Selection error":[{"":""}]}
+    eventDict = [{"":""}]
     if selectedTab == 'MME Event Logs':
         # Dropdown list is generated based upon the selected tab from the tabbed menu
         dropDownDict = coreNetwork_functions.getApnDropdownList(pointer, startTime)
@@ -187,11 +187,12 @@ def updateGraphData_bsc(currentInterval, selectedTab, timeFrameDropdown, dataTyp
     if selectedTab == 'Top Events':
         # Dropdown list is generated based upon the selected tab from the tabbed menu
         dropDownDict, eventList = coreNetwork_functions.getEventDropdownList(pointer, startTime)
-        #eventDict = coreNetwork_functions.topEventsQuery(pointer, dataTypeDropdown, startTime, eventList)
+        # Generate datatable dictionary based upon dataTypeDropdown
+        eventDict = coreNetwork_functions.topEventsQuery(pointer, dataTypeDropdown, startTime, eventList)
     # Close DB connection
     pointer.close()
     connectr.close()
-    return mmeSessionEventsPie, dropDownDict, [{'name':'apntest', 'id':'apntest'}], eventDict['Gateway Selection error']
+    return mmeSessionEventsPie, dropDownDict, [{'name':dataTypeDropdown, 'id':dataTypeDropdown}, {'name':'Occurrencies', 'id':'Occurrencies'}], eventDict
 
 # Callback to hide/display selected tab
 @app.callback([

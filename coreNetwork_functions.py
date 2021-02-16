@@ -62,6 +62,7 @@ def logEventDistributionQuery(pointer, graphTitleFontSize, dataTypeDropdown, sta
     mmeSessionEventsPie.update_traces(textinfo='value')
     return mmeSessionEventsPie
 
+# This function receives sql pointer, timeframe and returns list with events and dictionary for the event list dropdown
 def getEventDropdownList(pointer, startTime):
     # First, get the whole Details list inside the time frame
     pointer.execute('select Details from mme_logs.session_event where Times > \'' + startTime + '\';')
@@ -75,21 +76,27 @@ def getEventDropdownList(pointer, startTime):
         if len(current) < 1:
             eventList.append('NULL')
         else:
-            eventList.append(str(event)[2:-3])
+            current = current.replace("'", "\\\'")
+            eventList.append(current)
     # Parse into an Options Dictionary Format for the drop down
     eventDict = [{'label':i, 'value':i} for i in eventList]
     # Add the "All" apn option to the dictionary
     eventDict.append({'label':'All', 'value':'All'})
     return eventDict, eventList
 
+# This function receives mysql pointer, timeframe, event list and returns the event dictionary to generate the datatable.
 def topEventsQuery(pointer, dataTypeDropdown, startTime, eventList):
     # Now, get top 10 APNs from every detail
-    eventDict = {}
+    eventDict = {"":[]}
+    if dataTypeDropdown == 'All':
+        dataTypeDropdown = 'Gateway Selection error'
     # loop through the list containing all the different events on the timeframe
     for event in eventList:
-        pointer.execute('select APN_Used,count(*) from mme_logs.session_event where Details = \'' + event + ' and Times > \'' + startTime + '\' group by APN_Used order by count(*) desc limit 10;')
+        # Initialize dictionary with key and an empty list
+        eventDict[event] = []
+        data = 'select APN_Used,count(*) from mme_logs.session_event where Details = \'' + event + '\' and Times > \'' + startTime + '\' group by APN_Used order by count(*) desc limit 10;'
+        pointer.execute(data)
         queryRaw = pointer.fetchall()
-        for i in range(len(queryRaw[0])):
-            eventDict[event] = []
-            eventDict[event].append({queryRaw[0][i]:queryRaw[1][i]})
-    return eventDict
+        for query in queryRaw:
+            eventDict[event].append({query[0]:query[1]})
+    return eventDict[dataTypeDropdown]
