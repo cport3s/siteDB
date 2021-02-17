@@ -192,7 +192,7 @@ def updateGraphData_bsc(currentInterval, selectedTab, timeFrameDropdown, dataTyp
     # Close DB connection
     pointer.close()
     connectr.close()
-    return mmeSessionEventsPie, dropDownDict, [{'name':dataTypeDropdown, 'id':dataTypeDropdown}, {'name':'Occurrencies', 'id':'Occurrencies'}], eventDict
+    return mmeSessionEventsPie, dropDownDict, [{'name':'APN', 'id':'APN'}, {'name':'Occurrencies', 'id':'Occurrencies'}], eventDict
 
 # Callback to hide/display selected tab
 @app.callback([
