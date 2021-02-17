@@ -30,18 +30,21 @@
 #    eventDict.append({'label':'All', 'value':'All'})
 #    return eventDict, eventList
 #
-#def topEventsQuery(pointer, startTime, eventList):
+#def topEventsQuery(pointer, dataTypeDropdown, startTime, eventList):
 #    # Now, get top 10 APNs from every detail
-#    eventDict = {}
+#    eventDict = {"":[]}
+#    if dataTypeDropdown == 'All':
+#        dataTypeDropdown = 'Gateway Selection error'
 #    # loop through the list containing all the different events on the timeframe
 #    for event in eventList:
+#        # Initialize dictionary with key and an empty list
 #        eventDict[event] = []
 #        data = 'select APN_Used,count(*) from mme_logs.session_event where Details = \'' + event + '\' and Times > \'' + startTime + '\' group by APN_Used order by count(*) desc limit 10;'
 #        pointer.execute(data)
 #        queryRaw = pointer.fetchall()
 #        for query in queryRaw:
 #            eventDict[event].append({query[0]:query[1]})
-#    return eventDict
+#    return eventDict[dataTypeDropdown]
 #
 #dbPara = classes.coreDbCredentials()
 ## Connect to DB
@@ -49,9 +52,9 @@
 ## Connection must be buffered when executing multiple querys on DB before closing connection.
 #pointer = connectr.cursor(buffered=True)
 #startTime = (datetime.now() - timedelta(hours=1)).strftime("%Y/%m/%d %H:%M:%S")
-#
+#dataTypeDropdown = 'System Failure (#204)'
 #dropDownDict, eventList = getEventDropdownList(pointer, startTime)
-#eventDict = topEventsQuery(pointer, startTime, eventList)
+#eventDict = topEventsQuery(pointer, dataTypeDropdown, startTime, eventList)
 #
 #print(eventDict)
 #

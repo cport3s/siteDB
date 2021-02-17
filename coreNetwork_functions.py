@@ -98,5 +98,5 @@ def topEventsQuery(pointer, dataTypeDropdown, startTime, eventList):
         pointer.execute(data)
         queryRaw = pointer.fetchall()
         for query in queryRaw:
-            eventDict[event].append({query[0]:query[1]})
+            eventDict[event].append({str(query[0]):str(query[1])})
     return eventDict[dataTypeDropdown]
