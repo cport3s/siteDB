@@ -1,14 +1,15 @@
 class gridContainer():
     gsmGraphGridContainerStyle = {
         'display':'grid',
-        'gridTemplate':'repeat(1, 1fr) / repeat(3, 1fr)',
+        'gridTemplate':'repeat(2, 1fr) / repeat(3, 1fr)',
         'width':'100%'
     }
 
     umtsGraphGridContainerStyle = {
         'display':'grid',
         'gridTemplate':'repeat(2, 1fr) / repeat(3, 1fr)',
-        'width':'100%'
+        'width':'100%',
+        'height':'2000'
     }
 
     lteGraphGridContainerStyle = {

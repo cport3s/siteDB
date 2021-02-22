@@ -16,7 +16,8 @@ import csv
 import classes
 import styles
 import ran_functions
-app = dash.Dash(__name__)
+
+app = dash.Dash(__name__, title='RAN-Ops Dashboard')
 server = app.server
 
 # DB Connection Parameters
@@ -117,7 +118,7 @@ app.layout = html.Div(children=[
     dcc.Interval(
         id='viewUpateInterval',
         # interval is expressed in milliseconds (evey 1min)
-        interval=60000, 
+        interval=20000, 
         n_intervals=0
     )
 ])
@@ -167,29 +168,48 @@ def updateGraph(currentInterval):
         plot_bgcolor=graphColors.plot_bgcolor, 
         paper_bgcolor=graphColors.paper_bgcolor, 
         font_color=graphColors.font_color, 
-        title_font_size=graphTitleFontSize,
-        title='4G Data eRAB SSR'
+        margin=dict(l=10, r=10, t=90, b=10),
+        height=700,
+        legend=dict(orientation='h'),
+        title=dict(text='4G Data eRAB SSR'),
+        title_font=dict(size=graphTitleFontSize),
+        legend_font_size=26
     )
     lteVolteCssr.update_layout(
         plot_bgcolor=graphColors.plot_bgcolor, 
         paper_bgcolor=graphColors.paper_bgcolor, 
         font_color=graphColors.font_color,  
         title_font_size=graphTitleFontSize,
-        title='4G VoLTE eRAB SSR'
+        margin=dict(l=10, r=10, t=90, b=10),
+        height=700,
+        legend=dict(orientation='h'),
+        title=dict(text='4G VoLTE eRAB SSR'),
+        title_font=dict(size=graphTitleFontSize),
+        legend_font_size=26
     )
     lteDataDcr.update_layout(
         plot_bgcolor=graphColors.plot_bgcolor, 
         paper_bgcolor=graphColors.paper_bgcolor, 
         font_color=graphColors.font_color, 
         title_font_size=graphTitleFontSize,
-        title='4G Data DCR'
+        margin=dict(l=10, r=10, t=90, b=10),
+        height=700,
+        legend=dict(orientation='h'),
+        title=dict(text='4G Data DCR'),
+        title_font=dict(size=graphTitleFontSize),
+        legend_font_size=26
     )
     lteVolteDcr.update_layout(
         plot_bgcolor=graphColors.plot_bgcolor, 
         paper_bgcolor=graphColors.paper_bgcolor, 
         font_color=graphColors.font_color, 
         title_font_size=graphTitleFontSize,
-        title='4G VoLTE DCR'
+        margin=dict(l=10, r=10, t=90, b=10),
+        height=700,
+        legend=dict(orientation='h'),
+        title=dict(text='4G VoLTE DCR'),
+        title_font=dict(size=graphTitleFontSize),
+        legend_font_size=26
     )
     umtsCssr, hsdpaCssr, hsupaCssr, umtsDcr, hsdpaDcr, hsupaDcr = ran_functions.populateUmtsGraphs(pointer, startTime, ranController.rncNameList, umtsCssr, hsdpaCssr, hsupaCssr, umtsDcr, hsdpaDcr, hsupaDcr)
     hsdpaCssr.update_layout(
@@ -197,42 +217,72 @@ def updateGraph(currentInterval):
         paper_bgcolor=graphColors.paper_bgcolor, 
         font_color=graphColors.font_color, 
         title_font_size=graphTitleFontSize,
-        title='HSDPA CSSR'
+        margin=dict(l=10, r=10, t=90, b=10),
+        height=700,
+        legend=dict(orientation='h'),
+        title=dict(text='HSDPA CSSR'),
+        title_font=dict(size=graphTitleFontSize),
+        legend_font_size=26
     )
     hsupaCssr.update_layout(
         plot_bgcolor=graphColors.plot_bgcolor, 
         paper_bgcolor=graphColors.paper_bgcolor, 
         font_color=graphColors.font_color, 
         title_font_size=graphTitleFontSize,
-        title='HSUPA CSSR'
+        margin=dict(l=10, r=10, t=90, b=10),
+        height=700,
+        legend=dict(orientation='h'),
+        title=dict(text='HSUPA CSSR'),
+        title_font=dict(size=graphTitleFontSize),
+        legend_font_size=26
     )
     umtsCssr.update_layout(
         plot_bgcolor=graphColors.plot_bgcolor, 
         paper_bgcolor=graphColors.paper_bgcolor, 
         font_color=graphColors.font_color, 
         title_font_size=graphTitleFontSize,
-        title='CS CSSR'
+        margin=dict(l=10, r=10, t=90, b=10),
+        height=700,
+        legend=dict(orientation='h'),
+        title=dict(text='CS CSSR'),
+        title_font=dict(size=graphTitleFontSize),
+        legend_font_size=26
     )
     hsdpaDcr.update_layout(
         plot_bgcolor=graphColors.plot_bgcolor, 
         paper_bgcolor=graphColors.paper_bgcolor, 
         font_color=graphColors.font_color, 
         title_font_size=graphTitleFontSize,
-        title='HSDPA DCR'
+        margin=dict(l=10, r=10, t=90, b=10),
+        height=700,
+        legend=dict(orientation='h'),
+        title=dict(text='HSDPA DCR'),
+        title_font=dict(size=graphTitleFontSize),
+        legend_font_size=26
     )
     hsupaDcr.update_layout(
         plot_bgcolor=graphColors.plot_bgcolor, 
         paper_bgcolor=graphColors.paper_bgcolor, 
         font_color=graphColors.font_color, 
         title_font_size=graphTitleFontSize,
-        title='HSUPA DCR'
+        margin=dict(l=10, r=10, t=90, b=10),
+        height=700,
+        legend=dict(orientation='h'),
+        title=dict(text='HSUPA DCR'),
+        title_font=dict(size=graphTitleFontSize),
+        legend_font_size=26
     )
     umtsDcr.update_layout(
         plot_bgcolor=graphColors.plot_bgcolor, 
         paper_bgcolor=graphColors.paper_bgcolor, 
         font_color=graphColors.font_color, 
         title_font_size=graphTitleFontSize,
-        title='CS DCR'
+        margin=dict(l=10, r=10, t=90, b=10),
+        height=700,
+        legend=dict(orientation='h'),
+        title=dict(text='CS DCR'),
+        title_font=dict(size=graphTitleFontSize),
+        legend_font_size=26
     )
     gsmCsCssr, gsmPsCssr, gsmCsDcr = ran_functions.populateGsmGraphs(pointer, startTime, ranController.bscNameList, gsmCsCssr, gsmPsCssr, gsmCsDcr)
     gsmCsCssr.update_layout(
@@ -240,21 +290,36 @@ def updateGraph(currentInterval):
         paper_bgcolor=graphColors.paper_bgcolor, 
         font_color=graphColors.font_color, 
         title_font_size=graphTitleFontSize,
-        title='2G CS CSSR'
+        margin=dict(l=10, r=10, t=90, b=10),
+        height=700,
+        legend=dict(orientation='h'),
+        title=dict(text='GSM CS CSSR'),
+        title_font=dict(size=graphTitleFontSize),
+        legend_font_size=26
     )
     gsmPsCssr.update_layout(
         plot_bgcolor=graphColors.plot_bgcolor, 
         paper_bgcolor=graphColors.paper_bgcolor, 
         font_color=graphColors.font_color, 
         title_font_size=graphTitleFontSize,
-        title='2G PS CSSR'
+        margin=dict(l=10, r=10, t=90, b=10),
+        height=700,
+        legend=dict(orientation='h'),
+        title=dict(text='GSM PS CSSR'),
+        title_font=dict(size=graphTitleFontSize),
+        legend_font_size=26
     )
     gsmCsDcr.update_layout(
         plot_bgcolor=graphColors.plot_bgcolor, 
         paper_bgcolor=graphColors.paper_bgcolor, 
         font_color=graphColors.font_color, 
         title_font_size=graphTitleFontSize,
-        title='2G CS DCR'
+        margin=dict(l=10, r=10, t=90, b=10),
+        height=700,
+        legend=dict(orientation='h'),
+        title=dict(text='GSM CS DCR'),
+        title_font=dict(size=graphTitleFontSize),
+        legend_font_size=26
     )
     # Close DB connection
     pointer.close()
