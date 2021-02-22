@@ -173,3 +173,4 @@ class coreDbCredentials():
 class ranControllers():
     bscNameList = ['BSC_01_RRA', 'BSC_02_STGO', 'BSC_03_VM', 'BSC_04_VM', 'BSC_05_RRA', 'BSC_06_STGO']
     rncNameList = ['RNC_01_RRA', 'RNC_02_STGO', 'RNC_03_VM', 'RNC_04_VM', 'RNC_05_RRA', 'RNC_06_STGO', 'RNC_07_VM']
+    lteBandList = ['Network Band=2', 'Network Band=5', 'Network Band=4', 'Network Band=42', 'Network Band=8']
