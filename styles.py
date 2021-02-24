@@ -34,6 +34,21 @@ class gridElement():
         'grid-row':'1 / 2'
     }
 
+    lteGeneralKPITableStyle={
+        'grid-column':'1 / 2',
+        'grid-row':'2 / 3'
+    }
+
+    umtsGeneralKPITableStyle={
+        'grid-column':'2 / 3',
+        'grid-row':'2 / 3'
+    }
+
+    gsmGeneralKPITableStyle={
+        'grid-column':'3 / 4',
+        'grid-row':'2 / 3'
+    }
+
     umtsDcrStyle={
         'grid-column':'1 / 2',
         'grid-row':'1 / 2'
@@ -88,3 +103,17 @@ class NetworkWideGraphColors():
     plot_bgcolor='#2F2F2F'
     paper_bgcolor='#000000'
     font_color='#FFFFFF'
+    height=700
+    legend_font_size=26
+    graphTitleFontSize=52
+
+class datatableHeaderStyle():
+    style_header = {
+        'backgroundColor':'black',
+        'color':'white'
+    }
+
+    style_cell = {
+        'backgroundColor':'black',
+        'color':'white'
+    }
