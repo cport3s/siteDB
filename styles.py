@@ -110,10 +110,12 @@ class NetworkWideGraphColors():
 class datatableHeaderStyle():
     style_header = {
         'backgroundColor':'black',
-        'color':'white'
+        'color':'white',
+        'fontSize':'30px'
     }
 
     style_cell = {
         'backgroundColor':'black',
-        'color':'white'
+        'color':'white',
+        'fontSize':'30px'
     }

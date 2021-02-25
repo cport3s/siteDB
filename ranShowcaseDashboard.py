@@ -272,7 +272,7 @@ app.layout = html.Div(children=[
     Input('graphUpateInterval', 'n_intervals'))
 def updateGraph(currentInterval):
     # starttime is the current date/time - daysdelta
-    startTime = 3
+    startTime = 7
     # Connect to DB
     connectr = mysql.connector.connect(user = dbPara.dbUsername, password = dbPara.dbPassword, host = dbPara.dbServerIp , database = dbPara.dataTable)
     # Connection must be buffered when executing multiple querys on DB before closing connection.
@@ -466,7 +466,7 @@ def updateDatatable(currentInterval):
             latestRanReport = ranReportFilepath + file
     
     ranReportLteTable = pd.read_excel(latestRanReport, sheet_name='4G Table')
-    ranReportLteTable['Threshold'] = ['< 0.13%', '>= 99.00%', '>= 99%', '', '>= 6500.0000', '', '', '', '', '', '']
+    ranReportLteTable['Threshold'] = ['< 0.13%', '>= 99%', '>= 99%', '', '>= 6500', '', '', '', '', '', '']
     ranReportUmtsTable = pd.read_excel(latestRanReport, sheet_name='3G Table')
     ranReportUmtsTable['Threshold'] = ['< 0.17%', '>= 99.87%', '', '', '', '', '<= 0.30%', '<= 0.30%', '>= 99%', '>= 99%', '', '', '']
     ranReportGsmTable = pd.read_excel(latestRanReport, sheet_name='2G Table')
