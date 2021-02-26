@@ -7,28 +7,6 @@ body {
     background-color: black;
 }
 
-.titleHeaderContainer {
-    margin-bottom: 0;
-    margin-top: 0;
-    display: flex;
-    align-items: center;
-    width: 100%;
-}
-
-.titleHeaderContainer h1 {
-    margin-top: 3px;
-    margin-bottom: 0px;
-}
-
-#dashboardTitle {
-    color: white;
-    width: 30%;
-}
-
-#tabsContainer-parent {
-    width: 70%;
-}
-
 #graphGridContainer {
     display: grid;
     grid-template: auto repeat(4, 1fr) / repeat(4, 1fr);

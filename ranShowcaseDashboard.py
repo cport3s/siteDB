@@ -15,7 +15,7 @@ import os
 import csv
 # Custom libraries
 import classes
-import styles
+import ranShowcaseDashboardStyles as styles
 import ran_functions
 
 app = dash.Dash(__name__, title='RAN-Ops Dashboard')
