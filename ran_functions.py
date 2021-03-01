@@ -74,3 +74,26 @@ def populateGsmGraphs(pointer, startTime, bscNameList, gsmCsCssrNetworkWideGraph
         gsmCsDcrNetworkWideGraph.add_trace(go.Scatter(x=gsmDataDataframe['time'], y=gsmDataDataframe['csdcr'], name=bsc))
         queryRaw.clear()
     return gsmCsCssrNetworkWideGraph, gsmPsCssrNetworkWideGraph, gsmCsDcrNetworkWideGraph
+
+def bscHighRefreshQuery(pointer, startTime, bscHighRefresh, bscNameList, gsmGraphValueConversionDict, dataTypeDropdown):
+    for bsc in bscNameList:
+        pointer.execute('SELECT ' + gsmGraphValueConversionDict[dataTypeDropdown] + ', lastupdate FROM ran_pf_data.bsc_performance_data where nename = \'' + bsc + '\' and lastupdate >= \'' + startTime + '\';')
+        queryRaw = pointer.fetchall()
+        queryPayload = np.array(queryRaw)
+        # Transform the query payload into a dataframe
+        df = pd.DataFrame({dataTypeDropdown:queryPayload[:,0], 'Time':queryPayload[:,1]})
+        # Add trace to the plot
+        bscHighRefresh.add_trace(go.Scatter(x=df["Time"], y=df[dataTypeDropdown], name=bsc))
+        queryRaw.clear()
+    return bscHighRefresh
+
+def rncHighRefreshQuery(pointer, startTime, rncHighRefresh, rncNameList, umtsGraphValueConversionDict, dataTypeDropdown):
+    for rnc in rncNameList:
+        pointer.execute('SELECT ' + umtsGraphValueConversionDict[dataTypeDropdown] + ', lastupdate FROM ran_pf_data.rnc_performance_data where nename = \'' + rnc + '\' and lastupdate >= \'' + startTime + '\';')
+        queryRaw = pointer.fetchall()
+        queryPayload = np.array(queryRaw)
+        # Transform the query payload into a dataframe
+        df = pd.DataFrame({ dataTypeDropdown:queryPayload[:,0], 'Time':queryPayload[:,1] })
+        rncHighRefresh.add_trace(go.Scatter(x=df["Time"], y=df[dataTypeDropdown], name=rnc))
+        queryRaw.clear()
+    return rncHighRefresh

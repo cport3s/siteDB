@@ -2,6 +2,7 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
+from dash.exceptions import PreventUpdate
 import dash_table
 import plotly.express as px
 from plotly.subplots import make_subplots
@@ -15,12 +16,15 @@ import os
 import csv
 import classes
 import ranEngDashboardStyles as styles
+import ran_functions
 
 app = dash.Dash(__name__, title='RAN-Ops Engineering Dashboard')
 server = app.server
 
 # DB Connection Parameters
 dbPara = classes.dbCredentials()
+# Data
+ranControllers = classes.ranControllers()
 # Styles
 tabStyles = styles.headerStyles()
 engDashboardStyles = styles.engDashboardTab()
@@ -128,17 +132,6 @@ app.layout = html.Div(children=[
                     'BSC Graph',
                     dcc.Graph(
                         id = 'bscGraph'
-                    )
-                ]
-            ),
-            html.Div(
-                className = 'gridElement',
-                id = 'oosNeGraphContainer',
-                style = engDashboardStyles.oosNeGraphContainer,
-                children = [
-                    'NE OOS',
-                    dcc.Graph(
-                        id = 'oosNeGraph'
                     )
                 ]
             ),
@@ -654,8 +647,7 @@ app.layout = html.Div(children=[
     [
         Output('bscGraph', 'figure'), 
         Output('rncGraph', 'figure'), 
-        Output('trxUsageGraph', 'figure'),
-        Output('oosNeGraph', 'figure')
+        Output('trxUsageGraph', 'figure')
     ], 
     [
         # We use the update interval function and both dropdown menus as inputs for the callback
@@ -666,58 +658,78 @@ app.layout = html.Div(children=[
     ]
 )
 def updateEngDashboardTab(currentInterval, selectedTab, timeFrameDropdown, dataTypeDropdown):
-    # Instantiate the plots
-    bscHighRefresh = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
-    rncHighRefresh = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
     # Connect to DB
     connectr = mysql.connector.connect(user = dbPara.dbUsername, password = dbPara.dbPassword, host = dbPara.dbServerIp , database = dbPara.dataTable)
     # Connection must be buffered when executing multiple querys on DB before closing connection.
     pointer = connectr.cursor(buffered=True)
     if selectedTab == 'Engineering Dashboard':
+        # Instantiate the plots
+        bscHighRefresh = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
+        rncHighRefresh = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
         gsmGraphValueConversionDict = {'CS Call Setup Success Rate':'cssr', 'PS Call Setup Success Rate':'edgedlssr', 'CS Drop Call Rate':'dcr', 'PS Drop Call Rate':'edgedldcr', 'Assignment Success Rate':'assignmentsuccessrate', 'Location Update Success Rate':'luupdatesr'}
         umtsGraphValueConversionDict = {'CS Call Setup Success Rate':'csconnectionsuccessrate', 'PS Call Setup Success Rate':'psrtsuccessrate', 'CS Drop Call Rate':'csdropcallrate', 'PS Drop Call Rate':'psdropcallrate', 'Assignment Success Rate':'rrcconnectionsuccessrate', 'Location Update Success Rate':'pagingsuccessrate'}
         daysDelta = int(timeFrameDropdown)
         # starttime is the current date/time - daysdelta
         startTime = (datetime.now() - timedelta(days=daysDelta)).strftime("%Y/%m/%d %H:%M:%S")
-        for bsc in bscNameList:
-            pointer.execute('SELECT ' + gsmGraphValueConversionDict[dataTypeDropdown] + ', lastupdate FROM ran_pf_data.bsc_performance_data where nename = \'' + bsc + '\' and lastupdate >= \'' + startTime + '\';')
-            queryRaw = pointer.fetchall()
-            queryPayload = np.array(queryRaw)
-            # Transform the query payload into a dataframe
-            df = pd.DataFrame({dataTypeDropdown:queryPayload[:,0], 'Time':queryPayload[:,1]})
-            # Add trace to the plot
-            bscHighRefresh.add_trace(go.Scatter(x=df["Time"], y=df[dataTypeDropdown], name=bsc))
-            queryRaw.clear()
+        bscHighRefresh = ran_functions.bscHighRefreshQuery(pointer, startTime, bscHighRefresh, ranControllers.bscNameList, gsmGraphValueConversionDict, dataTypeDropdown)
         # Set Graph background colores & title font size
         bscHighRefresh.update_layout(
             plot_bgcolor=graphSyles.plot_bgcolor, 
             paper_bgcolor=graphSyles.paper_bgcolor, 
             font_color=graphSyles.font_color, 
-            title_font_size=graphTitleFontSize
+            title_font_size=graphTitleFontSize,
+            margin=dict(l=10, r=10, t=10, b=10),
+            legend=dict(orientation='h')
         )
-        for rnc in rncNameList:
-            pointer.execute('SELECT ' + umtsGraphValueConversionDict[dataTypeDropdown] + ', lastupdate FROM ran_pf_data.rnc_performance_data where nename = \'' + rnc + '\' and lastupdate >= \'' + startTime + '\';')
-            queryRaw = pointer.fetchall()
-            queryPayload = np.array(queryRaw)
-            # Transform the query payload into a dataframe
-            df = pd.DataFrame({ dataTypeDropdown:queryPayload[:,0], 'Time':queryPayload[:,1] })
-            rncHighRefresh.add_trace(go.Scatter(x=df["Time"], y=df[dataTypeDropdown], name=rnc))
-            queryRaw.clear()
+        rncHighRefresh = ran_functions.rncHighRefreshQuery(pointer, startTime, rncHighRefresh, ranControllers.rncNameList, umtsGraphValueConversionDict, dataTypeDropdown)
         # Set Graph background colores & title font size
         rncHighRefresh.update_layout(
             plot_bgcolor=graphSyles.plot_bgcolor, 
             paper_bgcolor=graphSyles.paper_bgcolor, 
             font_color=graphSyles.font_color,  
-            title_font_size=graphTitleFontSize
+            title_font_size=graphTitleFontSize,
+            margin=dict(l=10, r=10, t=10, b=10),
+            legend=dict(orientation='h')
         )
-    pass
+        # TRX Utilization Graph
+        tempDataFrame = {'neName':[], 'ipPoolId':[], 'trxQty':[]}
+        # Loop through BSC Names
+        for ne in ranControllers.bscNameList:
+            # Loop through Ip Pool ID range (10 - 12)
+            for ippool in range(10,13):
+                tempDataFrame['neName'].append(ne)
+                # Must change ippool to string for the bar chart to display in group mode.
+                tempDataFrame['ipPoolId'].append(str(ippool))
+                pointer.execute('SELECT trxqty FROM ran_pf_data.trx_usage_data where lastupdate >= \'' + datetime.now().strftime("%Y/%m/%d") + '\' and nename = \'' + ne + '\' and ippoolid = ' + str(ippool) + ' order by lastupdate desc;')
+                queryPayload = pointer.fetchone()
+                # Must check if query result is empty, to full with 0
+                if queryPayload:
+                    # Take the latest value on the DB
+                    tempDataFrame['trxQty'].append(queryPayload[0])
+                else:
+                    tempDataFrame['trxQty'].append(0)
+        ipPoolReportDf = pd.DataFrame(tempDataFrame, columns = ['neName', 'ipPoolId', 'trxQty'])
+        trxUsageGraph = px.bar(ipPoolReportDf, x='neName', y='trxQty', color='ipPoolId', barmode='group', template='simple_white')
+        trxUsageGraph.update_layout(
+            plot_bgcolor='#000000', 
+            paper_bgcolor='#000000', 
+            font_color='#FFFFFF', 
+            title_font_size=graphTitleFontSize,
+            font_size=graphTitleFontSize,
+            title='TRX Load per Interface'
+        )
+        return bscHighRefresh, rncHighRefresh, trxUsageGraph
+    else:
+        # Used in case there is no update needed on callback
+        raise PreventUpdate
 
 # Callback to hide/display selected tab
-@app.callback([
-    Output('graphGridContainer', 'style'),
-    Output('datatableGridContainer', 'style'), 
-    Output('networkCheckGridContainer', 'style'),
-    Output('graphInsightContainer', 'style')
+@app.callback(
+    [
+        Output('graphGridContainer', 'style'),
+        Output('datatableGridContainer', 'style'), 
+        Output('networkCheckGridContainer', 'style'),
+        Output('graphInsightContainer', 'style')
     ], 
     Input('tabsContainer', 'value')
 )

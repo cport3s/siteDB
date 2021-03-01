@@ -50,12 +50,12 @@ class engDashboardTab():
     }
 
     dataTypeDropdownGridElement={
-        'grid-column': '1 / 2',
+        'grid-column': '1 / 3',
         'grid-row': '1 / 2'
     }
 
     timeFrameDropdownGridElement={
-        'grid-column': '2 / 3',
+        'grid-column': '3 / 5',
         'grid-row': '1 / 2'
     }
 
@@ -65,17 +65,12 @@ class engDashboardTab():
     }
 
     rncGraphContainer={
-        'grid-column': '1 / 3',
-        'grid-row': '3 / 4'
-    }
-
-    oosNeGraphContainer={
         'grid-column': '3 / 5',
-        'grid-row': '1 / 3'
+        'grid-row': '2 / 3'
     }
 
     trxGraphContainer={
-        'grid-column': '3 / 5',
+        'grid-column': '1 / 5',
         'grid-row': '3 / 5'
     }
 
