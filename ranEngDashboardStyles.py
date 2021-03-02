@@ -25,7 +25,7 @@ class headerStyles():
         'borderTopLeftRadius': '7px',
         'borderTopRightRadius': '7px',
         'paddingTop': '10px',
-        'paddingBottom': '10px',
+        'paddingBottom': '5px',
         'width': 'auto'
     }
 
@@ -37,7 +37,7 @@ class headerStyles():
         'borderTopLeftRadius': '7px',
         'borderTopRightRadius': '7px',
         'paddingTop': '10px',
-        'paddingBottom': '10px',
+        'paddingBottom': '5px',
         'width': 'auto'
     }
 
@@ -78,3 +78,14 @@ class graphStyles():
     plot_bgcolor='#2F2F2F'
     paper_bgcolor='#000000'
     font_color='#FFFFFF'
+
+class dataTableStyles():
+    style_header = {
+        'backgroundColor':'black',
+        'color':'white'
+    }
+
+    style_cell = {
+        'backgroundColor':'black',
+        'color':'white'
+    }
