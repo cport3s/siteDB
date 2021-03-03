@@ -11,6 +11,11 @@ body {
     grid-column: 1 / 5;
     grid-row: 2 / 7;
 }
+
+.datatableGridElement h3 {
+    text-align: center;
+    color: rgb(112, 100, 100);
+}
 /*
 #networkCheckGridContainer {
     display: grid;
@@ -25,11 +30,6 @@ body {
 
 .networkCheckGridElement {
     padding: 0px;
-}
-
-.datatableGridElement h3 {
-    text-align: center;
-    color: rgb(112, 100, 100);
 }
 
 .networkCheckGridElement h3 {

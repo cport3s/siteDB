@@ -24,14 +24,16 @@ server = app.server
 # DB Connection Parameters
 dbPara = classes.dbCredentials()
 # Data
-ranControllers = classes.ranControllers()
+ranController = classes.ranControllers()
 topWorstFilePath = "D:\\ftproot\\BSC\\top_worst_report\\"
+
 # Styles
 tabStyles = styles.headerStyles()
 engDashboardStyles = styles.engDashboardTab()
 graphSyles = styles.graphStyles()
 dataTableStyles = styles.topWorstTab()
 networkCheckStyles = styles.networkCheckTab()
+graphColors = styles.NetworkWideGraphColors()
 
 graphTitleFontSize = 18
 
@@ -282,146 +284,14 @@ app.layout = html.Div(children=[
     # Network Check Tab
     html.Div(
         id = 'networkCheckGridContainer',
+        style = networkCheckStyles.networkCheckGridContainer,
         children = [ 
-            html.Div(
-                className = 'networkCheckGridElement',
-                id = 'lteGeneralKPITable',
-                children = [
-                    html.H3('LTE General Network KPI'),
-                    dash_table.DataTable(
-                        id = 'ranReportLteTable',
-                        style_header = {
-                            'backgroundColor':'black',
-                            'color':'white'
-                            },
-                        style_cell = {
-                            'backgroundColor':'black',
-                            'color':'white'
-                        },
-                        style_cell_conditional = [
-                            {
-                                'if':{'column_id':'KPI\\Object'},
-                                'textAlign':'left'
-                            }
-                            ],
-                        style_data_conditional = [
-                            {
-                                # LTE DCR style rule
-                                'if':{'column_id':'Whole Network', 'row_index':0, 'filter_query':'{Whole Network} >= 0.13'},
-                                'backgroundColor':'red'
-                            },
-                            {
-                                # LTE RRC SSR style rule
-                                'if':{'column_id':'Whole Network', 'row_index':1, 'filter_query':'{Whole Network} < 99'},
-                                'backgroundColor':'red'
-                            },
-                            {
-                                # LTE eRAB SSR style rule
-                                'if':{'column_id':'Whole Network', 'row_index':2, 'filter_query':'{Whole Network} < 99'},
-                                'backgroundColor':'red'
-                            }
-                        ]
-                    )
-                ]
-            ),
-            html.Div(
-                className = 'networkCheckGridElement',
-                id = 'umtsGeneralKPITable',
-                children = [
-                    html.H3('UMTS General Network KPI'), 
-                    dash_table.DataTable(
-                        id = 'ranReportUmtsTable',
-                        style_header = {
-                            'backgroundColor':'black',
-                            'color':'white'
-                            },
-                        style_cell = {
-                            'backgroundColor':'black',
-                            'color':'white'
-                        },
-                        style_cell_conditional = [
-                            {
-                                'if':{'column_id':'KPI\\Object'},
-                                'textAlign':'left'
-                            }
-                            ],
-                        style_data_conditional = [
-                            {
-                                # UMTS DCR style rule
-                                'if':{'column_id':'Whole Network', 'row_index':0, 'filter_query':'{Whole Network} >= 0.17'},
-                                'backgroundColor':'red'
-                            },
-                            {
-                                # UMTS CSSR style rule
-                                'if':{'column_id':'Whole Network', 'row_index':1, 'filter_query':'{Whole Network} < 99.87'},
-                                'backgroundColor':'red'
-                            },
-                            {
-                                # HSDPA DCR style rule
-                                'if':{'column_id':'Whole Network', 'row_index':6, 'filter_query':'{Whole Network} > 0.30'},
-                                'backgroundColor':'red'
-                            },
-                            {
-                                # HSUPA DCR style rule
-                                'if':{'column_id':'Whole Network', 'row_index':7, 'filter_query':'{Whole Network} > 0.30'},
-                                'backgroundColor':'red'
-                            },
-                            {
-                                # HSDPA CSSR style rule
-                                'if':{'column_id':'Whole Network', 'row_index':8, 'filter_query':'{Whole Network} < 99'},
-                                'backgroundColor':'red'
-                            },
-                            {
-                                # HSUPA CSSR style rule
-                                'if':{'column_id':'Whole Network', 'row_index':9, 'filter_query':'{Whole Network} < 99'},
-                                'backgroundColor':'red'
-                            },
-                        ]
-                    )
-                ]
-            ), 
-            html.Div(
-                className = 'networkCheckGridElement',
-                id = 'gsmGeneralKPITable',
-                children = [
-                    html.H3('GSM General Network KPI'),
-                    dash_table.DataTable(
-                        id = 'ranReportGsmTable',
-                        style_header = {
-                            'backgroundColor':'black',
-                            'color':'white'
-                            },
-                        style_cell = {
-                            'backgroundColor':'black',
-                            'color':'white'
-                        },
-                        style_cell_conditional = [
-                            {
-                                'if':{'column_id':'KPI\\Object'},
-                                'textAlign':'left'
-                            }
-                            ],
-                        style_data_conditional = [
-                            {
-                                # GSM CS DCR style rule
-                                'if':{'column_id':'Whole Network', 'row_index':0, 'filter_query':'{Whole Network} >= 0.3'},
-                                'backgroundColor':'red'
-                            },
-                            {
-                                # GSM CS CSSR style rule
-                                'if':{'column_id':'Whole Network', 'row_index':1, 'filter_query':'{Whole Network} < 99.87'},
-                                'backgroundColor':'red'
-                            }
-                        ]
-                    )
-                ]
-            ),
             html.Div(
                 className = 'networkCheckGridElement',
                 id = 'cssrNetworkWideGraphGridElement',
                 children = [
                     dcc.Graph(
-                        id = 'cssrNetworkWideGraph'
+                        id = 'lteDataCssrNetworkWideGraph'
                     )
                 ]
             ),
@@ -430,7 +300,7 @@ app.layout = html.Div(children=[
                 id = 'volteCssrNetworkWideGraphGridElement',
                 children = [
                     dcc.Graph(
-                        id = 'volteCssrNetworkWideGraph'
+                        id = 'lteVolteCssrNetworkWideGraph'
                     )
                 ]
             ),
@@ -439,7 +309,7 @@ app.layout = html.Div(children=[
                 id = 'dcrNetworkWideGraphGridElement',
                 children = [
                     dcc.Graph(
-                        id = 'dcrNetworkWideGraph'
+                        id = 'lteDataDcrNetworkWideGraph'
                     )
                 ]
             ),
@@ -448,7 +318,7 @@ app.layout = html.Div(children=[
                 id = 'volteDcrNetworkWideGraphGridElement',
                 children = [
                     dcc.Graph(
-                        id = 'volteDcrNetworkWideGraph'
+                        id = 'lteVolteDcrNetworkWideGraph'
                     )
                 ]
             ),
@@ -616,7 +486,7 @@ def updateEngDashboardTab(currentInterval, selectedTab, timeFrameDropdown, dataT
         daysDelta = int(timeFrameDropdown)
         # starttime is the current date/time - daysdelta
         startTime = (datetime.now() - timedelta(days=daysDelta)).strftime("%Y/%m/%d %H:%M:%S")
-        bscHighRefresh = ran_functions.bscHighRefreshQuery(pointer, startTime, bscHighRefresh, ranControllers.bscNameList, gsmGraphValueConversionDict, dataTypeDropdown)
+        bscHighRefresh = ran_functions.bscHighRefreshQuery(pointer, startTime, bscHighRefresh, ranController.bscNameList, gsmGraphValueConversionDict, dataTypeDropdown)
         # Set Graph background colores & title font size
         bscHighRefresh.update_layout(
             plot_bgcolor=graphSyles.plot_bgcolor, 
@@ -626,7 +496,7 @@ def updateEngDashboardTab(currentInterval, selectedTab, timeFrameDropdown, dataT
             margin=dict(l=10, r=10, t=10, b=10),
             legend=dict(orientation='h')
         )
-        rncHighRefresh = ran_functions.rncHighRefreshQuery(pointer, startTime, rncHighRefresh, ranControllers.rncNameList, umtsGraphValueConversionDict, dataTypeDropdown)
+        rncHighRefresh = ran_functions.rncHighRefreshQuery(pointer, startTime, rncHighRefresh, ranController.rncNameList, umtsGraphValueConversionDict, dataTypeDropdown)
         # Set Graph background colores & title font size
         rncHighRefresh.update_layout(
             plot_bgcolor=graphSyles.plot_bgcolor, 
@@ -639,7 +509,7 @@ def updateEngDashboardTab(currentInterval, selectedTab, timeFrameDropdown, dataT
         # TRX Utilization Graph
         tempDataFrame = {'neName':[], 'ipPoolId':[], 'trxQty':[]}
         # Loop through BSC Names
-        for ne in ranControllers.bscNameList:
+        for ne in ranController.bscNameList:
             # Loop through Ip Pool ID range (10 - 12)
             for ippool in range(10,13):
                 tempDataFrame['neName'].append(ne)
@@ -772,30 +642,191 @@ def updateTopWorstTab(selectedTab):
     else:
         raise PreventUpdate
 
-## Callback to update Network Check Tab
-#@app.callback(
-#    [
-#        Output('gsmCsCssrNetworkWideGraph', 'figure'),  
-#        Output('gsmPsCssrNetworkWideGraph', 'figure'), 
-#        Output('gsmCsDcrNetworkWideGraph', 'figure'),
-#        Output('umtsCssrNetworkWideGraph', 'figure'),
-#        Output('hsdpaCssrNetworkWideGraph', 'figure'),
-#        Output('hsupaCssrNetworkWideGraph', 'figure'),
-#        Output('umtsDcrNetworkWideGraph', 'figure'),
-#        Output('hsdpaDcrNetworkWideGraph', 'figure'),
-#        Output('hsupaDcrNetworkWideGraph', 'figure'),
-#        Output('lteVolteDcrNetworkWideGraph', 'figure'),
-#        Output('lteDataDcrNetworkWideGraph', 'figure'),
-#        Output('lteVolteCssrNetworkWideGraph', 'figure'),
-#        Output('lteDataCssrNetworkWideGraph', 'figure')
-#    ],
-#    Input('tabsContainer', 'value')
-#)
-#def updateNetworkCheckTab(selectedTab):
-#    if selectedTab == 'Network Check': 
-#        pass
-#    else:
-#        raise PreventUpdate
+# Callback to update Network Check Tab
+@app.callback(
+    [
+        Output('gsmCsCssrNetworkWideGraph', 'figure'),  
+        Output('gsmPsCssrNetworkWideGraph', 'figure'), 
+        Output('gsmCsDcrNetworkWideGraph', 'figure'),
+        Output('umtsCssrNetworkWideGraph', 'figure'),
+        Output('hsdpaCssrNetworkWideGraph', 'figure'),
+        Output('hsupaCssrNetworkWideGraph', 'figure'),
+        Output('umtsDcrNetworkWideGraph', 'figure'),
+        Output('hsdpaDcrNetworkWideGraph', 'figure'),
+        Output('hsupaDcrNetworkWideGraph', 'figure'),
+        Output('lteVolteDcrNetworkWideGraph', 'figure'),
+        Output('lteDataDcrNetworkWideGraph', 'figure'),
+        Output('lteVolteCssrNetworkWideGraph', 'figure'),
+        Output('lteDataCssrNetworkWideGraph', 'figure')
+    ],
+    [
+        Input('tabsContainer', 'value'),
+        Input('dataUpateInterval', 'n_intervals')
+    ]
+)
+def updateNetworkCheckTab(selectedTab, currentInterval):
+    if selectedTab == 'Network Check': 
+        # starttime is the current date/time - daysdelta
+        startTime = 7
+        # Connect to DB
+        connectr = mysql.connector.connect(user = dbPara.dbUsername, password = dbPara.dbPassword, host = dbPara.dbServerIp , database = dbPara.dataTable)
+        # Connection must be buffered when executing multiple querys on DB before closing connection.
+        pointer = connectr.cursor(buffered=True)
+        # Create plots
+        gsmCsCssr = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
+        gsmPsCssr = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
+        gsmCsDcr = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
+        umtsCssr = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
+        hsdpaCssr = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
+        hsupaCssr = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
+        umtsDcr = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
+        hsdpaDcr = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
+        hsupaDcr = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
+        lteVolteDcr = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
+        lteDataDcr = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
+        lteVolteCssr = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
+        lteDataCssr = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
+        # Function to populate graph data
+        lteVolteCssr, lteDataCssr, lteVolteDcr, lteDataDcr = ran_functions.populateLteGraphs(pointer, startTime, ranController.lteBandList, lteVolteCssr, lteDataCssr, lteVolteDcr, lteDataDcr)
+        # Customize graph layout
+        lteDataCssr.update_layout(
+            plot_bgcolor=graphColors.plot_bgcolor, 
+            paper_bgcolor=graphColors.paper_bgcolor, 
+            font_color=graphColors.font_color, 
+            margin=dict(l=10, r=10, t=90, b=10),
+            legend=dict(orientation='h'),
+            title=dict(text='LTE Data eRAB SSR'),
+            title_font=dict(size=graphColors.graphTitleFontSize),
+            legend_font_size=graphColors.legend_font_size
+        )
+        lteVolteCssr.update_layout(
+            plot_bgcolor=graphColors.plot_bgcolor, 
+            paper_bgcolor=graphColors.paper_bgcolor, 
+            font_color=graphColors.font_color,  
+            margin=dict(l=10, r=10, t=90, b=10),
+            legend=dict(orientation='h'),
+            title=dict(text='VoLTE eRAB SSR'),
+            title_font=dict(size=graphColors.graphTitleFontSize),
+            legend_font_size=graphColors.legend_font_size
+        )
+        lteDataDcr.update_layout(
+            plot_bgcolor=graphColors.plot_bgcolor, 
+            paper_bgcolor=graphColors.paper_bgcolor, 
+            font_color=graphColors.font_color, 
+            margin=dict(l=10, r=10, t=90, b=10),
+            legend=dict(orientation='h'),
+            title=dict(text='LTE Data DCR'),
+            title_font=dict(size=graphColors.graphTitleFontSize),
+            legend_font_size=graphColors.legend_font_size
+        )
+        lteVolteDcr.update_layout(
+            plot_bgcolor=graphColors.plot_bgcolor, 
+            paper_bgcolor=graphColors.paper_bgcolor, 
+            font_color=graphColors.font_color, 
+            margin=dict(l=10, r=10, t=90, b=10),
+            legend=dict(orientation='h'),
+            title=dict(text='VoLTE DCR'),
+            title_font=dict(size=graphColors.graphTitleFontSize),
+            legend_font_size=graphColors.legend_font_size
+        )
+        umtsCssr, hsdpaCssr, hsupaCssr, umtsDcr, hsdpaDcr, hsupaDcr = ran_functions.populateUmtsGraphs(pointer, startTime, ranController.rncNameList, umtsCssr, hsdpaCssr, hsupaCssr, umtsDcr, hsdpaDcr, hsupaDcr)
+        hsdpaCssr.update_layout(
+            plot_bgcolor=graphColors.plot_bgcolor, 
+            paper_bgcolor=graphColors.paper_bgcolor, 
+            font_color=graphColors.font_color, 
+            margin=dict(l=10, r=10, t=90, b=10),
+            legend=dict(orientation='h'),
+            title=dict(text='HSDPA CSSR'),
+            title_font=dict(size=graphColors.graphTitleFontSize),
+            legend_font_size=graphColors.legend_font_size
+        )
+        hsupaCssr.update_layout(
+            plot_bgcolor=graphColors.plot_bgcolor, 
+            paper_bgcolor=graphColors.paper_bgcolor, 
+            font_color=graphColors.font_color, 
+            margin=dict(l=10, r=10, t=90, b=10),
+            legend=dict(orientation='h'),
+            title=dict(text='HSUPA CSSR'),
+            title_font=dict(size=graphColors.graphTitleFontSize),
+            legend_font_size=graphColors.legend_font_size
+        )
+        umtsCssr.update_layout(
+            plot_bgcolor=graphColors.plot_bgcolor, 
+            paper_bgcolor=graphColors.paper_bgcolor, 
+            font_color=graphColors.font_color, 
+            margin=dict(l=10, r=10, t=90, b=10),
+            legend=dict(orientation='h'),
+            title=dict(text='UMTS CSSR'),
+            title_font=dict(size=graphColors.graphTitleFontSize),
+            legend_font_size=graphColors.legend_font_size
+        )
+        hsdpaDcr.update_layout(
+            plot_bgcolor=graphColors.plot_bgcolor, 
+            paper_bgcolor=graphColors.paper_bgcolor, 
+            font_color=graphColors.font_color, 
+            margin=dict(l=10, r=10, t=90, b=10),
+            legend=dict(orientation='h'),
+            title=dict(text='HSDPA DCR'),
+            title_font=dict(size=graphColors.graphTitleFontSize),
+            legend_font_size=graphColors.legend_font_size
+        )
+        hsupaDcr.update_layout(
+            plot_bgcolor=graphColors.plot_bgcolor, 
+            paper_bgcolor=graphColors.paper_bgcolor, 
+            font_color=graphColors.font_color, 
+            margin=dict(l=10, r=10, t=90, b=10),
+            legend=dict(orientation='h'),
+            title=dict(text='HSUPA DCR'),
+            title_font=dict(size=graphColors.graphTitleFontSize),
+            legend_font_size=graphColors.legend_font_size
+        )
+        umtsDcr.update_layout(
+            plot_bgcolor=graphColors.plot_bgcolor, 
+            paper_bgcolor=graphColors.paper_bgcolor, 
+            font_color=graphColors.font_color, 
+            margin=dict(l=10, r=10, t=90, b=10),
+            legend=dict(orientation='h'),
+            title=dict(text='UMTS DCR'),
+            title_font=dict(size=graphColors.graphTitleFontSize),
+            legend_font_size=graphColors.legend_font_size
+        )
+        gsmCsCssr, gsmPsCssr, gsmCsDcr = ran_functions.populateGsmGraphs(pointer, startTime, ranController.bscNameList, gsmCsCssr, gsmPsCssr, gsmCsDcr)
+        gsmCsCssr.update_layout(
+            plot_bgcolor=graphColors.plot_bgcolor, 
+            paper_bgcolor=graphColors.paper_bgcolor, 
+            font_color=graphColors.font_color, 
+            margin=dict(l=10, r=10, t=90, b=10),
+            legend=dict(orientation='h'),
+            title=dict(text='GSM CS CSSR'),
+            title_font=dict(size=graphColors.graphTitleFontSize),
+            legend_font_size=graphColors.legend_font_size
+        )
+        gsmPsCssr.update_layout(
+            plot_bgcolor=graphColors.plot_bgcolor, 
+            paper_bgcolor=graphColors.paper_bgcolor, 
+            font_color=graphColors.font_color, 
+            margin=dict(l=10, r=10, t=90, b=10),
+            legend=dict(orientation='h'),
+            title=dict(text='GSM PS CSSR'),
+            title_font=dict(size=graphColors.graphTitleFontSize),
+            legend_font_size=graphColors.legend_font_size
+        )
+        gsmCsDcr.update_layout(
+            plot_bgcolor=graphColors.plot_bgcolor, 
+            paper_bgcolor=graphColors.paper_bgcolor, 
+            font_color=graphColors.font_color, 
+            margin=dict(l=10, r=10, t=90, b=10),
+            legend=dict(orientation='h'),
+            title=dict(text='GSM CS DCR'),
+            title_font=dict(size=graphColors.graphTitleFontSize),
+            legend_font_size=graphColors.legend_font_size
+        )
+        # Close DB connection
+        pointer.close()
+        connectr.close()
+        return gsmCsCssr, gsmPsCssr, gsmCsDcr, umtsCssr, hsdpaCssr, hsupaCssr, umtsDcr, hsdpaDcr, hsupaDcr, lteVolteDcr, lteDataDcr, lteVolteCssr, lteDataCssr
+    else:
+        raise PreventUpdate
 
 # Callback to hide/display selected tab
 @app.callback(
