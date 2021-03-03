@@ -44,7 +44,7 @@ class headerStyles():
 class engDashboardTab():
     graphGridContainerStyle={
         'display': 'grid',
-        'grid-template': 'auto repeat(4, 1fr) / repeat(4, 1fr)',
+        'gridTemplate': 'auto repeat(2, 1fr) / repeat(4, 1fr)',
         'width': '100%',
         'border': '1px solid white'
     }
@@ -71,7 +71,7 @@ class engDashboardTab():
 
     trxGraphContainer={
         'grid-column': '1 / 5',
-        'grid-row': '3 / 5'
+        'grid-row': '3 / 4'
     }
 
 class graphStyles():
@@ -79,7 +79,14 @@ class graphStyles():
     paper_bgcolor='#000000'
     font_color='#FFFFFF'
 
-class dataTableStyles():
+class topWorstTab():
+    datatableGridContainer = {
+        'display': 'grid',
+        'grid-template': 'auto repeat(5, 1fr) / repeat(2, 1fr)',
+        'width': '100%',
+        'border': '1px solid white'
+    }
+
     style_header = {
         'backgroundColor':'black',
         'color':'white'
@@ -88,4 +95,12 @@ class dataTableStyles():
     style_cell = {
         'backgroundColor':'black',
         'color':'white'
+    }
+
+class networkCheckTab():
+    networkCheckGridContainer = {
+        'display': 'grid',
+        'grid-template': 'repeat(1, 1fr) / repeat(3, 1fr)',
+        'width': '100%',
+        'border': '1px solid white'
     }

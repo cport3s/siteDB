@@ -30,7 +30,8 @@ topWorstFilePath = "D:\\ftproot\\BSC\\top_worst_report\\"
 tabStyles = styles.headerStyles()
 engDashboardStyles = styles.engDashboardTab()
 graphSyles = styles.graphStyles()
-dataTableStyles = styles.dataTableStyles()
+dataTableStyles = styles.topWorstTab()
+networkCheckStyles = styles.networkCheckTab()
 
 graphTitleFontSize = 18
 
@@ -164,6 +165,7 @@ app.layout = html.Div(children=[
     # Top Worst Reports Tab
     html.Div(
         id = 'datatableGridContainer', 
+        style = dataTableStyles.datatableGridContainer,
         children = [
             html.Div(
                 className = 'datatableGridElement',
@@ -770,11 +772,36 @@ def updateTopWorstTab(selectedTab):
     else:
         raise PreventUpdate
 
+## Callback to update Network Check Tab
+#@app.callback(
+#    [
+#        Output('gsmCsCssrNetworkWideGraph', 'figure'),  
+#        Output('gsmPsCssrNetworkWideGraph', 'figure'), 
+#        Output('gsmCsDcrNetworkWideGraph', 'figure'),
+#        Output('umtsCssrNetworkWideGraph', 'figure'),
+#        Output('hsdpaCssrNetworkWideGraph', 'figure'),
+#        Output('hsupaCssrNetworkWideGraph', 'figure'),
+#        Output('umtsDcrNetworkWideGraph', 'figure'),
+#        Output('hsdpaDcrNetworkWideGraph', 'figure'),
+#        Output('hsupaDcrNetworkWideGraph', 'figure'),
+#        Output('lteVolteDcrNetworkWideGraph', 'figure'),
+#        Output('lteDataDcrNetworkWideGraph', 'figure'),
+#        Output('lteVolteCssrNetworkWideGraph', 'figure'),
+#        Output('lteDataCssrNetworkWideGraph', 'figure')
+#    ],
+#    Input('tabsContainer', 'value')
+#)
+#def updateNetworkCheckTab(selectedTab):
+#    if selectedTab == 'Network Check': 
+#        pass
+#    else:
+#        raise PreventUpdate
+
 # Callback to hide/display selected tab
 @app.callback(
     [
         Output('graphGridContainer', 'style'),
-        Output('datatableGridContainer', 'style'), 
+        Output('datatableGridContainer', 'style'),
         Output('networkCheckGridContainer', 'style'),
         Output('graphInsightContainer', 'style')
     ], 
@@ -782,13 +809,29 @@ def updateTopWorstTab(selectedTab):
 )
 def showTabContent(currentTab):
     if currentTab == 'Engineering Dashboard':
-        return {'display':'grid'}, {'display':'none'}, {'display':'none'}, {'display':'none'}
+        engDashboard = engDashboardStyles.graphGridContainerStyle
+        engDashboard['display'] = 'grid'
+        topWorst = dataTableStyles.datatableGridContainer
+        topWorst['display'] = 'none'
+        return engDashboard, topWorst, {'display':'none'}, {'display':'none'}
     elif currentTab == 'Top Worst Report':
-        return {'display':'none'}, {'display':'grid'}, {'display':'none'}, {'display':'none'}
+        engDashboard = engDashboardStyles.graphGridContainerStyle
+        engDashboard['display'] = 'none'
+        topWorst = dataTableStyles.datatableGridContainer
+        topWorst['display'] = 'grid'
+        return engDashboard, topWorst, {'display':'none'}, {'display':'none'}
     elif currentTab == 'Network Check':
-        return {'display':'none'}, {'display':'none'}, {'display':'grid'}, {'display':'none'}
+        engDashboard = engDashboardStyles.graphGridContainerStyle
+        engDashboard['display'] = 'none'
+        topWorst = dataTableStyles.datatableGridContainer
+        topWorst['display'] = 'none'
+        return engDashboard, topWorst, {'display':'grid'}, {'display':'none'}
     else:
-        return {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'inline'}
+        engDashboard = engDashboardStyles.graphGridContainerStyle
+        engDashboard['display'] = 'none'
+        topWorst = dataTableStyles.datatableGridContainer
+        topWorst['display'] = 'none'
+        return engDashboard, topWorst, {'display':'none'}, {'display':'inline'}
 
 if __name__ == '__main__':
     app.run_server(debug=True, host='0.0.0.0', port='5016')
