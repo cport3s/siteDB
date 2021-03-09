@@ -82,7 +82,7 @@ class graphStyles():
 class topWorstTab():
     datatableGridContainer = {
         'display': 'grid',
-        'grid-template': 'auto repeat(5, 1fr) / repeat(2, 1fr)',
+        'grid-template': 'auto repeat(1, 1fr) / repeat(2, 1fr)',
         'width': '100%',
         'border': '1px solid white'
     }
@@ -100,9 +100,35 @@ class topWorstTab():
 class networkCheckTab():
     networkCheckGridContainer = {
         'display': 'grid',
-        'grid-template': 'repeat(6, 1fr) / repeat(6, 1fr)',
+        'grid-template': 'auto repeat(1, 1fr) / repeat(1, 1fr)',
         'width': '100%',
         'border': '1px solid white'
+    }
+
+class graphInsightTab():
+    graphInsightFlexContainer = {
+        'display': 'flex',
+        'width': '100%',
+        'flexDirection': 'row', 
+        'flexWrap': 'wrap',
+        'border': '1px solid white'
+    }
+
+    graphInsightDropdownContainer = {
+        'display': 'flex',
+        'width': '100%'
+    }
+
+    graphInsightRat = {
+        'width': '100%'
+    }
+
+    graphInsightGraphType = {
+        'width': '100%'
+    }
+
+    graphInsightGraphContainer = {
+        'width': '100%'
     }
 
 class NetworkWideGraphColors():

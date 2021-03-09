@@ -34,6 +34,7 @@ graphSyles = styles.graphStyles()
 dataTableStyles = styles.topWorstTab()
 networkCheckStyles = styles.networkCheckTab()
 graphColors = styles.NetworkWideGraphColors()
+graphInsightStyles = styles.graphInsightTab()
 
 graphTitleFontSize = 18
 
@@ -49,7 +50,7 @@ app.layout = html.Div(children=[
             ),
             dcc.Tabs(
                 id = 'tabsContainer',
-                value = 'Engineering Dashboard',
+                value = 'Graph Insight',
                 children = [
                     dcc.Tab(
                         label = 'Engineering Dashboard', 
@@ -405,38 +406,35 @@ app.layout = html.Div(children=[
             )
         ]
     ),
-    # Graph Insight Tab (WIP)
+    # Graph Insight Tab
     html.Div(
-        id = 'graphInsightContainer',
+        id = 'graphInsightFlexContainer',
+        style = graphInsightStyles.graphInsightFlexContainer,
         children = [
             html.Div(
                 id = 'graphInsightDropdownContainer',
-                style = {'display': 'flex', 'width':'100%'},
+                style = graphInsightStyles.graphInsightDropdownContainer,
                 children = [
                     dcc.Dropdown(
                         id = 'graphInsightRat',
-                        style = {'width': '100%'},
+                        style = graphInsightStyles.graphInsightRat,
                         options = [
-                            {'label':'BSC', 'value':'BSC'},
-                            {'label':'RNC', 'value':'RNC'}
+                            {'label':'GSM', 'value':'GSM'},
+                            {'label':'UMTS', 'value':'UMTS'},
+                            {'label':'LTE', 'value':'LTE'}
                         ],
-                        value = 'BSC'
+                        value = 'LTE'
                     ),
                     dcc.Dropdown(
-                        id = 'graphInsightDataType',
-                        style = {'width': '100%'},
-                        options = [
-                            {'label':'CS DCR', 'value':'CS DCR'},
-                            {'label':'PS DCR', 'value':'PS DCR'},
-                            {'label':'CS CSSR', 'value':'CS CSSR'},
-                            {'label':'PS CSSR', 'value':'PS CSSR'}
-                        ],
-                        value = 'CS DCR'
+                        id = 'graphInsightGraphType',
+                        style = graphInsightStyles.graphInsightGraphType,
+                        value = 'None'
                     )
                 ]
             ),
             html.Div(
                 id = 'graphInsightGraphContainer',
+                style = graphInsightStyles.graphInsightGraphContainer,
                 children = [
                     dcc.Graph(
                         id = 'graphInsightgraph'
@@ -694,7 +692,7 @@ def updateNetworkCheckTab(selectedTab, currentInterval):
             paper_bgcolor=graphColors.paper_bgcolor, 
             font_color=graphColors.font_color, 
             margin=dict(l=10, r=10, t=90, b=10),
-            legend=dict(orientation='h'),
+            #legend=dict(orientation='h'),
             title=dict(text='LTE Data eRAB SSR'),
             title_font=dict(size=graphColors.graphTitleFontSize),
             legend_font_size=graphColors.legend_font_size
@@ -704,7 +702,7 @@ def updateNetworkCheckTab(selectedTab, currentInterval):
             paper_bgcolor=graphColors.paper_bgcolor, 
             font_color=graphColors.font_color,  
             margin=dict(l=10, r=10, t=90, b=10),
-            legend=dict(orientation='h'),
+            #legend=dict(orientation='h'),
             title=dict(text='VoLTE eRAB SSR'),
             title_font=dict(size=graphColors.graphTitleFontSize),
             legend_font_size=graphColors.legend_font_size
@@ -714,7 +712,7 @@ def updateNetworkCheckTab(selectedTab, currentInterval):
             paper_bgcolor=graphColors.paper_bgcolor, 
             font_color=graphColors.font_color, 
             margin=dict(l=10, r=10, t=90, b=10),
-            legend=dict(orientation='h'),
+            #legend=dict(orientation='h'),
             title=dict(text='LTE Data DCR'),
             title_font=dict(size=graphColors.graphTitleFontSize),
             legend_font_size=graphColors.legend_font_size
@@ -724,7 +722,7 @@ def updateNetworkCheckTab(selectedTab, currentInterval):
             paper_bgcolor=graphColors.paper_bgcolor, 
             font_color=graphColors.font_color, 
             margin=dict(l=10, r=10, t=90, b=10),
-            legend=dict(orientation='h'),
+            #legend=dict(orientation='h'),
             title=dict(text='VoLTE DCR'),
             title_font=dict(size=graphColors.graphTitleFontSize),
             legend_font_size=graphColors.legend_font_size
@@ -735,7 +733,7 @@ def updateNetworkCheckTab(selectedTab, currentInterval):
             paper_bgcolor=graphColors.paper_bgcolor, 
             font_color=graphColors.font_color, 
             margin=dict(l=10, r=10, t=90, b=10),
-            legend=dict(orientation='h'),
+            #legend=dict(orientation='h'),
             title=dict(text='HSDPA CSSR'),
             title_font=dict(size=graphColors.graphTitleFontSize),
             legend_font_size=graphColors.legend_font_size
@@ -745,7 +743,7 @@ def updateNetworkCheckTab(selectedTab, currentInterval):
             paper_bgcolor=graphColors.paper_bgcolor, 
             font_color=graphColors.font_color, 
             margin=dict(l=10, r=10, t=90, b=10),
-            legend=dict(orientation='h'),
+            #legend=dict(orientation='h'),
             title=dict(text='HSUPA CSSR'),
             title_font=dict(size=graphColors.graphTitleFontSize),
             legend_font_size=graphColors.legend_font_size
@@ -755,7 +753,7 @@ def updateNetworkCheckTab(selectedTab, currentInterval):
             paper_bgcolor=graphColors.paper_bgcolor, 
             font_color=graphColors.font_color, 
             margin=dict(l=10, r=10, t=90, b=10),
-            legend=dict(orientation='h'),
+            #legend=dict(orientation='h'),
             title=dict(text='UMTS CSSR'),
             title_font=dict(size=graphColors.graphTitleFontSize),
             legend_font_size=graphColors.legend_font_size
@@ -765,7 +763,7 @@ def updateNetworkCheckTab(selectedTab, currentInterval):
             paper_bgcolor=graphColors.paper_bgcolor, 
             font_color=graphColors.font_color, 
             margin=dict(l=10, r=10, t=90, b=10),
-            legend=dict(orientation='h'),
+            #legend=dict(orientation='h'),
             title=dict(text='HSDPA DCR'),
             title_font=dict(size=graphColors.graphTitleFontSize),
             legend_font_size=graphColors.legend_font_size
@@ -775,7 +773,7 @@ def updateNetworkCheckTab(selectedTab, currentInterval):
             paper_bgcolor=graphColors.paper_bgcolor, 
             font_color=graphColors.font_color, 
             margin=dict(l=10, r=10, t=90, b=10),
-            legend=dict(orientation='h'),
+            #legend=dict(orientation='h'),
             title=dict(text='HSUPA DCR'),
             title_font=dict(size=graphColors.graphTitleFontSize),
             legend_font_size=graphColors.legend_font_size
@@ -785,7 +783,7 @@ def updateNetworkCheckTab(selectedTab, currentInterval):
             paper_bgcolor=graphColors.paper_bgcolor, 
             font_color=graphColors.font_color, 
             margin=dict(l=10, r=10, t=90, b=10),
-            legend=dict(orientation='h'),
+            #legend=dict(orientation='h'),
             title=dict(text='UMTS DCR'),
             title_font=dict(size=graphColors.graphTitleFontSize),
             legend_font_size=graphColors.legend_font_size
@@ -796,7 +794,7 @@ def updateNetworkCheckTab(selectedTab, currentInterval):
             paper_bgcolor=graphColors.paper_bgcolor, 
             font_color=graphColors.font_color, 
             margin=dict(l=10, r=10, t=90, b=10),
-            legend=dict(orientation='h'),
+            #legend=dict(orientation='h'),
             title=dict(text='GSM CS CSSR'),
             title_font=dict(size=graphColors.graphTitleFontSize),
             legend_font_size=graphColors.legend_font_size
@@ -806,7 +804,7 @@ def updateNetworkCheckTab(selectedTab, currentInterval):
             paper_bgcolor=graphColors.paper_bgcolor, 
             font_color=graphColors.font_color, 
             margin=dict(l=10, r=10, t=90, b=10),
-            legend=dict(orientation='h'),
+            #legend=dict(orientation='h'),
             title=dict(text='GSM PS CSSR'),
             title_font=dict(size=graphColors.graphTitleFontSize),
             legend_font_size=graphColors.legend_font_size
@@ -816,7 +814,7 @@ def updateNetworkCheckTab(selectedTab, currentInterval):
             paper_bgcolor=graphColors.paper_bgcolor, 
             font_color=graphColors.font_color, 
             margin=dict(l=10, r=10, t=90, b=10),
-            legend=dict(orientation='h'),
+            #legend=dict(orientation='h'),
             title=dict(text='GSM CS DCR'),
             title_font=dict(size=graphColors.graphTitleFontSize),
             legend_font_size=graphColors.legend_font_size
@@ -828,41 +826,60 @@ def updateNetworkCheckTab(selectedTab, currentInterval):
     else:
         raise PreventUpdate
 
+#Callback to update Graph Insight Dropdown
+@app.callback(
+    Output('graphInsightGraphType', 'options'),
+    Input('graphInsightRat', 'value')
+)
+def updateGraphInsightDropdown(selectedRAT):
+    returnList = ['None']
+    if selectedRAT == 'LTE':
+        returnList = [{'label':'LTE Data DCR', 'value':'LTE Data DCR'}, {'label':'LTE Data CSSR', 'value':'LTE Data CSSR'}, {'label':'VoLTE DCR', 'value':'VoLTE DCR'}, {'label':'VoLTE CSSR', 'value':'VoLTE CSSR'}]
+    elif selectedRAT == 'UMTS':
+        returnList = [{'label':'UMTS DCR', 'value':'UMTS DCR'}, {'label':'UMTS CSSR', 'value':'UMTS CSSR'}, {'label':'HSDPA DCR', 'value':'HSDPA DCR'}, {'label':'HSDPA CSSR', 'value':'HSDPA CSSR'}, {'label':'HSUPA DCR', 'value':'HSUPA DCR'}, {'label':'HSUPA CSSR', 'value':'HSUPA CSSR'}]
+    else:
+        returnList = [{'label':'GSM CS CSSR', 'value':'GSM CS CSSR'}, {'label':'GSM PS CSSR', 'value':'GSM PS CSSR'}, {'label':'GSM CS DCR', 'value':'GSM CS DCR'}]
+    return returnList
+
 # Callback to hide/display selected tab
 @app.callback(
     [
         Output('graphGridContainer', 'style'),
         Output('datatableGridContainer', 'style'),
         Output('networkCheckGridContainer', 'style'),
-        Output('graphInsightContainer', 'style')
+        Output('graphInsightFlexContainer', 'style')
     ], 
     Input('tabsContainer', 'value')
 )
 def showTabContent(currentTab):
+    engDashboard = engDashboardStyles.graphGridContainerStyle
+    topWorst = dataTableStyles.datatableGridContainer
+    networkCheck = networkCheckStyles.networkCheckGridContainer
+    graphInsight = graphInsightStyles.graphInsightFlexContainer
     if currentTab == 'Engineering Dashboard':
-        engDashboard = engDashboardStyles.graphGridContainerStyle
         engDashboard['display'] = 'grid'
-        topWorst = dataTableStyles.datatableGridContainer
         topWorst['display'] = 'none'
-        return engDashboard, topWorst, {'display':'none'}, {'display':'none'}
+        networkCheck['display'] = 'none'
+        graphInsight['display'] = 'none'
+        return engDashboard, topWorst, networkCheck, graphInsight
     elif currentTab == 'Top Worst Report':
-        engDashboard = engDashboardStyles.graphGridContainerStyle
         engDashboard['display'] = 'none'
-        topWorst = dataTableStyles.datatableGridContainer
         topWorst['display'] = 'grid'
-        return engDashboard, topWorst, {'display':'none'}, {'display':'none'}
+        networkCheck['display'] = 'none'
+        graphInsight['display'] = 'none'
+        return engDashboard, topWorst, networkCheck, graphInsight
     elif currentTab == 'Network Check':
-        engDashboard = engDashboardStyles.graphGridContainerStyle
         engDashboard['display'] = 'none'
-        topWorst = dataTableStyles.datatableGridContainer
         topWorst['display'] = 'none'
-        return engDashboard, topWorst, {'display':'grid'}, {'display':'none'}
+        networkCheck['display'] = 'grid'
+        graphInsight['display'] = 'none'
+        return engDashboard, topWorst, networkCheck, graphInsight
     else:
-        engDashboard = engDashboardStyles.graphGridContainerStyle
         engDashboard['display'] = 'none'
-        topWorst = dataTableStyles.datatableGridContainer
         topWorst['display'] = 'none'
-        return engDashboard, topWorst, {'display':'none'}, {'display':'inline'}
+        networkCheck['display'] = 'none'
+        graphInsight['display'] = 'flex'
+        return engDashboard, topWorst, networkCheck, graphInsight
 
 if __name__ == '__main__':
     app.run_server(debug=True, host='0.0.0.0', port='5016')
