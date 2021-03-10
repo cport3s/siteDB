@@ -437,7 +437,7 @@ app.layout = html.Div(children=[
                 style = graphInsightStyles.graphInsightGraphContainer,
                 children = [
                     dcc.Graph(
-                        id = 'graphInsightgraph'
+                        id = 'graphInsightGraph'
                     )
                 ]
             )
@@ -840,6 +840,31 @@ def updateGraphInsightDropdown(selectedRAT):
     else:
         returnList = [{'label':'GSM CS CSSR', 'value':'GSM CS CSSR'}, {'label':'GSM PS CSSR', 'value':'GSM PS CSSR'}, {'label':'GSM CS DCR', 'value':'GSM CS DCR'}]
     return returnList
+
+# Callback to update Graph Inisight Graph
+@app.callback(
+    Output('graphInsightGraph', 'figure'),
+    Input('graphInsightGraphType', 'value')
+)
+def updateGraphInsightGraph(selectedKPI):
+    startTime = 7
+    # Connect to DB
+    connectr = mysql.connector.connect(user = dbPara.dbUsername, password = dbPara.dbPassword, host = dbPara.dbServerIp , database = dbPara.dataTable)
+    # Connection must be buffered when executing multiple querys on DB before closing connection.
+    pointer = connectr.cursor(buffered=True)
+    currentGraph = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
+    currentGraph = ran_functions.graphInsightQuery(currentGraph, startTime, selectedKPI, pointer)
+    currentGraph.update_layout(
+        plot_bgcolor=graphColors.plot_bgcolor, 
+        paper_bgcolor=graphColors.paper_bgcolor, 
+        font_color=graphColors.font_color, 
+        margin=dict(l=10, r=10, t=90, b=10),
+        legend=dict(orientation='h'),
+        title=dict(text=selectedKPI),
+        title_font=dict(size=graphColors.graphTitleFontSize),
+        legend_font_size=graphColors.legend_font_size
+    )
+    return currentGraph
 
 # Callback to hide/display selected tab
 @app.callback(

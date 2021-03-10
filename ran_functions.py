@@ -16,6 +16,8 @@ import os
 import csv
 import classes
 
+neList = classes.ranControllers()
+
 def populateLteGraphs(pointer, startTime, lteBandList, volteCssrNetworkWideGraph, cssrNetworkWideGraph, volteDcrNetworkWideGraph, dcrNetworkWideGraph):
     startTimeNetworkWide = (datetime.now()-timedelta(days=startTime)).strftime("%Y-%m-%d")
     for band in lteBandList:
@@ -97,3 +99,52 @@ def rncHighRefreshQuery(pointer, startTime, rncHighRefresh, rncNameList, umtsGra
         rncHighRefresh.add_trace(go.Scatter(x=df["Time"], y=df[dataTypeDropdown], name=rnc))
         queryRaw.clear()
     return rncHighRefresh
+
+def graphInsightQuery(currentGraph, startTime, selectedKPI, pointer):
+    startTimeNetworkWide = (datetime.now()-timedelta(days=startTime)).strftime("%Y-%m-%d")
+    kpiDict = {'LTE Data CSSR':'erabssr', 'LTE Data DCR': 'dcr', 'VoLTE CSSR': 'volteerabssr', 'VoLTE DCR': 'voltedcr', 'GSM CS CSSR': 'cscssr', 'GSM PS CSSR': 'pscssr', 'GSM CS DCR': 'csdcr', 'UMTS CSSR': 'cscssr', 'UMTS DCR': 'csdcr', 'HSDPA CSSR': 'hsdpacssr', 'HSDPA DCR': 'hsdpadcr', 'HSUPA CSSR': 'hsupacssr', 'HSUPA DCR': 'hsupadcr'}
+    kpiSpecificDict = {'LTE Data CSSR':'dataerabssr', 'LTE Data DCR': 'datadcr', 'VoLTE CSSR': 'volteerabssr', 'VoLTE DCR': 'voltedcr', 'GSM CS CSSR': 'cscssr', 'GSM PS CSSR': 'pscssr', 'GSM CS DCR': 'csdcr', 'UMTS CSSR': 'cscssr', 'UMTS DCR': 'csdcr', 'HSDPA CSSR': 'hsdpacssr', 'HSDPA DCR': 'hsdpadcr', 'HSUPA CSSR': 'hsupacssr', 'HSUPA DCR': 'hsupadcr'}
+    networkWidetable = ''
+    topTable = ''
+    condition = ''
+    order = ''
+    currentList = ''
+    if 'LTE' in selectedKPI or 'VoLTE' in selectedKPI:
+        currentList = neList.lteBandList
+        networkWidetable = 'ran_report_4g_report_network_wide'
+        topTable = 'ran_report_4g_report_specific'
+        condition = 'ltecellgroup = \''
+    elif 'UMTS' in selectedKPI or 'HSDPA' in selectedKPI or 'HSUPA' in selectedKPI:
+        currentList = neList.rncNameList
+        networkWidetable = 'ran_report_3g_report_network_wide'
+        topTable = 'ran_report_3g_report_specific'
+        condition = 'rncname = \''
+    elif 'GSM' in selectedKPI:
+        currentList = neList.bscNameList
+        networkWidetable = 'ran_report_2g_report_network_wide'
+        topTable = 'ran_report_2g_report_specific'
+        condition = 'gbsc = \''
+    else:
+        return currentGraph
+
+    if 'DCR' in selectedKPI:
+        order = 'desc'
+    elif 'CSSR' in selectedKPI:
+        order = 'asc'
+    else:
+        return currentGraph
+    # Query TOP cell names from DB
+    pointer.execute('select b.time,b.cellname,b.' + kpiSpecificDict[selectedKPI] + ' from (select a.time,a.cellname,a.' + kpiSpecificDict[selectedKPI] + ',row_number() over (partition by a.time order by a.' + kpiSpecificDict[selectedKPI] + ' ' + order + ') as rn from ran_pf_data.' + topTable + ' a where a.time >= \'' + str(startTimeNetworkWide) + '\') b where b.rn = 1')
+    queryRaw = pointer.fetchall()
+    queryPayload = np.array(queryRaw)
+    topWorstPerHourDataFrame = pd.DataFrame(queryPayload, columns=['time', 'cellname', kpiSpecificDict[selectedKPI]])
+    queryRaw.clear()
+    for ne in currentList:
+        query = 'select time,' + kpiDict[selectedKPI] + ' from ran_pf_data.' + networkWidetable + ' where ' + condition + ne + '\' and time > \'' + str(startTimeNetworkWide) + '\';'
+        pointer.execute(query)
+        queryRaw = pointer.fetchall()
+        queryPayload = np.array(queryRaw)
+        DataDataframe = pd.DataFrame(queryPayload, columns=['time', kpiDict[selectedKPI]])
+        currentGraph.add_trace(go.Scatter(x=DataDataframe['time'], y=DataDataframe[kpiDict[selectedKPI]], name=ne, text=topWorstPerHourDataFrame['cellname']))
+        queryRaw.clear()
+    return currentGraph
