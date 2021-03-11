@@ -35,6 +35,7 @@ dataTableStyles = styles.topWorstTab()
 networkCheckStyles = styles.networkCheckTab()
 graphColors = styles.NetworkWideGraphColors()
 graphInsightStyles = styles.graphInsightTab()
+txCheckStyles = styles.txCheckTab()
 
 graphTitleFontSize = 18
 
@@ -50,7 +51,7 @@ app.layout = html.Div(children=[
             ),
             dcc.Tabs(
                 id = 'tabsContainer',
-                value = 'Graph Insight',
+                value = 'Engineering Dashboard',
                 children = [
                     dcc.Tab(
                         label = 'Engineering Dashboard', 
@@ -73,6 +74,12 @@ app.layout = html.Div(children=[
                     dcc.Tab(
                         label = 'Graph Insight', 
                         value = 'Graph Insight', 
+                        style = tabStyles.tabStyle,
+                        selected_style = tabStyles.tabSelectedStyle
+                    ),
+                    dcc.Tab(
+                        label = 'Tx Status', 
+                        value = 'Tx Status', 
                         style = tabStyles.tabStyle,
                         selected_style = tabStyles.tabSelectedStyle
                     )
@@ -440,6 +447,25 @@ app.layout = html.Div(children=[
                         id = 'graphInsightGraph'
                     )
                 ]
+            )
+        ]
+    ),
+    # Tx Check Tab
+    html.Div(
+        id = 'txCheckGridContainer',
+        style = txCheckStyles.txCheckGridContainer,
+        children = [
+            dcc.Graph(
+                id = 'umtsNetworkPacketLossGraph'
+            ),
+            dcc.Graph(
+                id = 'umtsNetworkDelayGraph'
+            ),
+            dcc.Graph(
+                id = 'gsmNetworkPacketLossGraph'
+            ),
+            dcc.Graph(
+                id = 'gsmNetworkDelayGraph'
             )
         ]
     ),
@@ -866,13 +892,88 @@ def updateGraphInsightGraph(selectedKPI):
     )
     return currentGraph
 
+# Callback to update Network Check Tab
+@app.callback(
+    [
+        Output('umtsNetworkPacketLossGraph', 'figure'),  
+        Output('umtsNetworkDelayGraph', 'figure'), 
+        Output('gsmNetworkPacketLossGraph', 'figure'), 
+        Output('gsmNetworkDelayGraph', 'figure')
+    ],
+    [
+        Input('tabsContainer', 'value'),
+        Input('dataUpateInterval', 'n_intervals')
+    ]
+)
+def updateTxCheckTab(selectedTab, currentInterval):
+    if selectedTab == 'Tx Status': 
+        # starttime is the current date/time - daysdelta
+        startTime = 7
+        # Connect to DB
+        connectr = mysql.connector.connect(user = dbPara.dbUsername, password = dbPara.dbPassword, host = dbPara.dbServerIp , database = dbPara.dataTable)
+        # Connection must be buffered when executing multiple querys on DB before closing connection.
+        pointer = connectr.cursor(buffered=True)
+        # Create plots
+        umtsNetworkPacketLossGraph = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
+        umtsNetworkDelayGraph = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
+        gsmNetworkPacketLossGraph = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
+        gsmNetworkDelayGraph = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
+        umtsNetworkPacketLossGraph, umtsNetworkDelayGraph, gsmNetworkPacketLossGraph, gsmNetworkDelayGraph = ran_functions.queryTxData(pointer, startTime, ranController.bscNameList, ranController.rncNameList, umtsNetworkPacketLossGraph, umtsNetworkDelayGraph, gsmNetworkPacketLossGraph, gsmNetworkDelayGraph)
+        umtsNetworkPacketLossGraph.update_layout(
+            plot_bgcolor=graphColors.plot_bgcolor, 
+            paper_bgcolor=graphColors.paper_bgcolor, 
+            font_color=graphColors.font_color, 
+            margin=dict(l=10, r=10, t=90, b=10),
+            #legend=dict(orientation='h'),
+            title=dict(text='UMTS Network Packet Loss'),
+            title_font=dict(size=graphColors.graphTitleFontSize),
+            legend_font_size=graphColors.legend_font_size
+        )
+        umtsNetworkDelayGraph.update_layout(
+            plot_bgcolor=graphColors.plot_bgcolor, 
+            paper_bgcolor=graphColors.paper_bgcolor, 
+            font_color=graphColors.font_color, 
+            margin=dict(l=10, r=10, t=90, b=10),
+            #legend=dict(orientation='h'),
+            title=dict(text='UMTS Network Delay'),
+            title_font=dict(size=graphColors.graphTitleFontSize),
+            legend_font_size=graphColors.legend_font_size
+        )
+        gsmNetworkPacketLossGraph.update_layout(
+            plot_bgcolor=graphColors.plot_bgcolor, 
+            paper_bgcolor=graphColors.paper_bgcolor, 
+            font_color=graphColors.font_color, 
+            margin=dict(l=10, r=10, t=90, b=10),
+            #legend=dict(orientation='h'),
+            title=dict(text='GSM Network Packet Loss'),
+            title_font=dict(size=graphColors.graphTitleFontSize),
+            legend_font_size=graphColors.legend_font_size
+        )
+        gsmNetworkDelayGraph.update_layout(
+            plot_bgcolor=graphColors.plot_bgcolor, 
+            paper_bgcolor=graphColors.paper_bgcolor, 
+            font_color=graphColors.font_color, 
+            margin=dict(l=10, r=10, t=90, b=10),
+            #legend=dict(orientation='h'),
+            title=dict(text='GSM Network Delay'),
+            title_font=dict(size=graphColors.graphTitleFontSize),
+            legend_font_size=graphColors.legend_font_size
+        )
+        # Close DB connection
+        pointer.close()
+        connectr.close()
+        return umtsNetworkPacketLossGraph, umtsNetworkDelayGraph, gsmNetworkPacketLossGraph, gsmNetworkDelayGraph
+    else:
+        raise PreventUpdate
+
 # Callback to hide/display selected tab
 @app.callback(
     [
         Output('graphGridContainer', 'style'),
         Output('datatableGridContainer', 'style'),
         Output('networkCheckGridContainer', 'style'),
-        Output('graphInsightFlexContainer', 'style')
+        Output('graphInsightFlexContainer', 'style'),
+        Output('txCheckGridContainer', 'style')
     ], 
     Input('tabsContainer', 'value')
 )
@@ -881,30 +982,42 @@ def showTabContent(currentTab):
     topWorst = dataTableStyles.datatableGridContainer
     networkCheck = networkCheckStyles.networkCheckGridContainer
     graphInsight = graphInsightStyles.graphInsightFlexContainer
+    txCheck = txCheckStyles.txCheckGridContainer
     if currentTab == 'Engineering Dashboard':
         engDashboard['display'] = 'grid'
         topWorst['display'] = 'none'
         networkCheck['display'] = 'none'
         graphInsight['display'] = 'none'
-        return engDashboard, topWorst, networkCheck, graphInsight
+        txCheck['display'] = 'none'
+        return engDashboard, topWorst, networkCheck, graphInsight, txCheck
     elif currentTab == 'Top Worst Report':
         engDashboard['display'] = 'none'
         topWorst['display'] = 'grid'
         networkCheck['display'] = 'none'
         graphInsight['display'] = 'none'
-        return engDashboard, topWorst, networkCheck, graphInsight
+        txCheck['display'] = 'none'
+        return engDashboard, topWorst, networkCheck, graphInsight, txCheck
     elif currentTab == 'Network Check':
         engDashboard['display'] = 'none'
         topWorst['display'] = 'none'
         networkCheck['display'] = 'grid'
         graphInsight['display'] = 'none'
-        return engDashboard, topWorst, networkCheck, graphInsight
-    else:
+        txCheck['display'] = 'none'
+        return engDashboard, topWorst, networkCheck, graphInsight, txCheck
+    elif currentTab == 'Graph Insight':
         engDashboard['display'] = 'none'
         topWorst['display'] = 'none'
         networkCheck['display'] = 'none'
         graphInsight['display'] = 'flex'
-        return engDashboard, topWorst, networkCheck, graphInsight
+        txCheck['display'] = 'none'
+        return engDashboard, topWorst, networkCheck, graphInsight, txCheck
+    else:
+        engDashboard['display'] = 'none'
+        topWorst['display'] = 'none'
+        networkCheck['display'] = 'none'
+        graphInsight['display'] = 'none'
+        txCheck['display'] = 'grid'
+        return engDashboard, topWorst, networkCheck, graphInsight, txCheck
 
 if __name__ == '__main__':
     app.run_server(debug=True, host='0.0.0.0', port='5016')

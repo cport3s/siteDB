@@ -148,3 +148,25 @@ def graphInsightQuery(currentGraph, startTime, selectedKPI, pointer):
         currentGraph.add_trace(go.Scatter(x=DataDataframe['time'], y=DataDataframe[kpiDict[selectedKPI]], name=ne, text=topWorstPerHourDataFrame['cellname']))
         queryRaw.clear()
     return currentGraph
+
+def queryTxData(pointer, startTime, bscNameList, rncNameList, umtsNetworkPacketLossGraph, umtsNetworkDelayGraph, gsmNetworkPacketLossGraph, gsmNetworkDelayGraph):
+    startTimeNetworkWide = (datetime.now()-timedelta(days=startTime)).strftime("%Y-%m-%d")
+    for rnc in rncNameList:
+        pointer.execute('SELECT date,delay,lost FROM ran_pf_data.rnc_packetloss_data where rncname = \'' + rnc + '\' and date > \'' + str(startTimeNetworkWide) + '\';')
+        queryRaw = pointer.fetchall()
+        queryPayload = np.array(queryRaw)
+        # Transform the query payload into a dataframe
+        umtsDataDataframe = pd.DataFrame(queryPayload, columns=['date', 'delay', 'lost'])
+        umtsNetworkPacketLossGraph.add_trace(go.Scatter(x=umtsDataDataframe['date'], y=umtsDataDataframe['lost'], name=rnc))
+        umtsNetworkDelayGraph.add_trace(go.Scatter(x=umtsDataDataframe['date'], y=umtsDataDataframe['delay'], name=rnc))
+        queryRaw.clear()
+    for bsc in bscNameList:
+        pointer.execute('SELECT date,delay,lost FROM ran_pf_data.bsc_packetloss_data where bscname = \'' + bsc + '\' and date > \'' + str(startTimeNetworkWide) + '\';')
+        queryRaw = pointer.fetchall()
+        queryPayload = np.array(queryRaw)
+        # Transform the query payload into a dataframe
+        gsmDataDataframe = pd.DataFrame(queryPayload, columns=['date', 'delay', 'lost'])
+        gsmNetworkPacketLossGraph.add_trace(go.Scatter(x=gsmDataDataframe['date'], y=gsmDataDataframe['lost'], name=bsc))
+        gsmNetworkDelayGraph.add_trace(go.Scatter(x=gsmDataDataframe['date'], y=gsmDataDataframe['delay'], name=bsc))
+        queryRaw.clear()
+    return umtsNetworkPacketLossGraph, umtsNetworkDelayGraph, gsmNetworkPacketLossGraph, gsmNetworkDelayGraph

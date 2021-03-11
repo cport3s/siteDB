@@ -131,6 +131,14 @@ class graphInsightTab():
         'width': '100%'
     }
 
+class txCheckTab():
+    txCheckGridContainer = {
+        'display': 'grid',
+        'grid-template': 'auto repeat(1, 1fr) / repeat(2, 1fr)',
+        'width': '100%',
+        'border': '1px solid white'
+    }
+
 class NetworkWideGraphColors():
     plot_bgcolor='#2F2F2F'
     paper_bgcolor='#000000'
