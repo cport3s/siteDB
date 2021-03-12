@@ -80,6 +80,19 @@ class graphStyles():
     font_color='#FFFFFF'
 
 class topWorstTab():
+    outerTopWorstReportFlexContainer = {
+        'display': 'flex',
+        'width': '100%',
+        'flexDirection': 'row', 
+        'flexWrap': 'wrap',
+        'border': '1px solid white'
+    }
+
+    innerTopWorstTabContainer = {
+        'width': '100%',
+        'alignItems': 'right'
+    }
+
     datatableGridContainer = {
         'display': 'grid',
         'grid-template': 'auto repeat(1, 1fr) / repeat(2, 1fr)',
@@ -95,6 +108,13 @@ class topWorstTab():
     style_cell = {
         'backgroundColor':'black',
         'color':'white'
+    }
+
+    topWorstRecordGridContainer = {
+        'display': 'grid',
+        'grid-template': 'auto repeat(1, 1fr) / repeat(1, 1fr)',
+        'width': '100%',
+        'border': '1px solid white'
     }
 
 class networkCheckTab():

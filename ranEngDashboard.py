@@ -174,116 +174,160 @@ app.layout = html.Div(children=[
     ),
     # Top Worst Reports Tab
     html.Div(
-        id = 'datatableGridContainer', 
-        style = dataTableStyles.datatableGridContainer,
+        id = 'outerTopWorstReportFlexContainer',
+        style = dataTableStyles.outerTopWorstReportFlexContainer,
         children = [
-            html.Div(
-                className = 'datatableGridElement',
+            # Inner Tab Container
+            dcc.Tabs(
+                id = 'innerTopWorstTabContainer',
+                value = 'Daily Report',
+                style = dataTableStyles.innerTopWorstTabContainer,
                 children = [
-                    html.H3('Top Worst LTE eRAB SR'),
-                    dash_table.DataTable(
-                        id = 'topWorst4GeRabSrTable',
-                        style_header = dataTableStyles.style_header,
-                        style_cell = dataTableStyles.style_cell
+                    dcc.Tab(
+                        label = 'Daily Report',
+                        value = 'Daily Report',
+                        style = tabStyles.tabStyle,
+                        selected_style = tabStyles.tabSelectedStyle
+                    ),
+                    dcc.Tab(
+                        label = 'Records',
+                        value = 'Records',
+                        style = tabStyles.tabStyle,
+                        selected_style = tabStyles.tabSelectedStyle
                     )
                 ]
             ),
+            # Daily Top Worst Reports
             html.Div(
-                className = 'datatableGridElement',
+                id = 'datatableGridContainer', 
+                style = dataTableStyles.datatableGridContainer,
                 children = [
-                    html.H3('Top Worst LTE DCR'),
-                    dash_table.DataTable(
-                        id='topWorst4GDcrTable',
-                        style_header = dataTableStyles.style_header,
-                        style_cell = dataTableStyles.style_cell
+                    html.Div(
+                        className = 'datatableGridElement',
+                        children = [
+                            html.H3('Top Worst LTE eRAB SR'),
+                            dash_table.DataTable(
+                                id = 'topWorst4GeRabSrTable',
+                                style_header = dataTableStyles.style_header,
+                                style_cell = dataTableStyles.style_cell
+                            )
+                        ]
+                    ),
+                    html.Div(
+                        className = 'datatableGridElement',
+                        children = [
+                            html.H3('Top Worst LTE DCR'),
+                            dash_table.DataTable(
+                                id='topWorst4GDcrTable',
+                                style_header = dataTableStyles.style_header,
+                                style_cell = dataTableStyles.style_cell
+                            )
+                        ]
+                    ),
+                    html.Div(
+                        className = 'datatableGridElement',
+                        children = [
+                            html.H3('Top Worst HSDPA CSSR'),
+                            dash_table.DataTable(
+                                id = 'topWorst3GHsdpaCssrTable',
+                                style_header = dataTableStyles.style_header,
+                                style_cell = dataTableStyles.style_cell
+                            )
+                        ]
+                    ),
+                    html.Div(
+                        className = 'datatableGridElement',
+                        children = [
+                            html.H3('Top Worst HSUPA CSSR'),
+                            dash_table.DataTable(
+                                id='topWorst3GHsupaCssrTable',
+                                style_header = dataTableStyles.style_header,
+                                style_cell = dataTableStyles.style_cell
+                            )
+                        ]
+                    ),
+                    html.Div(
+                        className = 'datatableGridElement',
+                        children = [
+                            html.H3('Top Worst UMTS CSSR'),
+                            dash_table.DataTable(
+                                id='topWorst3GUmtsCssrTable',
+                                style_header = dataTableStyles.style_header,
+                                style_cell = dataTableStyles.style_cell
+                            )
+                        ]
+                    ),
+                    html.Div(
+                        className = 'datatableGridElement',
+                        children = [
+                            html.H3('Top Worst HSDPA DCR'),
+                            dash_table.DataTable(
+                                id='topWorst3GHsdpaDcrTable',
+                                style_header = dataTableStyles.style_header,
+                                style_cell = dataTableStyles.style_cell
+                            )
+                        ]
+                    ),
+                    html.Div(
+                        className = 'datatableGridElement',
+                        children = [
+                            html.H3('Top Worst HSUPA DCR'),
+                            dash_table.DataTable(
+                                id='topWorst3GHsupaDcrTable',
+                                style_header = dataTableStyles.style_header,
+                                style_cell = dataTableStyles.style_cell
+                            )
+                        ]
+                    ),
+                    html.Div(
+                        className = 'datatableGridElement',
+                        children = [
+                            html.H3('Top Worst UMTS DCR'),
+                            dash_table.DataTable(
+                                id='topWorst3GUmtsDcrTable',
+                                style_header = dataTableStyles.style_header,
+                                style_cell = dataTableStyles.style_cell
+                            )
+                        ]
+                    ),
+                    html.Div(
+                        className = 'datatableGridElement',
+                        children = [
+                            html.H3('Top Worst GSM CSSR'),
+                            dash_table.DataTable(
+                                id='topWorst2GSpeechCssrTable',
+                                style_header = dataTableStyles.style_header,
+                                style_cell = dataTableStyles.style_cell
+                            )
+                        ]
+                    ),
+                    html.Div(
+                        className = 'datatableGridElement',
+                        children = [
+                            html.H3('Top Worst GSM DCR'),
+                            dash_table.DataTable(
+                                id='topWorst2GSpeechDcrTable',
+                                style_header = dataTableStyles.style_header,
+                                style_cell = dataTableStyles.style_cell
+                            )
+                        ]
                     )
                 ]
             ),
+            # Top Reports Records
             html.Div(
-                className = 'datatableGridElement',
+                id = 'topReportRecordGridContainer',
+                style = dataTableStyles.topWorstRecordGridContainer,
                 children = [
-                    html.H3('Top Worst HSDPA CSSR'),
-                    dash_table.DataTable(
-                        id = 'topWorst3GHsdpaCssrTable',
-                        style_header = dataTableStyles.style_header,
-                        style_cell = dataTableStyles.style_cell
-                    )
-                ]
-            ),
-            html.Div(
-                className = 'datatableGridElement',
-                children = [
-                    html.H3('Top Worst HSUPA CSSR'),
-                    dash_table.DataTable(
-                        id='topWorst3GHsupaCssrTable',
-                        style_header = dataTableStyles.style_header,
-                        style_cell = dataTableStyles.style_cell
-                    )
-                ]
-            ),
-            html.Div(
-                className = 'datatableGridElement',
-                children = [
-                    html.H3('Top Worst UMTS CSSR'),
-                    dash_table.DataTable(
-                        id='topWorst3GUmtsCssrTable',
-                        style_header = dataTableStyles.style_header,
-                        style_cell = dataTableStyles.style_cell
-                    )
-                ]
-            ),
-            html.Div(
-                className = 'datatableGridElement',
-                children = [
-                    html.H3('Top Worst HSDPA DCR'),
-                    dash_table.DataTable(
-                        id='topWorst3GHsdpaDcrTable',
-                        style_header = dataTableStyles.style_header,
-                        style_cell = dataTableStyles.style_cell
-                    )
-                ]
-            ),
-            html.Div(
-                className = 'datatableGridElement',
-                children = [
-                    html.H3('Top Worst HSUPA DCR'),
-                    dash_table.DataTable(
-                        id='topWorst3GHsupaDcrTable',
-                        style_header = dataTableStyles.style_header,
-                        style_cell = dataTableStyles.style_cell
-                    )
-                ]
-            ),
-            html.Div(
-                className = 'datatableGridElement',
-                children = [
-                    html.H3('Top Worst UMTS DCR'),
-                    dash_table.DataTable(
-                        id='topWorst3GUmtsDcrTable',
-                        style_header = dataTableStyles.style_header,
-                        style_cell = dataTableStyles.style_cell
-                    )
-                ]
-            ),
-            html.Div(
-                className = 'datatableGridElement',
-                children = [
-                    html.H3('Top Worst GSM CSSR'),
-                    dash_table.DataTable(
-                        id='topWorst2GSpeechCssrTable',
-                        style_header = dataTableStyles.style_header,
-                        style_cell = dataTableStyles.style_cell
-                    )
-                ]
-            ),
-            html.Div(
-                className = 'datatableGridElement',
-                children = [
-                    html.H3('Top Worst GSM DCR'),
-                    dash_table.DataTable(
-                        id='topWorst2GSpeechDcrTable',
-                        style_header = dataTableStyles.style_header,
-                        style_cell = dataTableStyles.style_cell
+                    html.Div(
+                        children = [
+                            html.H3('LTE Records'),
+                            dash_table.DataTable(
+                                id = 'topWorst4GeRabSrRercordTable',
+                                style_header = dataTableStyles.style_header,
+                                style_cell = dataTableStyles.style_cell
+                            )
+                        ]
                     )
                 ]
             )
@@ -473,11 +517,6 @@ app.layout = html.Div(children=[
         id='dataUpateInterval', 
         interval=300000, 
         n_intervals=0
-    ),
-    dcc.Interval(
-        id='graphUpateInterval', 
-        interval=60000, 
-        n_intervals=0
     )
 ])
 
@@ -567,6 +606,7 @@ def updateEngDashboardTab(currentInterval, selectedTab, timeFrameDropdown, dataT
     [
         Output('topWorst4GeRabSrTable', 'columns'),
         Output('topWorst4GeRabSrTable', 'data'),
+        Output('topWorst4GeRabSrRercordTable', 'columns'),
         Output('topWorst4GDcrTable', 'columns'),
         Output('topWorst4GDcrTable', 'data'),
         Output('topWorst3GHsdpaCssrTable', 'columns'),
@@ -617,6 +657,9 @@ def updateTopWorstTab(selectedTab):
         topWorst4GeRabSrDataframe = topWorst4GeRabSrDataframe.fillna(0)
         topWorst4GeRabSrDataframe = topWorst4GeRabSrDataframe.nsmallest(10, 'E-RAB Setup Success Rate (ALL)[%](%)')
         topWorst4GeRabSrColumns = [{'name': i, 'id': i} for i in topWorst4GeRabSrDataframe.columns]
+        topWorst4GeRabSrRecordColumns = topWorst4GeRabSrColumns
+        topWorst4GeRabSrRecordColumns.append({'name': 'TTK', 'id':'TTK'})
+        topWorst4GeRabSrRecordColumns.append({'name': 'Responsable', 'id':'Responsable'})
 
         topWorst4GDcrDataframe = current4GTopWorstDcrDataframe.filter(items = ['eNodeB Name', 'Cell FDD TDD Indication', 'Cell Name', 'Call Drop Rate (All)[%]', 'Date'])
         topWorst4GDcrDataframe = topWorst4GDcrDataframe.fillna(0)
@@ -662,7 +705,7 @@ def updateTopWorstTab(selectedTab):
         topWorst2GSpeechDcrDataframe = topWorst2GSpeechDcrDataframe.fillna(0)
         topWorst2GSpeechDcrDataframe = topWorst2GSpeechDcrDataframe.nlargest(10, 'Drop Call Rate – Speech (%)')
         topWorst2GSpeechDcrColumns = [{'name': i, 'id': i} for i in topWorst2GSpeechDcrDataframe.columns]
-        return topWorst4GeRabSrColumns, topWorst4GeRabSrDataframe.to_dict('records'), topWorst4GDcrColumns, topWorst4GDcrDataframe.to_dict('records'), topWorst3GHsdpaCssrColumns, topWorst3GHsdpaCssrDataframe.to_dict('records'), topWorst3GHsupaCssrColumns, topWorst3GHsupaCssrDataframe.to_dict('records'), topWorst3GUmtsCssrColumns, topWorst3GUmtsCssrDataframe.to_dict('records'), topWorst3GHsdpaDcrColumns, topWorst3GHsdpaDcrDataframe.to_dict('records'), topWorst3GHsupaDcrColumns, topWorst3GHsupaDcrDataframe.to_dict('records'), topWorst3GUmtsDcrColumns, topWorst3GUmtsDcrDataframe.to_dict('records'), topWorst2GSpeechCssrColumns, topWorst2GSpeechCssrDataframe.to_dict('records'), topWorst2GSpeechDcrColumns, topWorst2GSpeechDcrDataframe.to_dict('records')
+        return topWorst4GeRabSrColumns, topWorst4GeRabSrDataframe.to_dict('records'), topWorst4GeRabSrRecordColumns, topWorst4GDcrColumns, topWorst4GDcrDataframe.to_dict('records'), topWorst3GHsdpaCssrColumns, topWorst3GHsdpaCssrDataframe.to_dict('records'), topWorst3GHsupaCssrColumns, topWorst3GHsupaCssrDataframe.to_dict('records'), topWorst3GUmtsCssrColumns, topWorst3GUmtsCssrDataframe.to_dict('records'), topWorst3GHsdpaDcrColumns, topWorst3GHsdpaDcrDataframe.to_dict('records'), topWorst3GHsupaDcrColumns, topWorst3GHsupaDcrDataframe.to_dict('records'), topWorst3GUmtsDcrColumns, topWorst3GUmtsDcrDataframe.to_dict('records'), topWorst2GSpeechCssrColumns, topWorst2GSpeechCssrDataframe.to_dict('records'), topWorst2GSpeechDcrColumns, topWorst2GSpeechDcrDataframe.to_dict('records')
     else:
         raise PreventUpdate
 
@@ -970,7 +1013,7 @@ def updateTxCheckTab(selectedTab, currentInterval):
 @app.callback(
     [
         Output('graphGridContainer', 'style'),
-        Output('datatableGridContainer', 'style'),
+        Output('outerTopWorstReportFlexContainer', 'style'),
         Output('networkCheckGridContainer', 'style'),
         Output('graphInsightFlexContainer', 'style'),
         Output('txCheckGridContainer', 'style')
@@ -979,7 +1022,7 @@ def updateTxCheckTab(selectedTab, currentInterval):
 )
 def showTabContent(currentTab):
     engDashboard = engDashboardStyles.graphGridContainerStyle
-    topWorst = dataTableStyles.datatableGridContainer
+    topWorst = dataTableStyles.outerTopWorstReportFlexContainer
     networkCheck = networkCheckStyles.networkCheckGridContainer
     graphInsight = graphInsightStyles.graphInsightFlexContainer
     txCheck = txCheckStyles.txCheckGridContainer
@@ -992,7 +1035,7 @@ def showTabContent(currentTab):
         return engDashboard, topWorst, networkCheck, graphInsight, txCheck
     elif currentTab == 'Top Worst Report':
         engDashboard['display'] = 'none'
-        topWorst['display'] = 'grid'
+        topWorst['display'] = 'flex'
         networkCheck['display'] = 'none'
         graphInsight['display'] = 'none'
         txCheck['display'] = 'none'
@@ -1018,6 +1061,26 @@ def showTabContent(currentTab):
         graphInsight['display'] = 'none'
         txCheck['display'] = 'grid'
         return engDashboard, topWorst, networkCheck, graphInsight, txCheck
+
+# Callback to hide/display Top Worst inner tabs
+@app.callback(
+    [
+        Output('datatableGridContainer', 'style'),
+        Output('topReportRecordGridContainer', 'style')
+    ], 
+    Input('innerTopWorstTabContainer', 'value')
+)
+def showTopWorstInnerTabContent(currentTab):
+    topWorstDaily = dataTableStyles.datatableGridContainer
+    topWorstRecord = dataTableStyles.topWorstRecordGridContainer
+    if currentTab == 'Daily Report':
+        topWorstDaily['display'] = 'grid'
+        topWorstRecord['display'] = 'none'
+        return topWorstDaily, topWorstRecord
+    else:
+        topWorstDaily['display'] = 'none'
+        topWorstRecord['display'] = 'grid'
+        return topWorstDaily, topWorstRecord
 
 if __name__ == '__main__':
     app.run_server(debug=True, host='0.0.0.0', port='5016')
