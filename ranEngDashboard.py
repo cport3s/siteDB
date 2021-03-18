@@ -37,6 +37,7 @@ graphColors = styles.NetworkWideGraphColors()
 graphInsightStyles = styles.graphInsightTab()
 txCheckStyles = styles.txCheckTab()
 
+rows = []
 graphTitleFontSize = 18
 
 app.layout = html.Div(children=[
@@ -325,8 +326,10 @@ app.layout = html.Div(children=[
                             html.Button('Add Cell', id = 'addCellButton', n_clicks = 0),
                             dash_table.DataTable(
                                 id = 'topWorst4GeRabSrRercordTable',
+                                #data = [{'eNodeB Name':'', 'Cell FDD TDD Inidication':'', 'Cell Name':'', 'E-RAB Setup Success Rate (All)[%](%)':'', 'Date':'', 'TTK':'', 'Responsable':''}],
                                 style_header = dataTableStyles.style_header,
                                 style_cell = dataTableStyles.style_cell,
+                                include_headers_on_copy_paste = True,
                                 editable = True,
                                 row_deletable = True
                             ),
@@ -334,55 +337,73 @@ app.layout = html.Div(children=[
                             dash_table.DataTable(
                                 id = 'topWorst4DcrRercordTable',
                                 style_header = dataTableStyles.style_header,
-                                style_cell = dataTableStyles.style_cell
+                                style_cell = dataTableStyles.style_cell,
+                                editable = True,
+                                row_deletable = True
                             ),
                             html.H3('HSDPA CSSR Records'),
                             dash_table.DataTable(
                                 id = 'topWorst3GHsdpaCssrRecordTable',
                                 style_header = dataTableStyles.style_header,
-                                style_cell = dataTableStyles.style_cell
+                                style_cell = dataTableStyles.style_cell,
+                                editable = True,
+                                row_deletable = True
                             ),
                             html.H3('HSUPA CSSR Records'),
                             dash_table.DataTable(
                                 id = 'topWorst3GHsupaCssrRecordTable',
                                 style_header = dataTableStyles.style_header,
-                                style_cell = dataTableStyles.style_cell
+                                style_cell = dataTableStyles.style_cell,
+                                editable = True,
+                                row_deletable = True
                             ),
                             html.H3('UMTS CSSR Records'),
                             dash_table.DataTable(
                                 id = 'topWorst3GUmtsCssrRecordTable',
                                 style_header = dataTableStyles.style_header,
-                                style_cell = dataTableStyles.style_cell
+                                style_cell = dataTableStyles.style_cell,
+                                editable = True,
+                                row_deletable = True
                             ),
                             html.H3('HSDPA DCR Records'),
                             dash_table.DataTable(
                                 id = 'topWorst3GHsdpaDcrRecordTable',
                                 style_header = dataTableStyles.style_header,
-                                style_cell = dataTableStyles.style_cell
+                                style_cell = dataTableStyles.style_cell,
+                                editable = True,
+                                row_deletable = True
                             ),
                             html.H3('HSUPA DCR Records'),
                             dash_table.DataTable(
                                 id = 'topWorst3GHsupaDcrRecordTable',
                                 style_header = dataTableStyles.style_header,
-                                style_cell = dataTableStyles.style_cell
+                                style_cell = dataTableStyles.style_cell,
+                                editable = True,
+                                row_deletable = True
                             ),
                             html.H3('UMTS DCR Records'),
                             dash_table.DataTable(
                                 id = 'topWorst3GUmtsDcrRecordTable',
                                 style_header = dataTableStyles.style_header,
-                                style_cell = dataTableStyles.style_cell
+                                style_cell = dataTableStyles.style_cell,
+                                editable = True,
+                                row_deletable = True
                             ),
                             html.H3('GSM CSSR Records'),
                             dash_table.DataTable(
                                 id = 'topWorst2GSpeechCssrRecordTable',
                                 style_header = dataTableStyles.style_header,
-                                style_cell = dataTableStyles.style_cell
+                                style_cell = dataTableStyles.style_cell,
+                                editable = True,
+                                row_deletable = True
                             ),
                             html.H3('GSM DCR Records'),
                             dash_table.DataTable(
                                 id = 'topWorst2GSpeechDcrRecordTable',
                                 style_header = dataTableStyles.style_header,
-                                style_cell = dataTableStyles.style_cell
+                                style_cell = dataTableStyles.style_cell,
+                                editable = True,
+                                row_deletable = True
                             )
                         ]
                     )
@@ -798,6 +819,7 @@ def updateTopWorstTab(selectedTab):
         topWorst2GSpeechDcrRecordColumns = topWorst2GSpeechDcrColumns.copy()
         topWorst2GSpeechDcrRecordColumns.append({'name': 'TTK', 'id':'TTK'})
         topWorst2GSpeechDcrRecordColumns.append({'name': 'Responsable', 'id':'Responsable'})
+
         return topWorst4GeRabSrColumns, topWorst4GeRabSrDataframe.to_dict('records'), topWorst4GeRabSrRecordColumns, topWorst4GDcrColumns, topWorst4GDcrDataframe.to_dict('records'), topWorst4GDcrRecordColumns, topWorst3GHsdpaCssrColumns, topWorst3GHsdpaCssrDataframe.to_dict('records'), topWorst3GHsdpaCssrRecordColumns, topWorst3GHsupaCssrColumns, topWorst3GHsupaCssrDataframe.to_dict('records'), topWorst3GHsupaCssrRecordColumns, topWorst3GUmtsCssrColumns, topWorst3GUmtsCssrDataframe.to_dict('records'), topWorst3GUmtsCssrRecordColumns, topWorst3GHsdpaDcrColumns, topWorst3GHsdpaDcrDataframe.to_dict('records'), topWorst3GHsdpaDcrRecordColumns, topWorst3GHsupaDcrColumns, topWorst3GHsupaDcrDataframe.to_dict('records'), topWorst3GHsupaDcrRecordColumns, topWorst3GUmtsDcrColumns, topWorst3GUmtsDcrDataframe.to_dict('records'), topWorst3GUmtsDcrRecordColumns, topWorst2GSpeechCssrColumns, topWorst2GSpeechCssrDataframe.to_dict('records'), topWorst2GSpeechCssrRecordColumns, topWorst2GSpeechDcrColumns, topWorst2GSpeechDcrDataframe.to_dict('records'), topWorst2GSpeechDcrRecordColumns
     else:
         raise PreventUpdate
@@ -806,11 +828,12 @@ def updateTopWorstTab(selectedTab):
 @app.callback(
     Output('topWorst4GeRabSrRercordTable', 'data'), 
     Input('addCellButton', 'n_clicks'),
-    State('topWorst4GeRabSrRercordTable', 'data'),
+    #State('topWorst4GeRabSrRercordTable', 'data_previous'),
     State('topWorst4GeRabSrRercordTable', 'columns')
 )
-def addRow(clicks, rows, columns):
-    #rows = []
+def addRow(clicks, columns):
+    #if not rows:
+    #    rows = [{'eNodeB Name':'', 'Cell FDD TDD Inidication':'', 'Cell Name':'', 'E-RAB Setup Success Rate (All)[%](%)':'', 'Date':'', 'TTK':'', 'Responsable':''}]
     if clicks > 0:
         rows.append({c['id']: '' for c in columns})
     return rows
