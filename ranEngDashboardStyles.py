@@ -95,24 +95,28 @@ class topWorstTab():
 
     datatableGridContainer = {
         'display': 'grid',
-        'grid-template': 'auto repeat(1, 1fr) / repeat(2, 1fr)',
+        'gridTemplate': 'auto repeat(1, 1fr) / repeat(2, 1fr)',
         'width': '100%',
         'border': '1px solid white'
     }
 
     style_header = {
         'backgroundColor':'black',
-        'color':'white'
+        'color':'white',
+        'whiteSpace': 'normal',
+        'height': 'auto'
     }
 
     style_cell = {
         'backgroundColor':'black',
-        'color':'white'
+        'color':'white',
+        'whiteSpace': 'normal',
+        'height': 'auto'
     }
 
     topWorstRecordGridContainer = {
         'display': 'grid',
-        'grid-template': 'auto repeat(1, 1fr) / repeat(1, 1fr)',
+        'gridTemplate': 'auto repeat(1, 1fr) / repeat(1, 1fr)',
         'width': '100%',
         'border': '1px solid white'
     }

@@ -1,7 +1,7 @@
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 import dash_table
 import plotly.express as px
@@ -321,9 +321,66 @@ app.layout = html.Div(children=[
                 children = [
                     html.Div(
                         children = [
-                            html.H3('LTE Records'),
+                            html.H3('LTE eRAB SR Records'),
+                            html.Button('Add Cell', id = 'addCellButton', n_clicks = 0),
                             dash_table.DataTable(
                                 id = 'topWorst4GeRabSrRercordTable',
+                                style_header = dataTableStyles.style_header,
+                                style_cell = dataTableStyles.style_cell,
+                                editable = True,
+                                row_deletable = True
+                            ),
+                            html.H3('LTE DCR Records'),
+                            dash_table.DataTable(
+                                id = 'topWorst4DcrRercordTable',
+                                style_header = dataTableStyles.style_header,
+                                style_cell = dataTableStyles.style_cell
+                            ),
+                            html.H3('HSDPA CSSR Records'),
+                            dash_table.DataTable(
+                                id = 'topWorst3GHsdpaCssrRecordTable',
+                                style_header = dataTableStyles.style_header,
+                                style_cell = dataTableStyles.style_cell
+                            ),
+                            html.H3('HSUPA CSSR Records'),
+                            dash_table.DataTable(
+                                id = 'topWorst3GHsupaCssrRecordTable',
+                                style_header = dataTableStyles.style_header,
+                                style_cell = dataTableStyles.style_cell
+                            ),
+                            html.H3('UMTS CSSR Records'),
+                            dash_table.DataTable(
+                                id = 'topWorst3GUmtsCssrRecordTable',
+                                style_header = dataTableStyles.style_header,
+                                style_cell = dataTableStyles.style_cell
+                            ),
+                            html.H3('HSDPA DCR Records'),
+                            dash_table.DataTable(
+                                id = 'topWorst3GHsdpaDcrRecordTable',
+                                style_header = dataTableStyles.style_header,
+                                style_cell = dataTableStyles.style_cell
+                            ),
+                            html.H3('HSUPA DCR Records'),
+                            dash_table.DataTable(
+                                id = 'topWorst3GHsupaDcrRecordTable',
+                                style_header = dataTableStyles.style_header,
+                                style_cell = dataTableStyles.style_cell
+                            ),
+                            html.H3('UMTS DCR Records'),
+                            dash_table.DataTable(
+                                id = 'topWorst3GUmtsDcrRecordTable',
+                                style_header = dataTableStyles.style_header,
+                                style_cell = dataTableStyles.style_cell
+                            ),
+                            html.H3('GSM CSSR Records'),
+                            dash_table.DataTable(
+                                id = 'topWorst2GSpeechCssrRecordTable',
+                                style_header = dataTableStyles.style_header,
+                                style_cell = dataTableStyles.style_cell
+                            ),
+                            html.H3('GSM DCR Records'),
+                            dash_table.DataTable(
+                                id = 'topWorst2GSpeechDcrRecordTable',
                                 style_header = dataTableStyles.style_header,
                                 style_cell = dataTableStyles.style_cell
                             )
@@ -609,22 +666,31 @@ def updateEngDashboardTab(currentInterval, selectedTab, timeFrameDropdown, dataT
         Output('topWorst4GeRabSrRercordTable', 'columns'),
         Output('topWorst4GDcrTable', 'columns'),
         Output('topWorst4GDcrTable', 'data'),
+        Output('topWorst4DcrRercordTable', 'columns'),
         Output('topWorst3GHsdpaCssrTable', 'columns'),
         Output('topWorst3GHsdpaCssrTable', 'data'),
+        Output('topWorst3GHsdpaCssrRecordTable', 'columns'),
         Output('topWorst3GHsupaCssrTable', 'columns'),
         Output('topWorst3GHsupaCssrTable', 'data'),
+        Output('topWorst3GHsupaCssrRecordTable', 'columns'),
         Output('topWorst3GUmtsCssrTable', 'columns'),
         Output('topWorst3GUmtsCssrTable', 'data'),
+        Output('topWorst3GUmtsCssrRecordTable', 'columns'),
         Output('topWorst3GHsdpaDcrTable', 'columns'),
         Output('topWorst3GHsdpaDcrTable', 'data'),
+        Output('topWorst3GHsdpaDcrRecordTable', 'columns'),
         Output('topWorst3GHsupaDcrTable', 'columns'),
         Output('topWorst3GHsupaDcrTable', 'data'),
+        Output('topWorst3GHsupaDcrRecordTable', 'columns'),
         Output('topWorst3GUmtsDcrTable', 'columns'),
         Output('topWorst3GUmtsDcrTable', 'data'),
+        Output('topWorst3GUmtsDcrRecordTable', 'columns'),
         Output('topWorst2GSpeechCssrTable', 'columns'),
         Output('topWorst2GSpeechCssrTable', 'data'),
+        Output('topWorst2GSpeechCssrRecordTable', 'columns'),
         Output('topWorst2GSpeechDcrTable', 'columns'),
-        Output('topWorst2GSpeechDcrTable', 'data')
+        Output('topWorst2GSpeechDcrTable', 'data'),
+        Output('topWorst2GSpeechDcrRecordTable', 'columns')
     ], 
     Input('tabsContainer', 'value')
 )
@@ -657,7 +723,7 @@ def updateTopWorstTab(selectedTab):
         topWorst4GeRabSrDataframe = topWorst4GeRabSrDataframe.fillna(0)
         topWorst4GeRabSrDataframe = topWorst4GeRabSrDataframe.nsmallest(10, 'E-RAB Setup Success Rate (ALL)[%](%)')
         topWorst4GeRabSrColumns = [{'name': i, 'id': i} for i in topWorst4GeRabSrDataframe.columns]
-        topWorst4GeRabSrRecordColumns = topWorst4GeRabSrColumns
+        topWorst4GeRabSrRecordColumns = topWorst4GeRabSrColumns.copy()
         topWorst4GeRabSrRecordColumns.append({'name': 'TTK', 'id':'TTK'})
         topWorst4GeRabSrRecordColumns.append({'name': 'Responsable', 'id':'Responsable'})
 
@@ -665,49 +731,89 @@ def updateTopWorstTab(selectedTab):
         topWorst4GDcrDataframe = topWorst4GDcrDataframe.fillna(0)
         topWorst4GDcrDataframe = topWorst4GDcrDataframe.nlargest(10, 'Call Drop Rate (All)[%]')
         topWorst4GDcrColumns = [{'name': i, 'id': i} for i in topWorst4GDcrDataframe.columns]
+        topWorst4GDcrRecordColumns = topWorst4GDcrColumns.copy()
+        topWorst4GDcrRecordColumns.append({'name': 'TTK', 'id':'TTK'})
+        topWorst4GDcrRecordColumns.append({'name': 'Responsable', 'id':'Responsable'})
 
         topWorst3GHsdpaCssrDataframe = current3GTopWorstDataframe.filter(items = ['RNC Name', 'NodeB Name', 'Cell Name', 'HSDPA CSSR(%)', 'Date'])
         topWorst3GHsdpaCssrDataframe = topWorst3GHsdpaCssrDataframe.fillna(0)
         topWorst3GHsdpaCssrDataframe = topWorst3GHsdpaCssrDataframe.nsmallest(10, 'HSDPA CSSR(%)')
         topWorst3GHsdpaCssrColumns = [{'name': i, 'id': i} for i in topWorst3GHsdpaCssrDataframe.columns]
+        topWorst3GHsdpaCssrRecordColumns = topWorst3GHsdpaCssrColumns.copy()
+        topWorst3GHsdpaCssrRecordColumns.append({'name': 'TTK', 'id':'TTK'})
+        topWorst3GHsdpaCssrRecordColumns.append({'name': 'Responsable', 'id':'Responsable'})
 
         topWorst3GHsupaCssrDataframe = current3GTopWorstDataframe.filter(items = ['RNC Name', 'NodeB Name', 'Cell Name', 'HSUPA CSSR(%)', 'Date'])
         topWorst3GHsupaCssrDataframe = topWorst3GHsupaCssrDataframe.fillna(0)
         topWorst3GHsupaCssrDataframe = topWorst3GHsupaCssrDataframe.nsmallest(10, 'HSUPA CSSR(%)')
         topWorst3GHsupaCssrColumns = [{'name': i, 'id': i} for i in topWorst3GHsupaCssrDataframe.columns]
+        topWorst3GHsupaCssrRecordColumns = topWorst3GHsupaCssrColumns.copy()
+        topWorst3GHsupaCssrRecordColumns.append({'name': 'TTK', 'id':'TTK'})
+        topWorst3GHsupaCssrRecordColumns.append({'name': 'Responsable', 'id':'Responsable'})
 
         topWorst3GUmtsCssrDataframe = current3GTopWorstDataframe.filter(items = ['RNC Name', 'NodeB Name', 'Cell Name', 'Speech CSSR', 'Date'])
         topWorst3GUmtsCssrDataframe = topWorst3GUmtsCssrDataframe.fillna(0)
         topWorst3GUmtsCssrDataframe = topWorst3GUmtsCssrDataframe.nsmallest(10, 'Speech CSSR')
         topWorst3GUmtsCssrColumns = [{'name': i, 'id': i} for i in topWorst3GUmtsCssrDataframe.columns]
+        topWorst3GUmtsCssrRecordColumns = topWorst3GUmtsCssrColumns.copy()
+        topWorst3GUmtsCssrRecordColumns.append({'name': 'TTK', 'id':'TTK'})
+        topWorst3GUmtsCssrRecordColumns.append({'name': 'Responsable', 'id':'Responsable'})
 
         topWorst3GHsdpaDcrDataframe = current3GTopWorstDataframe.filter(items = ['RNC Name', 'NodeB Name', 'Cell Name', 'HSDPA DCR(%)', 'Date'])
         topWorst3GHsdpaDcrDataframe = topWorst3GHsdpaDcrDataframe.fillna(0)
         topWorst3GHsdpaDcrDataframe = topWorst3GHsdpaDcrDataframe.nlargest(10, 'HSDPA DCR(%)')
         topWorst3GHsdpaDcrColumns = [{'name': i, 'id': i} for i in topWorst3GHsdpaDcrDataframe.columns]
+        topWorst3GHsdpaDcrRecordColumns = topWorst3GHsdpaDcrColumns.copy()
+        topWorst3GHsdpaDcrRecordColumns.append({'name': 'TTK', 'id':'TTK'})
+        topWorst3GHsdpaDcrRecordColumns.append({'name': 'Responsable', 'id':'Responsable'})
 
         topWorst3GHsupaDcrDataframe = current3GTopWorstDataframe.filter(items = ['RNC Name', 'NodeB Name', 'Cell Name', 'HSUPA DCR(%)', 'Date'])
         topWorst3GHsupaDcrDataframe = topWorst3GHsupaDcrDataframe.fillna(0)
         topWorst3GHsupaDcrDataframe = topWorst3GHsupaDcrDataframe.nlargest(10, 'HSUPA DCR(%)')
         topWorst3GHsupaDcrColumns = [{'name': i, 'id': i} for i in topWorst3GHsupaDcrDataframe.columns]
+        topWorst3GHsupaDcrRecordColumns = topWorst3GHsupaDcrColumns.copy()
+        topWorst3GHsupaDcrRecordColumns.append({'name': 'TTK', 'id':'TTK'})
+        topWorst3GHsupaDcrRecordColumns.append({'name': 'Responsable', 'id':'Responsable'})
 
         topWorst3GUmtsDcrDataframe = current3GTopWorstDataframe.filter(items=['RNC Name', 'NodeB Name', 'Cell Name', 'Speech DCR(%)', 'Date'])
         topWorst3GUmtsDcrDataframe = topWorst3GUmtsDcrDataframe.fillna(0)
         topWorst3GUmtsDcrDataframe = topWorst3GUmtsDcrDataframe.nlargest(10, 'Speech DCR(%)')
         topWorst3GUmtsDcrColumns = [{'name': i, 'id': i} for i in topWorst3GUmtsDcrDataframe.columns]
+        topWorst3GUmtsDcrRecordColumns = topWorst3GUmtsDcrColumns.copy()
+        topWorst3GUmtsDcrRecordColumns.append({'name': 'TTK', 'id':'TTK'})
+        topWorst3GUmtsDcrRecordColumns.append({'name': 'Responsable', 'id':'Responsable'})
 
         topWorst2GSpeechCssrDataframe = current2GTopWorstCssrDataframe.filter(items = ['GBSC', 'Site Name', 'Cell Name', 'Call Setup Success Rate – Speech (%)', 'Date'])
         topWorst2GSpeechCssrDataframe = topWorst2GSpeechCssrDataframe.fillna(0)
         topWorst2GSpeechCssrDataframe = topWorst2GSpeechCssrDataframe.nsmallest(10, 'Call Setup Success Rate – Speech (%)')
         topWorst2GSpeechCssrColumns = [{'name': i, 'id': i} for i in topWorst2GSpeechCssrDataframe.columns]
+        topWorst2GSpeechCssrRecordColumns = topWorst2GSpeechCssrColumns.copy()
+        topWorst2GSpeechCssrRecordColumns.append({'name': 'TTK', 'id':'TTK'})
+        topWorst2GSpeechCssrRecordColumns.append({'name': 'Responsable', 'id':'Responsable'})
 
         topWorst2GSpeechDcrDataframe = current2GTopWorstDcrDataframe.filter(items = ['GBSC', 'Site Name', 'Cell Name', 'Drop Call Rate – Speech (%)', 'Date'])
         topWorst2GSpeechDcrDataframe = topWorst2GSpeechDcrDataframe.fillna(0)
         topWorst2GSpeechDcrDataframe = topWorst2GSpeechDcrDataframe.nlargest(10, 'Drop Call Rate – Speech (%)')
         topWorst2GSpeechDcrColumns = [{'name': i, 'id': i} for i in topWorst2GSpeechDcrDataframe.columns]
-        return topWorst4GeRabSrColumns, topWorst4GeRabSrDataframe.to_dict('records'), topWorst4GeRabSrRecordColumns, topWorst4GDcrColumns, topWorst4GDcrDataframe.to_dict('records'), topWorst3GHsdpaCssrColumns, topWorst3GHsdpaCssrDataframe.to_dict('records'), topWorst3GHsupaCssrColumns, topWorst3GHsupaCssrDataframe.to_dict('records'), topWorst3GUmtsCssrColumns, topWorst3GUmtsCssrDataframe.to_dict('records'), topWorst3GHsdpaDcrColumns, topWorst3GHsdpaDcrDataframe.to_dict('records'), topWorst3GHsupaDcrColumns, topWorst3GHsupaDcrDataframe.to_dict('records'), topWorst3GUmtsDcrColumns, topWorst3GUmtsDcrDataframe.to_dict('records'), topWorst2GSpeechCssrColumns, topWorst2GSpeechCssrDataframe.to_dict('records'), topWorst2GSpeechDcrColumns, topWorst2GSpeechDcrDataframe.to_dict('records')
+        topWorst2GSpeechDcrRecordColumns = topWorst2GSpeechDcrColumns.copy()
+        topWorst2GSpeechDcrRecordColumns.append({'name': 'TTK', 'id':'TTK'})
+        topWorst2GSpeechDcrRecordColumns.append({'name': 'Responsable', 'id':'Responsable'})
+        return topWorst4GeRabSrColumns, topWorst4GeRabSrDataframe.to_dict('records'), topWorst4GeRabSrRecordColumns, topWorst4GDcrColumns, topWorst4GDcrDataframe.to_dict('records'), topWorst4GDcrRecordColumns, topWorst3GHsdpaCssrColumns, topWorst3GHsdpaCssrDataframe.to_dict('records'), topWorst3GHsdpaCssrRecordColumns, topWorst3GHsupaCssrColumns, topWorst3GHsupaCssrDataframe.to_dict('records'), topWorst3GHsupaCssrRecordColumns, topWorst3GUmtsCssrColumns, topWorst3GUmtsCssrDataframe.to_dict('records'), topWorst3GUmtsCssrRecordColumns, topWorst3GHsdpaDcrColumns, topWorst3GHsdpaDcrDataframe.to_dict('records'), topWorst3GHsdpaDcrRecordColumns, topWorst3GHsupaDcrColumns, topWorst3GHsupaDcrDataframe.to_dict('records'), topWorst3GHsupaDcrRecordColumns, topWorst3GUmtsDcrColumns, topWorst3GUmtsDcrDataframe.to_dict('records'), topWorst3GUmtsDcrRecordColumns, topWorst2GSpeechCssrColumns, topWorst2GSpeechCssrDataframe.to_dict('records'), topWorst2GSpeechCssrRecordColumns, topWorst2GSpeechDcrColumns, topWorst2GSpeechDcrDataframe.to_dict('records'), topWorst2GSpeechDcrRecordColumns
     else:
         raise PreventUpdate
+
+# Callback to add rows on Top Worst Records Tab
+@app.callback(
+    Output('topWorst4GeRabSrRercordTable', 'data'), 
+    Input('addCellButton', 'n_clicks'),
+    State('topWorst4GeRabSrRercordTable', 'data'),
+    State('topWorst4GeRabSrRercordTable', 'columns')
+)
+def addRow(clicks, rows, columns):
+    #rows = []
+    if clicks > 0:
+        rows.append({c['id']: '' for c in columns})
+    return rows
 
 # Callback to update Network Check Tab
 @app.callback(
