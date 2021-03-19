@@ -326,9 +326,8 @@ app.layout = html.Div(children=[
                             html.Button('Add Cell', id = 'addCellButton', n_clicks = 0),
                             dash_table.DataTable(
                                 id = 'topWorst4GeRabSrRercordTable',
-                                #data = [{'eNodeB Name':'', 'Cell FDD TDD Inidication':'', 'Cell Name':'', 'E-RAB Setup Success Rate (All)[%](%)':'', 'Date':'', 'TTK':'', 'Responsable':''}],
                                 style_header = dataTableStyles.style_header,
-                                style_cell = dataTableStyles.style_cell,
+                                #style_cell = dataTableStyles.style_cell,
                                 include_headers_on_copy_paste = True,
                                 editable = True,
                                 row_deletable = True
@@ -685,6 +684,7 @@ def updateEngDashboardTab(currentInterval, selectedTab, timeFrameDropdown, dataT
         Output('topWorst4GeRabSrTable', 'columns'),
         Output('topWorst4GeRabSrTable', 'data'),
         Output('topWorst4GeRabSrRercordTable', 'columns'),
+        Output('topWorst4GeRabSrRercordTable', 'data'),
         Output('topWorst4GDcrTable', 'columns'),
         Output('topWorst4GDcrTable', 'data'),
         Output('topWorst4DcrRercordTable', 'columns'),
@@ -747,6 +747,7 @@ def updateTopWorstTab(selectedTab):
         topWorst4GeRabSrRecordColumns = topWorst4GeRabSrColumns.copy()
         topWorst4GeRabSrRecordColumns.append({'name': 'TTK', 'id':'TTK'})
         topWorst4GeRabSrRecordColumns.append({'name': 'Responsable', 'id':'Responsable'})
+        topWorst4GeRabSrRecordDataframe = [{'eNodeB Name':'', 'Cell FDD TDD Inidication':'', 'Cell Name':'', 'E-RAB Setup Success Rate (All)[%](%)':'', 'Date':'', 'TTK':'', 'Responsable':''}]
 
         topWorst4GDcrDataframe = current4GTopWorstDcrDataframe.filter(items = ['eNodeB Name', 'Cell FDD TDD Indication', 'Cell Name', 'Call Drop Rate (All)[%]', 'Date'])
         topWorst4GDcrDataframe = topWorst4GDcrDataframe.fillna(0)
@@ -820,23 +821,25 @@ def updateTopWorstTab(selectedTab):
         topWorst2GSpeechDcrRecordColumns.append({'name': 'TTK', 'id':'TTK'})
         topWorst2GSpeechDcrRecordColumns.append({'name': 'Responsable', 'id':'Responsable'})
 
-        return topWorst4GeRabSrColumns, topWorst4GeRabSrDataframe.to_dict('records'), topWorst4GeRabSrRecordColumns, topWorst4GDcrColumns, topWorst4GDcrDataframe.to_dict('records'), topWorst4GDcrRecordColumns, topWorst3GHsdpaCssrColumns, topWorst3GHsdpaCssrDataframe.to_dict('records'), topWorst3GHsdpaCssrRecordColumns, topWorst3GHsupaCssrColumns, topWorst3GHsupaCssrDataframe.to_dict('records'), topWorst3GHsupaCssrRecordColumns, topWorst3GUmtsCssrColumns, topWorst3GUmtsCssrDataframe.to_dict('records'), topWorst3GUmtsCssrRecordColumns, topWorst3GHsdpaDcrColumns, topWorst3GHsdpaDcrDataframe.to_dict('records'), topWorst3GHsdpaDcrRecordColumns, topWorst3GHsupaDcrColumns, topWorst3GHsupaDcrDataframe.to_dict('records'), topWorst3GHsupaDcrRecordColumns, topWorst3GUmtsDcrColumns, topWorst3GUmtsDcrDataframe.to_dict('records'), topWorst3GUmtsDcrRecordColumns, topWorst2GSpeechCssrColumns, topWorst2GSpeechCssrDataframe.to_dict('records'), topWorst2GSpeechCssrRecordColumns, topWorst2GSpeechDcrColumns, topWorst2GSpeechDcrDataframe.to_dict('records'), topWorst2GSpeechDcrRecordColumns
+        return topWorst4GeRabSrColumns, topWorst4GeRabSrDataframe.to_dict('records'), topWorst4GeRabSrRecordColumns, topWorst4GeRabSrRecordDataframe, topWorst4GDcrColumns, topWorst4GDcrDataframe.to_dict('records'), topWorst4GDcrRecordColumns, topWorst3GHsdpaCssrColumns, topWorst3GHsdpaCssrDataframe.to_dict('records'), topWorst3GHsdpaCssrRecordColumns, topWorst3GHsupaCssrColumns, topWorst3GHsupaCssrDataframe.to_dict('records'), topWorst3GHsupaCssrRecordColumns, topWorst3GUmtsCssrColumns, topWorst3GUmtsCssrDataframe.to_dict('records'), topWorst3GUmtsCssrRecordColumns, topWorst3GHsdpaDcrColumns, topWorst3GHsdpaDcrDataframe.to_dict('records'), topWorst3GHsdpaDcrRecordColumns, topWorst3GHsupaDcrColumns, topWorst3GHsupaDcrDataframe.to_dict('records'), topWorst3GHsupaDcrRecordColumns, topWorst3GUmtsDcrColumns, topWorst3GUmtsDcrDataframe.to_dict('records'), topWorst3GUmtsDcrRecordColumns, topWorst2GSpeechCssrColumns, topWorst2GSpeechCssrDataframe.to_dict('records'), topWorst2GSpeechCssrRecordColumns, topWorst2GSpeechDcrColumns, topWorst2GSpeechDcrDataframe.to_dict('records'), topWorst2GSpeechDcrRecordColumns
     else:
         raise PreventUpdate
 
-# Callback to add rows on Top Worst Records Tab
-@app.callback(
-    Output('topWorst4GeRabSrRercordTable', 'data'), 
-    Input('addCellButton', 'n_clicks'),
-    #State('topWorst4GeRabSrRercordTable', 'data_previous'),
-    State('topWorst4GeRabSrRercordTable', 'columns')
-)
-def addRow(clicks, columns):
-    #if not rows:
-    #    rows = [{'eNodeB Name':'', 'Cell FDD TDD Inidication':'', 'Cell Name':'', 'E-RAB Setup Success Rate (All)[%](%)':'', 'Date':'', 'TTK':'', 'Responsable':''}]
-    if clicks > 0:
-        rows.append({c['id']: '' for c in columns})
-    return rows
+## Callback to add rows on Top Worst Records Tab
+#@app.callback(
+#    Output('topWorst4GeRabSrRercordTable', 'data'), 
+#    Input('addCellButton', 'n_clicks'),
+#    State('topWorst4GeRabSrRercordTable', 'data_previous'),
+#    State('topWorst4GeRabSrRercordTable', 'columns')
+#)
+#def addRow(clicks, data_previous, columns):
+#    #if not rows:
+#    #    rows.append({'eNodeB Name':'', 'Cell FDD TDD Inidication':'', 'Cell Name':'', 'E-RAB Setup Success Rate (All)[%](%)':'', 'Date':'', 'TTK':'', 'Responsable':''})
+#    if not data_previous:
+#        rows.append({'eNodeB Name':'', 'Cell FDD TDD Inidication':'', 'Cell Name':'', 'E-RAB Setup Success Rate (All)[%](%)':'', 'Date':'', 'TTK':'', 'Responsable':''})
+#    if clicks > 0:
+#        rows.append({c['id']: '' for c in columns})
+#    return rows
 
 # Callback to update Network Check Tab
 @app.callback(
