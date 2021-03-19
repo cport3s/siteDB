@@ -747,7 +747,7 @@ def updateTopWorstTab(selectedTab):
         topWorst4GeRabSrRecordColumns = topWorst4GeRabSrColumns.copy()
         topWorst4GeRabSrRecordColumns.append({'name': 'TTK', 'id':'TTK'})
         topWorst4GeRabSrRecordColumns.append({'name': 'Responsable', 'id':'Responsable'})
-        topWorst4GeRabSrRecordDataframe = [{'eNodeB Name':'', 'Cell FDD TDD Inidication':'', 'Cell Name':'', 'E-RAB Setup Success Rate (All)[%](%)':'', 'Date':'', 'TTK':'', 'Responsable':''}]
+        topWorst4GeRabSrRecordDataframe = [{i['id']:'' for i in topWorst4GeRabSrRecordColumns}]
 
         topWorst4GDcrDataframe = current4GTopWorstDcrDataframe.filter(items = ['eNodeB Name', 'Cell FDD TDD Indication', 'Cell Name', 'Call Drop Rate (All)[%]', 'Date'])
         topWorst4GDcrDataframe = topWorst4GDcrDataframe.fillna(0)
