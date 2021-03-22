@@ -713,9 +713,12 @@ def updateEngDashboardTab(currentInterval, selectedTab, timeFrameDropdown, dataT
         Output('topWorst2GSpeechDcrTable', 'data'),
         Output('topWorst2GSpeechDcrRecordTable', 'columns')
     ], 
-    Input('tabsContainer', 'value')
+    [
+        Input('tabsContainer', 'value'),
+        Input('addCellButton', 'n_clicks')
+    ]
 )
-def updateTopWorstTab(selectedTab):
+def updateTopWorstTab(selectedTab, clicks):
     # Ensure to refresh top worst tables only if that tab is selected
     if selectedTab == 'Top Worst Report':
         # Top Worst Reports Variables
