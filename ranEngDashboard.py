@@ -715,10 +715,11 @@ def updateEngDashboardTab(currentInterval, selectedTab, timeFrameDropdown, dataT
     ], 
     [
         Input('tabsContainer', 'value'),
-        Input('addCellButton', 'n_clicks')
+        Input('addCellButton', 'n_clicks'),
+        Input('innerTopWorstTabContainer', 'value')
     ]
 )
-def updateTopWorstTab(selectedTab, clicks):
+def updateTopWorstTab(selectedTab, clicks, selectedInnerTab):
     # Ensure to refresh top worst tables only if that tab is selected
     if selectedTab == 'Top Worst Report':
         # Top Worst Reports Variables
@@ -736,93 +737,95 @@ def updateTopWorstTab(selectedTab, clicks):
                 current3GTopWorstFile = file
             if topWorstCurrentDate and "LTE" in file:
                 current4GTopWorstFile = file
+        if selectedInnerTab == 'Daily Report':
+            current4GTopWorstDcrDataframe = pd.read_excel(topWorstFilePath + current4GTopWorstFile, sheet_name='TOP 50 Drop LTE', na_values='NIL')
+            current4GTopWorsteRabSrDataframe = pd.read_excel(topWorstFilePath + current4GTopWorstFile, sheet_name='TOP 50 E-RAB Setup', na_values='NIL')
+            current3GTopWorstDataframe = pd.read_excel(topWorstFilePath + current3GTopWorstFile, na_values=['NIL', '/0'])
+            current2GTopWorstCssrDataframe = pd.read_excel(topWorstFilePath + current2GTopWorstCssrFile, na_values='NIL')
+            current2GTopWorstDcrDataframe = pd.read_excel(topWorstFilePath + current2GTopWorstDcrFile, na_values='NIL')
 
-        current4GTopWorstDcrDataframe = pd.read_excel(topWorstFilePath + current4GTopWorstFile, sheet_name='TOP 50 Drop LTE', na_values='NIL')
-        current4GTopWorsteRabSrDataframe = pd.read_excel(topWorstFilePath + current4GTopWorstFile, sheet_name='TOP 50 E-RAB Setup', na_values='NIL')
-        current3GTopWorstDataframe = pd.read_excel(topWorstFilePath + current3GTopWorstFile, na_values=['NIL', '/0'])
-        current2GTopWorstCssrDataframe = pd.read_excel(topWorstFilePath + current2GTopWorstCssrFile, na_values='NIL')
-        current2GTopWorstDcrDataframe = pd.read_excel(topWorstFilePath + current2GTopWorstDcrFile, na_values='NIL')
+            topWorst4GeRabSrDataframe = current4GTopWorsteRabSrDataframe.filter(items = ['eNodeB Name', 'Cell FDD TDD Indication', 'Cell Name', 'E-RAB Setup Success Rate (ALL)[%](%)', 'Date'])
+            topWorst4GeRabSrDataframe = topWorst4GeRabSrDataframe.fillna(0)
+            topWorst4GeRabSrDataframe = topWorst4GeRabSrDataframe.nsmallest(10, 'E-RAB Setup Success Rate (ALL)[%](%)')
+            topWorst4GeRabSrColumns = [{'name': i, 'id': i} for i in topWorst4GeRabSrDataframe.columns]
+            topWorst4GeRabSrRecordColumns = topWorst4GeRabSrColumns.copy()
+            topWorst4GeRabSrRecordColumns.append({'name': 'TTK', 'id':'TTK'})
+            topWorst4GeRabSrRecordColumns.append({'name': 'Responsable', 'id':'Responsable'})
+            topWorst4GeRabSrRecordDataframe = [{i['id']:'' for i in topWorst4GeRabSrRecordColumns}]
 
-        topWorst4GeRabSrDataframe = current4GTopWorsteRabSrDataframe.filter(items = ['eNodeB Name', 'Cell FDD TDD Indication', 'Cell Name', 'E-RAB Setup Success Rate (ALL)[%](%)', 'Date'])
-        topWorst4GeRabSrDataframe = topWorst4GeRabSrDataframe.fillna(0)
-        topWorst4GeRabSrDataframe = topWorst4GeRabSrDataframe.nsmallest(10, 'E-RAB Setup Success Rate (ALL)[%](%)')
-        topWorst4GeRabSrColumns = [{'name': i, 'id': i} for i in topWorst4GeRabSrDataframe.columns]
-        topWorst4GeRabSrRecordColumns = topWorst4GeRabSrColumns.copy()
-        topWorst4GeRabSrRecordColumns.append({'name': 'TTK', 'id':'TTK'})
-        topWorst4GeRabSrRecordColumns.append({'name': 'Responsable', 'id':'Responsable'})
-        topWorst4GeRabSrRecordDataframe = [{i['id']:'' for i in topWorst4GeRabSrRecordColumns}]
+            topWorst4GDcrDataframe = current4GTopWorstDcrDataframe.filter(items = ['eNodeB Name', 'Cell FDD TDD Indication', 'Cell Name', 'Call Drop Rate (All)[%]', 'Date'])
+            topWorst4GDcrDataframe = topWorst4GDcrDataframe.fillna(0)
+            topWorst4GDcrDataframe = topWorst4GDcrDataframe.nlargest(10, 'Call Drop Rate (All)[%]')
+            topWorst4GDcrColumns = [{'name': i, 'id': i} for i in topWorst4GDcrDataframe.columns]
+            topWorst4GDcrRecordColumns = topWorst4GDcrColumns.copy()
+            topWorst4GDcrRecordColumns.append({'name': 'TTK', 'id':'TTK'})
+            topWorst4GDcrRecordColumns.append({'name': 'Responsable', 'id':'Responsable'})
 
-        topWorst4GDcrDataframe = current4GTopWorstDcrDataframe.filter(items = ['eNodeB Name', 'Cell FDD TDD Indication', 'Cell Name', 'Call Drop Rate (All)[%]', 'Date'])
-        topWorst4GDcrDataframe = topWorst4GDcrDataframe.fillna(0)
-        topWorst4GDcrDataframe = topWorst4GDcrDataframe.nlargest(10, 'Call Drop Rate (All)[%]')
-        topWorst4GDcrColumns = [{'name': i, 'id': i} for i in topWorst4GDcrDataframe.columns]
-        topWorst4GDcrRecordColumns = topWorst4GDcrColumns.copy()
-        topWorst4GDcrRecordColumns.append({'name': 'TTK', 'id':'TTK'})
-        topWorst4GDcrRecordColumns.append({'name': 'Responsable', 'id':'Responsable'})
+            topWorst3GHsdpaCssrDataframe = current3GTopWorstDataframe.filter(items = ['RNC Name', 'NodeB Name', 'Cell Name', 'HSDPA CSSR(%)', 'Date'])
+            topWorst3GHsdpaCssrDataframe = topWorst3GHsdpaCssrDataframe.fillna(0)
+            topWorst3GHsdpaCssrDataframe = topWorst3GHsdpaCssrDataframe.nsmallest(10, 'HSDPA CSSR(%)')
+            topWorst3GHsdpaCssrColumns = [{'name': i, 'id': i} for i in topWorst3GHsdpaCssrDataframe.columns]
+            topWorst3GHsdpaCssrRecordColumns = topWorst3GHsdpaCssrColumns.copy()
+            topWorst3GHsdpaCssrRecordColumns.append({'name': 'TTK', 'id':'TTK'})
+            topWorst3GHsdpaCssrRecordColumns.append({'name': 'Responsable', 'id':'Responsable'})
 
-        topWorst3GHsdpaCssrDataframe = current3GTopWorstDataframe.filter(items = ['RNC Name', 'NodeB Name', 'Cell Name', 'HSDPA CSSR(%)', 'Date'])
-        topWorst3GHsdpaCssrDataframe = topWorst3GHsdpaCssrDataframe.fillna(0)
-        topWorst3GHsdpaCssrDataframe = topWorst3GHsdpaCssrDataframe.nsmallest(10, 'HSDPA CSSR(%)')
-        topWorst3GHsdpaCssrColumns = [{'name': i, 'id': i} for i in topWorst3GHsdpaCssrDataframe.columns]
-        topWorst3GHsdpaCssrRecordColumns = topWorst3GHsdpaCssrColumns.copy()
-        topWorst3GHsdpaCssrRecordColumns.append({'name': 'TTK', 'id':'TTK'})
-        topWorst3GHsdpaCssrRecordColumns.append({'name': 'Responsable', 'id':'Responsable'})
+            topWorst3GHsupaCssrDataframe = current3GTopWorstDataframe.filter(items = ['RNC Name', 'NodeB Name', 'Cell Name', 'HSUPA CSSR(%)', 'Date'])
+            topWorst3GHsupaCssrDataframe = topWorst3GHsupaCssrDataframe.fillna(0)
+            topWorst3GHsupaCssrDataframe = topWorst3GHsupaCssrDataframe.nsmallest(10, 'HSUPA CSSR(%)')
+            topWorst3GHsupaCssrColumns = [{'name': i, 'id': i} for i in topWorst3GHsupaCssrDataframe.columns]
+            topWorst3GHsupaCssrRecordColumns = topWorst3GHsupaCssrColumns.copy()
+            topWorst3GHsupaCssrRecordColumns.append({'name': 'TTK', 'id':'TTK'})
+            topWorst3GHsupaCssrRecordColumns.append({'name': 'Responsable', 'id':'Responsable'})
 
-        topWorst3GHsupaCssrDataframe = current3GTopWorstDataframe.filter(items = ['RNC Name', 'NodeB Name', 'Cell Name', 'HSUPA CSSR(%)', 'Date'])
-        topWorst3GHsupaCssrDataframe = topWorst3GHsupaCssrDataframe.fillna(0)
-        topWorst3GHsupaCssrDataframe = topWorst3GHsupaCssrDataframe.nsmallest(10, 'HSUPA CSSR(%)')
-        topWorst3GHsupaCssrColumns = [{'name': i, 'id': i} for i in topWorst3GHsupaCssrDataframe.columns]
-        topWorst3GHsupaCssrRecordColumns = topWorst3GHsupaCssrColumns.copy()
-        topWorst3GHsupaCssrRecordColumns.append({'name': 'TTK', 'id':'TTK'})
-        topWorst3GHsupaCssrRecordColumns.append({'name': 'Responsable', 'id':'Responsable'})
+            topWorst3GUmtsCssrDataframe = current3GTopWorstDataframe.filter(items = ['RNC Name', 'NodeB Name', 'Cell Name', 'Speech CSSR', 'Date'])
+            topWorst3GUmtsCssrDataframe = topWorst3GUmtsCssrDataframe.fillna(0)
+            topWorst3GUmtsCssrDataframe = topWorst3GUmtsCssrDataframe.nsmallest(10, 'Speech CSSR')
+            topWorst3GUmtsCssrColumns = [{'name': i, 'id': i} for i in topWorst3GUmtsCssrDataframe.columns]
+            topWorst3GUmtsCssrRecordColumns = topWorst3GUmtsCssrColumns.copy()
+            topWorst3GUmtsCssrRecordColumns.append({'name': 'TTK', 'id':'TTK'})
+            topWorst3GUmtsCssrRecordColumns.append({'name': 'Responsable', 'id':'Responsable'})
 
-        topWorst3GUmtsCssrDataframe = current3GTopWorstDataframe.filter(items = ['RNC Name', 'NodeB Name', 'Cell Name', 'Speech CSSR', 'Date'])
-        topWorst3GUmtsCssrDataframe = topWorst3GUmtsCssrDataframe.fillna(0)
-        topWorst3GUmtsCssrDataframe = topWorst3GUmtsCssrDataframe.nsmallest(10, 'Speech CSSR')
-        topWorst3GUmtsCssrColumns = [{'name': i, 'id': i} for i in topWorst3GUmtsCssrDataframe.columns]
-        topWorst3GUmtsCssrRecordColumns = topWorst3GUmtsCssrColumns.copy()
-        topWorst3GUmtsCssrRecordColumns.append({'name': 'TTK', 'id':'TTK'})
-        topWorst3GUmtsCssrRecordColumns.append({'name': 'Responsable', 'id':'Responsable'})
+            topWorst3GHsdpaDcrDataframe = current3GTopWorstDataframe.filter(items = ['RNC Name', 'NodeB Name', 'Cell Name', 'HSDPA DCR(%)', 'Date'])
+            topWorst3GHsdpaDcrDataframe = topWorst3GHsdpaDcrDataframe.fillna(0)
+            topWorst3GHsdpaDcrDataframe = topWorst3GHsdpaDcrDataframe.nlargest(10, 'HSDPA DCR(%)')
+            topWorst3GHsdpaDcrColumns = [{'name': i, 'id': i} for i in topWorst3GHsdpaDcrDataframe.columns]
+            topWorst3GHsdpaDcrRecordColumns = topWorst3GHsdpaDcrColumns.copy()
+            topWorst3GHsdpaDcrRecordColumns.append({'name': 'TTK', 'id':'TTK'})
+            topWorst3GHsdpaDcrRecordColumns.append({'name': 'Responsable', 'id':'Responsable'})
 
-        topWorst3GHsdpaDcrDataframe = current3GTopWorstDataframe.filter(items = ['RNC Name', 'NodeB Name', 'Cell Name', 'HSDPA DCR(%)', 'Date'])
-        topWorst3GHsdpaDcrDataframe = topWorst3GHsdpaDcrDataframe.fillna(0)
-        topWorst3GHsdpaDcrDataframe = topWorst3GHsdpaDcrDataframe.nlargest(10, 'HSDPA DCR(%)')
-        topWorst3GHsdpaDcrColumns = [{'name': i, 'id': i} for i in topWorst3GHsdpaDcrDataframe.columns]
-        topWorst3GHsdpaDcrRecordColumns = topWorst3GHsdpaDcrColumns.copy()
-        topWorst3GHsdpaDcrRecordColumns.append({'name': 'TTK', 'id':'TTK'})
-        topWorst3GHsdpaDcrRecordColumns.append({'name': 'Responsable', 'id':'Responsable'})
+            topWorst3GHsupaDcrDataframe = current3GTopWorstDataframe.filter(items = ['RNC Name', 'NodeB Name', 'Cell Name', 'HSUPA DCR(%)', 'Date'])
+            topWorst3GHsupaDcrDataframe = topWorst3GHsupaDcrDataframe.fillna(0)
+            topWorst3GHsupaDcrDataframe = topWorst3GHsupaDcrDataframe.nlargest(10, 'HSUPA DCR(%)')
+            topWorst3GHsupaDcrColumns = [{'name': i, 'id': i} for i in topWorst3GHsupaDcrDataframe.columns]
+            topWorst3GHsupaDcrRecordColumns = topWorst3GHsupaDcrColumns.copy()
+            topWorst3GHsupaDcrRecordColumns.append({'name': 'TTK', 'id':'TTK'})
+            topWorst3GHsupaDcrRecordColumns.append({'name': 'Responsable', 'id':'Responsable'})
 
-        topWorst3GHsupaDcrDataframe = current3GTopWorstDataframe.filter(items = ['RNC Name', 'NodeB Name', 'Cell Name', 'HSUPA DCR(%)', 'Date'])
-        topWorst3GHsupaDcrDataframe = topWorst3GHsupaDcrDataframe.fillna(0)
-        topWorst3GHsupaDcrDataframe = topWorst3GHsupaDcrDataframe.nlargest(10, 'HSUPA DCR(%)')
-        topWorst3GHsupaDcrColumns = [{'name': i, 'id': i} for i in topWorst3GHsupaDcrDataframe.columns]
-        topWorst3GHsupaDcrRecordColumns = topWorst3GHsupaDcrColumns.copy()
-        topWorst3GHsupaDcrRecordColumns.append({'name': 'TTK', 'id':'TTK'})
-        topWorst3GHsupaDcrRecordColumns.append({'name': 'Responsable', 'id':'Responsable'})
+            topWorst3GUmtsDcrDataframe = current3GTopWorstDataframe.filter(items=['RNC Name', 'NodeB Name', 'Cell Name', 'Speech DCR(%)', 'Date'])
+            topWorst3GUmtsDcrDataframe = topWorst3GUmtsDcrDataframe.fillna(0)
+            topWorst3GUmtsDcrDataframe = topWorst3GUmtsDcrDataframe.nlargest(10, 'Speech DCR(%)')
+            topWorst3GUmtsDcrColumns = [{'name': i, 'id': i} for i in topWorst3GUmtsDcrDataframe.columns]
+            topWorst3GUmtsDcrRecordColumns = topWorst3GUmtsDcrColumns.copy()
+            topWorst3GUmtsDcrRecordColumns.append({'name': 'TTK', 'id':'TTK'})
+            topWorst3GUmtsDcrRecordColumns.append({'name': 'Responsable', 'id':'Responsable'})
 
-        topWorst3GUmtsDcrDataframe = current3GTopWorstDataframe.filter(items=['RNC Name', 'NodeB Name', 'Cell Name', 'Speech DCR(%)', 'Date'])
-        topWorst3GUmtsDcrDataframe = topWorst3GUmtsDcrDataframe.fillna(0)
-        topWorst3GUmtsDcrDataframe = topWorst3GUmtsDcrDataframe.nlargest(10, 'Speech DCR(%)')
-        topWorst3GUmtsDcrColumns = [{'name': i, 'id': i} for i in topWorst3GUmtsDcrDataframe.columns]
-        topWorst3GUmtsDcrRecordColumns = topWorst3GUmtsDcrColumns.copy()
-        topWorst3GUmtsDcrRecordColumns.append({'name': 'TTK', 'id':'TTK'})
-        topWorst3GUmtsDcrRecordColumns.append({'name': 'Responsable', 'id':'Responsable'})
+            topWorst2GSpeechCssrDataframe = current2GTopWorstCssrDataframe.filter(items = ['GBSC', 'Site Name', 'Cell Name', 'Call Setup Success Rate – Speech (%)', 'Date'])
+            topWorst2GSpeechCssrDataframe = topWorst2GSpeechCssrDataframe.fillna(0)
+            topWorst2GSpeechCssrDataframe = topWorst2GSpeechCssrDataframe.nsmallest(10, 'Call Setup Success Rate – Speech (%)')
+            topWorst2GSpeechCssrColumns = [{'name': i, 'id': i} for i in topWorst2GSpeechCssrDataframe.columns]
+            topWorst2GSpeechCssrRecordColumns = topWorst2GSpeechCssrColumns.copy()
+            topWorst2GSpeechCssrRecordColumns.append({'name': 'TTK', 'id':'TTK'})
+            topWorst2GSpeechCssrRecordColumns.append({'name': 'Responsable', 'id':'Responsable'})
 
-        topWorst2GSpeechCssrDataframe = current2GTopWorstCssrDataframe.filter(items = ['GBSC', 'Site Name', 'Cell Name', 'Call Setup Success Rate – Speech (%)', 'Date'])
-        topWorst2GSpeechCssrDataframe = topWorst2GSpeechCssrDataframe.fillna(0)
-        topWorst2GSpeechCssrDataframe = topWorst2GSpeechCssrDataframe.nsmallest(10, 'Call Setup Success Rate – Speech (%)')
-        topWorst2GSpeechCssrColumns = [{'name': i, 'id': i} for i in topWorst2GSpeechCssrDataframe.columns]
-        topWorst2GSpeechCssrRecordColumns = topWorst2GSpeechCssrColumns.copy()
-        topWorst2GSpeechCssrRecordColumns.append({'name': 'TTK', 'id':'TTK'})
-        topWorst2GSpeechCssrRecordColumns.append({'name': 'Responsable', 'id':'Responsable'})
-
-        topWorst2GSpeechDcrDataframe = current2GTopWorstDcrDataframe.filter(items = ['GBSC', 'Site Name', 'Cell Name', 'Drop Call Rate – Speech (%)', 'Date'])
-        topWorst2GSpeechDcrDataframe = topWorst2GSpeechDcrDataframe.fillna(0)
-        topWorst2GSpeechDcrDataframe = topWorst2GSpeechDcrDataframe.nlargest(10, 'Drop Call Rate – Speech (%)')
-        topWorst2GSpeechDcrColumns = [{'name': i, 'id': i} for i in topWorst2GSpeechDcrDataframe.columns]
-        topWorst2GSpeechDcrRecordColumns = topWorst2GSpeechDcrColumns.copy()
-        topWorst2GSpeechDcrRecordColumns.append({'name': 'TTK', 'id':'TTK'})
-        topWorst2GSpeechDcrRecordColumns.append({'name': 'Responsable', 'id':'Responsable'})
+            topWorst2GSpeechDcrDataframe = current2GTopWorstDcrDataframe.filter(items = ['GBSC', 'Site Name', 'Cell Name', 'Drop Call Rate – Speech (%)', 'Date'])
+            topWorst2GSpeechDcrDataframe = topWorst2GSpeechDcrDataframe.fillna(0)
+            topWorst2GSpeechDcrDataframe = topWorst2GSpeechDcrDataframe.nlargest(10, 'Drop Call Rate – Speech (%)')
+            topWorst2GSpeechDcrColumns = [{'name': i, 'id': i} for i in topWorst2GSpeechDcrDataframe.columns]
+            topWorst2GSpeechDcrRecordColumns = topWorst2GSpeechDcrColumns.copy()
+            topWorst2GSpeechDcrRecordColumns.append({'name': 'TTK', 'id':'TTK'})
+            topWorst2GSpeechDcrRecordColumns.append({'name': 'Responsable', 'id':'Responsable'})
+        else:
+            pass
 
         return topWorst4GeRabSrColumns, topWorst4GeRabSrDataframe.to_dict('records'), topWorst4GeRabSrRecordColumns, topWorst4GeRabSrRecordDataframe, topWorst4GDcrColumns, topWorst4GDcrDataframe.to_dict('records'), topWorst4GDcrRecordColumns, topWorst3GHsdpaCssrColumns, topWorst3GHsdpaCssrDataframe.to_dict('records'), topWorst3GHsdpaCssrRecordColumns, topWorst3GHsupaCssrColumns, topWorst3GHsupaCssrDataframe.to_dict('records'), topWorst3GHsupaCssrRecordColumns, topWorst3GUmtsCssrColumns, topWorst3GUmtsCssrDataframe.to_dict('records'), topWorst3GUmtsCssrRecordColumns, topWorst3GHsdpaDcrColumns, topWorst3GHsdpaDcrDataframe.to_dict('records'), topWorst3GHsdpaDcrRecordColumns, topWorst3GHsupaDcrColumns, topWorst3GHsupaDcrDataframe.to_dict('records'), topWorst3GHsupaDcrRecordColumns, topWorst3GUmtsDcrColumns, topWorst3GUmtsDcrDataframe.to_dict('records'), topWorst3GUmtsDcrRecordColumns, topWorst2GSpeechCssrColumns, topWorst2GSpeechCssrDataframe.to_dict('records'), topWorst2GSpeechCssrRecordColumns, topWorst2GSpeechDcrColumns, topWorst2GSpeechDcrDataframe.to_dict('records'), topWorst2GSpeechDcrRecordColumns
     else:
