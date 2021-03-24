@@ -313,8 +313,9 @@ app.layout = html.Div(children=[
                             ),
                             html.Button('Submit', id = 'topWorst4GeRabSrRercordTableSubmit', n_clicks = 0),
                             html.H3('LTE DCR Records'),
+                            html.Button('Add Entry', id = 'topWorst4GDcrRercordTableClicks', n_clicks = 0),
                             dash_table.DataTable(
-                                id = 'topWorst4DcrRercordTable',
+                                id = 'topWorst4GDcrRercordTable',
                                 style_header = dataTableStyles.style_header,
                                 columns = [{'name': '', 'id': ''}],
                                 data = [{'': ''}],
@@ -322,6 +323,7 @@ app.layout = html.Div(children=[
                                 editable = True,
                                 row_deletable = True
                             ),
+                            html.Button('Submit', id = 'topWorst4GDcrRercordTableSubmit', n_clicks = 0),
                             html.H3('3G PS CSSR Records'),
                             dash_table.DataTable(
                                 id = 'topWorst3GPsCssrRecordTable',
@@ -670,7 +672,7 @@ def updateEngDashboardTab(currentInterval, selectedTab, timeFrameDropdown, dataT
         Output('topWorst4GeRabSrRercordTable', 'columns'),
         Output('topWorst4GDcrTable', 'columns'),
         Output('topWorst4GDcrTable', 'data'),
-        Output('topWorst4DcrRercordTable', 'columns'),
+        Output('topWorst4GDcrRercordTable', 'columns'),
         Output('topWorst3GPsCssrTable', 'columns'),
         Output('topWorst3GPsCssrTable', 'data'),
         Output('topWorst3GPsCssrRecordTable', 'columns'),
@@ -791,26 +793,40 @@ def updateTopWorstTab(selectedTab):
 
 # Callback to add rows on Top Worst Records Tab. This tab's datatable data param must be updated on this callback to avoid callback output duplication.
 @app.callback(
-    Output('topWorst4GeRabSrRercordTable', 'data'), 
+    [
+        Output('topWorst4GeRabSrRercordTable', 'data'), 
+        Output('topWorst4GDcrRercordTable', 'data')
+    ],
     [
         Input('topWorst4GeRabSrRercordTableClicks', 'n_clicks'),
+        Input('topWorst4GDcrRercordTableClicks', 'n_clicks'),
         Input('innerTopWorstTabContainer', 'value')
     ],
     State('topWorst4GeRabSrRercordTable', 'data'),
-    State('topWorst4GeRabSrRercordTable', 'columns')
+    State('topWorst4GeRabSrRercordTable', 'columns'),
+    State('topWorst4GDcrRercordTable', 'data'),
+    State('topWorst4GDcrRercordTable', 'columns')
 )
-def addRow(topWorst4GeRabSrRercordTableClicks, selectedInnerTab, topWorst4GeRabSrRercordTableData, topWorst4GeRabSrRercordTableColumns):
+def addRow(topWorst4GeRabSrRercordTableClicks, topWorst4GDcrRercordTableClicks, selectedInnerTab, topWorst4GeRabSrRercordTableData, topWorst4GeRabSrRercordTableColumns, topWorst4GDcrRercordTableData, topWorst4GDcrRercordTableColumns):
     if selectedInnerTab == 'Records':
+        # Instantiate the callback context, to find the button ID that triggered the callback
+        callbackContext = dash.callback_context
+        # Get button ID
+        button_id = callbackContext.triggered[0]['prop_id'].split('.')[0]
         # Connect to DB
         connectr = mysql.connector.connect(user = dbPara.dbUsername, password = dbPara.dbPassword, host = dbPara.dbServerIp , database = dbPara.recordsDataTable)
         # Connection must be buffered when executing multiple querys on DB before closing connection.
         pointer = connectr.cursor(buffered=True)
-        if topWorst4GeRabSrRercordTableClicks > 0:
+        if button_id == 'topWorst4GeRabSrRercordTableClicks':
             topWorst4GeRabSrRercordTableData.append({column['id']: '' for column in topWorst4GeRabSrRercordTableColumns})
+        if button_id == 'topWorst4GDcrRercordTableClicks':
+            topWorst4GDcrRercordTableData.append({column['id']: '' for column in topWorst4GDcrRercordTableColumns})
         # Close DB Connection
         pointer.close()
         connectr.close()
-        return topWorst4GeRabSrRercordTableData
+        return topWorst4GeRabSrRercordTableData, topWorst4GDcrRercordTableData
+    else:
+        raise PreventUpdate
 
 # Callback to update Network Check Tab
 @app.callback(
