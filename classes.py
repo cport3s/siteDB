@@ -162,6 +162,7 @@ class dbCredentials():
     dbServerIp = '172.16.121.41'
     dataTable = 'alticedr_sitedb'
     performanceTable = 'ran_pf_data'
+    recordsDataTable = 'datatable_data'
 
 #Core Network Database credentiales
 class coreDbCredentials():
