@@ -170,3 +170,20 @@ def queryTxData(pointer, startTime, bscNameList, rncNameList, umtsNetworkPacketL
         gsmNetworkDelayGraph.add_trace(go.Scatter(x=gsmDataDataframe['date'], y=gsmDataDataframe['delay'], name=bsc))
         queryRaw.clear()
     return umtsNetworkPacketLossGraph, umtsNetworkDelayGraph, gsmNetworkPacketLossGraph, gsmNetworkDelayGraph
+
+def queryTopRecords(pointer, dataTableData, dataTableColumns, dbTable):
+    # Check if db table content
+    pointer.execute('SELECT * FROM datatable_data.' + dbTable + ';')
+    # If it's not empty, the append to the datatable content
+    queryRaw = pointer.fetchall()
+    if queryRaw:
+        tempDict = {}
+        # Loop the column headers list
+        for i in range(len(queryRaw)):
+            # Loop the db content list
+            for y in range(len(dataTableColumns)):
+                # Populate the entry's dictionary
+                tempDict[dataTableColumns[y]['id']] = queryRaw[i][y]
+            # Append that dictionary to the list
+            dataTableData.append(tempDict)
+    return dataTableData

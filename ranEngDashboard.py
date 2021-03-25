@@ -818,6 +818,8 @@ def addRow(topWorst4GeRabSrRercordTableClicks, topWorst4GDcrRercordTableClicks, 
         # Connection must be buffered when executing multiple querys on DB before closing connection.
         pointer = connectr.cursor(buffered=True)
         if button_id == 'topWorst4GeRabSrRercordTableClicks':
+            table = 'topworst4gerabsrrercord'
+            topWorst4GeRabSrRercordTableData = ran_functions.queryTopRecords(pointer, topWorst4GeRabSrRercordTableData, topWorst4GeRabSrRercordTableColumns, table)
             topWorst4GeRabSrRercordTableData.append({column['id']: '' for column in topWorst4GeRabSrRercordTableColumns})
         if button_id == 'topWorst4GDcrRercordTableClicks':
             topWorst4GDcrRercordTableData.append({column['id']: '' for column in topWorst4GDcrRercordTableColumns})
