@@ -171,7 +171,8 @@ def queryTxData(pointer, startTime, bscNameList, rncNameList, umtsNetworkPacketL
         queryRaw.clear()
     return umtsNetworkPacketLossGraph, umtsNetworkDelayGraph, gsmNetworkPacketLossGraph, gsmNetworkDelayGraph
 
-def queryTopRecords(pointer, dataTableData, dataTableColumns, dbTable):
+def queryTopRecords(pointer, dataTableColumns, dbTable):
+    dataTableData = []
     # Check if db table content
     pointer.execute('SELECT * FROM datatable_data.' + dbTable + ';')
     # If it's not empty, the append to the datatable content
@@ -186,4 +187,7 @@ def queryTopRecords(pointer, dataTableData, dataTableColumns, dbTable):
                 tempDict[dataTableColumns[y]['id']] = queryRaw[i][y]
             # Append that dictionary to the list
             dataTableData.append(tempDict)
+    # If the query content is empty, append an empty line to data
+    else:
+        dataTableData.append({'': ''})
     return dataTableData

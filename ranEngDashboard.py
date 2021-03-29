@@ -306,7 +306,7 @@ app.layout = html.Div(children=[
                                 id = 'topWorst4GeRabSrRercordTable',
                                 style_header = dataTableStyles.style_header,
                                 columns = [{'name': '', 'id': ''}],
-                                data = [{'': ''}],
+                                #data = [{'': ''}],
                                 include_headers_on_copy_paste = True,
                                 editable = True,
                                 row_deletable = True
@@ -318,7 +318,7 @@ app.layout = html.Div(children=[
                                 id = 'topWorst4GDcrRercordTable',
                                 style_header = dataTableStyles.style_header,
                                 columns = [{'name': '', 'id': ''}],
-                                data = [{'': ''}],
+                                #data = [{'': ''}],
                                 include_headers_on_copy_paste = True,
                                 editable = True,
                                 row_deletable = True
@@ -802,12 +802,13 @@ def updateTopWorstTab(selectedTab):
         Input('topWorst4GDcrRercordTableClicks', 'n_clicks'),
         Input('innerTopWorstTabContainer', 'value')
     ],
-    State('topWorst4GeRabSrRercordTable', 'data'),
+    State('topWorst4GeRabSrRercordTable', 'data_previous'),
+    #State('topWorst4GeRabSrRercordTable', 'data'),
     State('topWorst4GeRabSrRercordTable', 'columns'),
-    State('topWorst4GDcrRercordTable', 'data'),
+    #State('topWorst4GDcrRercordTable', 'data'),
     State('topWorst4GDcrRercordTable', 'columns')
 )
-def addRow(topWorst4GeRabSrRercordTableClicks, topWorst4GDcrRercordTableClicks, selectedInnerTab, topWorst4GeRabSrRercordTableData, topWorst4GeRabSrRercordTableColumns, topWorst4GDcrRercordTableData, topWorst4GDcrRercordTableColumns):
+def addRow(topWorst4GeRabSrRercordTableClicks, topWorst4GDcrRercordTableClicks, selectedInnerTab, topWorst4GeRabSrRercordTableState, topWorst4GeRabSrRercordTableColumns, topWorst4GDcrRercordTableColumns):
     if selectedInnerTab == 'Records':
         # Instantiate the callback context, to find the button ID that triggered the callback
         callbackContext = dash.callback_context
@@ -817,9 +818,12 @@ def addRow(topWorst4GeRabSrRercordTableClicks, topWorst4GDcrRercordTableClicks, 
         connectr = mysql.connector.connect(user = dbPara.dbUsername, password = dbPara.dbPassword, host = dbPara.dbServerIp , database = dbPara.recordsDataTable)
         # Connection must be buffered when executing multiple querys on DB before closing connection.
         pointer = connectr.cursor(buffered=True)
-        if button_id == 'topWorst4GeRabSrRercordTableClicks':
-            table = 'topworst4gerabsrrercord'
-            topWorst4GeRabSrRercordTableData = ran_functions.queryTopRecords(pointer, topWorst4GeRabSrRercordTableData, topWorst4GeRabSrRercordTableColumns, table)
+        table = 'topworst4gerabsrrercord'
+        # Fill datatable data with db table content
+        topWorst4GeRabSrRercordTableData = ran_functions.queryTopRecords(pointer, topWorst4GeRabSrRercordTableColumns, table)
+        table = 'topworst4gdcrrercord'
+        topWorst4GDcrRercordTableData = ran_functions.queryTopRecords(pointer, topWorst4GDcrRercordTableColumns, table)
+        if button_id == 'topWorst4GeRabSrRercordTableClicks':            
             topWorst4GeRabSrRercordTableData.append({column['id']: '' for column in topWorst4GeRabSrRercordTableColumns})
         if button_id == 'topWorst4GDcrRercordTableClicks':
             topWorst4GDcrRercordTableData.append({column['id']: '' for column in topWorst4GDcrRercordTableColumns})
