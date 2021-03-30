@@ -802,13 +802,10 @@ def updateTopWorstTab(selectedTab):
         Input('topWorst4GDcrRercordTableClicks', 'n_clicks'),
         Input('innerTopWorstTabContainer', 'value')
     ],
-    State('topWorst4GeRabSrRercordTable', 'data_previous'),
-    #State('topWorst4GeRabSrRercordTable', 'data'),
     State('topWorst4GeRabSrRercordTable', 'columns'),
-    #State('topWorst4GDcrRercordTable', 'data'),
     State('topWorst4GDcrRercordTable', 'columns')
 )
-def addRow(topWorst4GeRabSrRercordTableClicks, topWorst4GDcrRercordTableClicks, selectedInnerTab, topWorst4GeRabSrRercordTableState, topWorst4GeRabSrRercordTableColumns, topWorst4GDcrRercordTableColumns):
+def addRow(topWorst4GeRabSrRercordTableClicks, topWorst4GDcrRercordTableClicks, selectedInnerTab, topWorst4GeRabSrRercordTableColumns, topWorst4GDcrRercordTableColumns):
     if selectedInnerTab == 'Records':
         # Instantiate the callback context, to find the button ID that triggered the callback
         callbackContext = dash.callback_context
@@ -818,8 +815,8 @@ def addRow(topWorst4GeRabSrRercordTableClicks, topWorst4GDcrRercordTableClicks, 
         connectr = mysql.connector.connect(user = dbPara.dbUsername, password = dbPara.dbPassword, host = dbPara.dbServerIp , database = dbPara.recordsDataTable)
         # Connection must be buffered when executing multiple querys on DB before closing connection.
         pointer = connectr.cursor(buffered=True)
-        table = 'topworst4gerabsrrercord'
         # Fill datatable data with db table content
+        table = 'topworst4gerabsrrercord'
         topWorst4GeRabSrRercordTableData = ran_functions.queryTopRecords(pointer, topWorst4GeRabSrRercordTableColumns, table)
         table = 'topworst4gdcrrercord'
         topWorst4GDcrRercordTableData = ran_functions.queryTopRecords(pointer, topWorst4GDcrRercordTableColumns, table)
@@ -833,6 +830,53 @@ def addRow(topWorst4GeRabSrRercordTableClicks, topWorst4GDcrRercordTableClicks, 
         return topWorst4GeRabSrRercordTableData, topWorst4GDcrRercordTableData
     else:
         raise PreventUpdate
+
+# Callback to insert data to db
+@app.callback(
+    [
+        # The output will be the button style, because a callback MUST have an output
+        Output('topWorst4GeRabSrRercordTableSubmit', 'style'), 
+        Output('topWorst4GDcrRercordTableSubmit', 'style')
+    ],
+    [
+        # Our triggers will be the submit buttons
+        Input('topWorst4GeRabSrRercordTableSubmit', 'n_clicks'),
+        Input('topWorst4GDcrRercordTableSubmit', 'n_clicks')
+    ],
+    # We must know the state of the datatable data
+    State('topWorst4GeRabSrRercordTable', 'data'),
+    State('topWorst4GeRabSrRercordTable', 'columns'),
+    State('topWorst4GDcrRercordTable', 'data')
+)
+def insertData(topWorst4GeRabSrRercordTableSubmit, topWorst4GDcrRercordTableSubmit, topWorst4GeRabSrRercordTableData, topWorst4GeRabSrRercordTableColumns, topWorst4GDcrRercordTableData):
+    # Instantiate the callback context, to find the button ID that triggered the callback
+    callbackContext = dash.callback_context
+    # Get button ID
+    button_id = callbackContext.triggered[0]['prop_id'].split('.')[0]
+    # Connect to DB
+    connectr = mysql.connector.connect(user = dbPara.dbUsername, password = dbPara.dbPassword, host = dbPara.dbServerIp , database = dbPara.recordsDataTable)
+    # Connection must be buffered when executing multiple querys on DB before closing connection.
+    pointer = connectr.cursor(buffered=True)
+    if button_id == 'topWorst4GeRabSrRercordTableSubmit':
+        table = 'topworst4gerabsrrercord'
+        tempList = []
+        for i in range(len(topWorst4GeRabSrRercordTableData)):
+            tempList.append([v for v in topWorst4GeRabSrRercordTableData[i].values()])
+        for i in range(len(tempList)):
+            query = 'REPLACE INTO `datatable_data`.`' + table + '` (`enodebname`, `fddtddindicator`, `cellname`, `erabssr`, `entrydate`, `ttk`, `responsable`) VALUES (\'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\');'.format(tempList[i][0], tempList[i][1], tempList[i][2], tempList[i][3], tempList[i][4], tempList[i][5], tempList[i][6])
+            #ran_functions.insertDataTable(pointer, connectr, table, query)
+            pointer.execute(query)
+            connectr.commit()
+        # Close DB Connection
+        pointer.close()
+        connectr.close()
+        return {'backgroundColor': 'green'}, {'backgroundColor': '#e7e7e7'}
+    if button_id == 'topWorst4GDcrRercordTableSubmit':
+        # Close DB Connection
+        pointer.close()
+        connectr.close()
+        return {'backgroundColor': '#e7e7e7'}, {'backgroundColor': 'green'}
+    raise PreventUpdate
 
 # Callback to update Network Check Tab
 @app.callback(

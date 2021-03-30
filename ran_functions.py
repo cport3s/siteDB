@@ -191,3 +191,10 @@ def queryTopRecords(pointer, dataTableColumns, dbTable):
     else:
         dataTableData.append({'': ''})
     return dataTableData
+
+def insertDataTable(pointer, connectr, table, query):
+    pointer.execute(query)
+    connectr.commit()
+    # Close DB Connection
+    pointer.close()
+    connectr.close()
