@@ -882,20 +882,44 @@ def addRow(topWorst4GeRabSrRecordTableClicks, topWorst4GDcrRecordTableClicks, to
     [
         # The output will be the button style, because a callback MUST have an output
         Output('topWorst4GeRabSrRecordTableSubmit', 'style'), 
-        Output('topWorst4GDcrRecordTableSubmit', 'style')
+        Output('topWorst4GDcrRecordTableSubmit', 'style'), 
+        Output('topWorst3GPsCssrRecordTableSubmit', 'style'), 
+        Output('topWorst3GCsCssrRecordTableSubmit', 'style'), 
+        Output('topWorst3GPsDcrRecordTableSubmit', 'style'), 
+        Output('topWorst3GCsDcrRecordTableSubmit', 'style'), 
+        Output('topWorst2GSpeechCssrRecordTableSubmit', 'style'), 
+        Output('topWorst2GSpeechDcrRecordTableSubmit', 'style')
     ],
     [
         # Our triggers will be the submit buttons
         Input('topWorst4GeRabSrRecordTableSubmit', 'n_clicks'),
-        Input('topWorst4GDcrRecordTableSubmit', 'n_clicks')
+        Input('topWorst4GDcrRecordTableSubmit', 'n_clicks'),
+        Input('topWorst3GPsCssrRecordTableSubmit', 'n_clicks'),
+        Input('topWorst3GCsCssrRecordTableSubmit', 'n_clicks'),
+        Input('topWorst3GPsDcrRecordTableSubmit', 'n_clicks'),
+        Input('topWorst3GCsDcrRecordTableSubmit', 'n_clicks'),
+        Input('topWorst2GSpeechCssrRecordTableSubmit', 'n_clicks'),
+        Input('topWorst2GSpeechDcrRecordTableSubmit', 'n_clicks')
     ],
     # We must know the state of the datatable data
     State('topWorst4GeRabSrRecordTable', 'data'),
     State('topWorst4GeRabSrRecordTable', 'columns'),
     State('topWorst4GDcrRecordTable', 'data'),
-    State('topWorst4GDcrRecordTable', 'columns')
+    State('topWorst4GDcrRecordTable', 'columns'),
+    State('topWorst3GPsCssrRecordTable', 'data'),
+    State('topWorst3GPsCssrRecordTable', 'columns'),
+    State('topWorst3GCsCssrRecordTable', 'data'),
+    State('topWorst3GCsCssrRecordTable', 'columns'),
+    State('topWorst3GPsDcrRecordTable', 'data'),
+    State('topWorst3GPsDcrRecordTable', 'columns'),
+    State('topWorst3GCsDcrRecordTable', 'data'),
+    State('topWorst3GCsDcrRecordTable', 'columns'),
+    State('topWorst2GSpeechCssrRecordTable', 'data'),
+    State('topWorst2GSpeechCssrRecordTable', 'columns'),
+    State('topWorst2GSpeechDcrRecordTable', 'data'),
+    State('topWorst2GSpeechDcrRecordTable', 'columns')
 )
-def insertData(topWorst4GeRabSrRecordTableSubmit, topWorst4GDcrRecordTableSubmit, topWorst4GeRabSrRecordTableData, topWorst4GeRabSrRecordTableColumns, topWorst4GDcrRecordTableData, topWorst4GDcrRecordTableColumns):
+def insertData(topWorst4GeRabSrRecordTableSubmit, topWorst4GDcrRecordTableSubmit, topWorst3GPsCssrRecordTableSubmit, topWorst3GCsCssrRecordTableSubmit, topWorst3GPsDcrRecordTableSubmit, topWorst3GCsDcrRecordTableSubmit, topWorst2GSpeechCssrRecordTableSubmit, topWorst2GSpeechDcrRecordTableSubmit, topWorst4GeRabSrRecordTableData, topWorst4GeRabSrRecordTableColumns, topWorst4GDcrRecordTableData, topWorst4GDcrRecordTableColumns, topWorst3GPsCssrRecordTableData, topWorst3GPsCssrRecordTableColumns, topWorst3GCsCssrRecordTableData, topWorst3GCsCssrRecordTableColumns, topWorst3GPsDcrRecordTableData, topWorst3GPsDcrRecordTableColumns, topWorst3GCsDcrRecordTableData, topWorst3GCsDcrRecordTableColumns, topWorst2GSpeechCssrRecordTableData, topWorst2GSpeechCssrRecordTableColumns, topWorst2GSpeechDcrRecordTableData, topWorst2GSpeechDcrRecordTableColumns):
     # Instantiate the callback context, to find the button ID that triggered the callback
     callbackContext = dash.callback_context
     # Get button ID
@@ -907,23 +931,59 @@ def insertData(topWorst4GeRabSrRecordTableSubmit, topWorst4GDcrRecordTableSubmit
     if button_id == 'topWorst4GeRabSrRecordTableSubmit':
         table = 'topworst4gerabsrrecord'
         ran_functions.insertDataTable(pointer, connectr, table, topWorst4GeRabSrRecordTableData)
-        #tempList = []
-        #for i in range(len(topWorst4GeRabSrRecordTableData)):
-        #    tempList.append([v for v in topWorst4GeRabSrRecordTableData[i].values()])
-        #for i in range(len(tempList)):
-        #    query = 'REPLACE INTO `datatable_data`.`' + table + '` (`enodebname`, `fddtddindicator`, `cellname`, `erabssr`, `entrydate`, `ttk`, `responsable`) VALUES (\'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\');'.format(tempList[i][0], tempList[i][1], tempList[i][2], tempList[i][3], tempList[i][4], tempList[i][5], tempList[i][6])
-        #    #ran_functions.insertDataTable(pointer, connectr, table, query)
-        #    pointer.execute(query)
-        #    connectr.commit()
         # Close DB Connection
         pointer.close()
         connectr.close()
-        return {'backgroundColor': 'green'}, {'backgroundColor': '#e7e7e7'}
+        return {'backgroundColor': 'green'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}
     if button_id == 'topWorst4GDcrRecordTableSubmit':
+        table = 'topworst4gdcrrecord'
+        ran_functions.insertDataTable(pointer, connectr, table, topWorst4GDcrRecordTableData)
         # Close DB Connection
         pointer.close()
         connectr.close()
-        return {'backgroundColor': '#e7e7e7'}, {'backgroundColor': 'green'}
+        return {'backgroundColor': '#e7e7e7'}, {'backgroundColor': 'green'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}
+    if button_id == 'topWorst3GPsCssrRecordTableSubmit':
+        table = 'topworsts3gpscssrrecord'
+        ran_functions.insertDataTable(pointer, connectr, table, topWorst3GPsCssrRecordTableData)
+        # Close DB Connection
+        pointer.close()
+        connectr.close()
+        return {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': 'green'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}
+    if button_id == 'topWorst3GCsCssrRecordTableSubmit':
+        table = 'topworsts3gcscssrrecord'
+        ran_functions.insertDataTable(pointer, connectr, table, topWorst3GCsCssrRecordTableData)
+        # Close DB Connection
+        pointer.close()
+        connectr.close()
+        return {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': 'green'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}
+    if button_id == 'topWorst3GPsDcrRecordTableSubmit':
+        table = 'topworsts3gpsdcrrecord'
+        ran_functions.insertDataTable(pointer, connectr, table, topWorst3GPsDcrRecordTableData)
+        # Close DB Connection
+        pointer.close()
+        connectr.close()
+        return {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': 'green'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}
+    if button_id == 'topWorst3GCsDcrRecordTableSubmit':
+        table = 'topworsts3gcsdcrrecord'
+        ran_functions.insertDataTable(pointer, connectr, table, topWorst3GCsDcrRecordTableData)
+        # Close DB Connection
+        pointer.close()
+        connectr.close()
+        return {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': 'green'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}
+    if button_id == 'topWorst2GSpeechCssrRecordTableSubmit':
+        table = 'topworsts2gcssrrecord'
+        ran_functions.insertDataTable(pointer, connectr, table, topWorst2GSpeechCssrRecordTableData)
+        # Close DB Connection
+        pointer.close()
+        connectr.close()
+        return {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': 'green'}, {'backgroundColor': '#e7e7e7'}
+    if button_id == 'topWorst2GSpeechDcrRecordTableSubmit':
+        table = 'topworsts2gdcrrecord'
+        ran_functions.insertDataTable(pointer, connectr, table, topWorst2GSpeechDcrRecordTableData)
+        # Close DB Connection
+        pointer.close()
+        connectr.close()
+        return {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': 'green'}
     raise PreventUpdate
 
 # Callback to update Network Check Tab
@@ -1300,5 +1360,6 @@ def showTopWorstInnerTabContent(currentTab):
         return topWorstDaily, topWorstRecord
 
 if __name__ == '__main__':
-    app.run_server(debug=True, host='0.0.0.0', port='5016', dev_tools_silence_routes_logging=False)
+    #app.run_server(debug=True, host='0.0.0.0', port='5016', dev_tools_silence_routes_logging=False)
+    app.run_server(debug=True, host='0.0.0.0', port='5016')
 
