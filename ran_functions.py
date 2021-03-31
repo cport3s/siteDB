@@ -210,6 +210,9 @@ def insertDataTable(pointer, connectr, dbTable, dataTableData):
     query += ') VALUES ('
     # Create temporary list with datatable data values
     tempList = []
+    # We must always delete the key '' in case the datatable comes with an empty value
+    dataTableData[0].pop('')
+    #print(dataTableData[0])
     for i in range(len(dataTableData)):
         tempList.append([v for v in dataTableData[i].values()])
     for i in range(len(tempList)):
