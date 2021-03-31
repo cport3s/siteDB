@@ -187,14 +187,43 @@ def queryTopRecords(pointer, dataTableColumns, dbTable):
                 tempDict[dataTableColumns[y]['id']] = queryRaw[i][y]
             # Append that dictionary to the list
             dataTableData.append(tempDict)
+            tempDict = {}
     # If the query content is empty, append an empty line to data
     else:
         dataTableData.append({'': ''})
     return dataTableData
 
-def insertDataTable(pointer, connectr, table, query):
+def insertDataTable(pointer, connectr, dbTable, dataTableData):
+    # First, we must query the column names from the table
+    pointer.execute('SELECT * FROM datatable_data.' + dbTable + ';')
+    # Description method of pointer return a tuple of tuples, containing the column name on positon 0 on each tuple
+    columnNames = [column[0] for column in pointer.description]
+    # Now, we must construct the REPLACE query
+    query = 'REPLACE INTO `datatable_data`.`' + dbTable + '` ('
+    for i in range(len(columnNames)):
+        query += '`' + str(columnNames[i]) + '`'
+        # Add , to separate column names in query
+        if i < len(columnNames)-1:
+            query += ', '
+    query += ') VALUES ('
+    # Create temporary list with datatable data values
+    tempList = []
+    for i in range(len(dataTableData)):
+        tempList.append([v for v in dataTableData[i].values()])
+    for i in range(len(tempList)):
+        for y in range(len(columnNames)):
+            query += '`' + str(tempList[i][y]) + '`'
+            # Separate values by coma
+            if y < len(columnNames)-1:
+                query += ', '
+        query += ")"
+        # Separate groups of values by coma
+        if i < len(dataTableData)-1:
+            query += ', '
+    # Close query
+    query += ";"
     pointer.execute(query)
     connectr.commit()
-    # Close DB Connection
-    pointer.close()
-    connectr.close()
+    ## Close DB Connection
+    #pointer.close()
+    #connectr.close()

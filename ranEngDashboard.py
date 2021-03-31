@@ -301,89 +301,93 @@ app.layout = html.Div(children=[
                     html.Div(
                         children = [
                             html.H3('LTE eRAB SR Records'),
-                            html.Button('Add Entry', id = 'topWorst4GeRabSrRercordTableClicks', n_clicks = 0),
+                            html.Button('Add Entry', id = 'topWorst4GeRabSrRecordTableClicks', n_clicks = 0),
                             dash_table.DataTable(
-                                id = 'topWorst4GeRabSrRercordTable',
+                                id = 'topWorst4GeRabSrRecordTable',
                                 style_header = dataTableStyles.style_header,
                                 columns = [{'name': '', 'id': ''}],
-                                #data = [{'': ''}],
                                 include_headers_on_copy_paste = True,
                                 editable = True,
                                 row_deletable = True
                             ),
-                            html.Button('Submit', id = 'topWorst4GeRabSrRercordTableSubmit', n_clicks = 0),
+                            html.Button('Submit', id = 'topWorst4GeRabSrRecordTableSubmit', n_clicks = 0),
                             html.H3('LTE DCR Records'),
-                            html.Button('Add Entry', id = 'topWorst4GDcrRercordTableClicks', n_clicks = 0),
+                            html.Button('Add Entry', id = 'topWorst4GDcrRecordTableClicks', n_clicks = 0),
                             dash_table.DataTable(
-                                id = 'topWorst4GDcrRercordTable',
+                                id = 'topWorst4GDcrRecordTable',
                                 style_header = dataTableStyles.style_header,
                                 columns = [{'name': '', 'id': ''}],
-                                #data = [{'': ''}],
                                 include_headers_on_copy_paste = True,
                                 editable = True,
                                 row_deletable = True
                             ),
-                            html.Button('Submit', id = 'topWorst4GDcrRercordTableSubmit', n_clicks = 0),
+                            html.Button('Submit', id = 'topWorst4GDcrRecordTableSubmit', n_clicks = 0),
                             html.H3('3G PS CSSR Records'),
+                            html.Button('Add Entry', id = 'topWorst3GPsCssrRecordTableClicks', n_clicks = 0),
                             dash_table.DataTable(
                                 id = 'topWorst3GPsCssrRecordTable',
                                 style_header = dataTableStyles.style_header,
                                 columns = [{'name': '', 'id': ''}],
-                                data = [{'': ''}],
                                 include_headers_on_copy_paste = True,
                                 editable = True,
                                 row_deletable = True
                             ),
+                            html.Button('Submit', id = 'topWorst3GPsCssrRecordTableSubmit', n_clicks = 0),
                             html.H3('3G CS CSSR Records'),
+                            html.Button('Add Entry', id = 'topWorst3GCsCssrRecordTableClicks', n_clicks = 0),
                             dash_table.DataTable(
                                 id = 'topWorst3GCsCssrRecordTable',
                                 style_header = dataTableStyles.style_header,
                                 columns = [{'name': '', 'id': ''}],
-                                data = [{'': ''}],
                                 include_headers_on_copy_paste = True,
                                 editable = True,
                                 row_deletable = True
                             ),
+                            html.Button('Submit', id = 'topWorst3GCsCssrRecordTableSubmit', n_clicks = 0),
                             html.H3('3G PS DCR Records'),
+                            html.Button('Add Entry', id = 'topWorst3GPsDcrRecordTableClicks', n_clicks = 0),
                             dash_table.DataTable(
                                 id = 'topWorst3GPsDcrRecordTable',
                                 style_header = dataTableStyles.style_header,
                                 columns = [{'name': '', 'id': ''}],
-                                data = [{'': ''}],
                                 include_headers_on_copy_paste = True,
                                 editable = True,
                                 row_deletable = True
                             ),
+                            html.Button('Submit', id = 'topWorst3GPsDcrRecordTableSubmit', n_clicks = 0),
                             html.H3('3G CS DCR Records'),
+                            html.Button('Add Entry', id = 'topWorst3GCsDcrRecordTableClicks', n_clicks = 0),
                             dash_table.DataTable(
                                 id = 'topWorst3GCsDcrRecordTable',
                                 style_header = dataTableStyles.style_header,
                                 columns = [{'name': '', 'id': ''}],
-                                data = [{'': ''}],
                                 include_headers_on_copy_paste = True,
                                 editable = True,
                                 row_deletable = True
                             ),
+                            html.Button('Submit', id = 'topWorst3GCsDcrRecordTableSubmit', n_clicks = 0),
                             html.H3('GSM CSSR Records'),
+                            html.Button('Add Entry', id = 'topWorst2GSpeechCssrRecordTableClicks', n_clicks = 0),
                             dash_table.DataTable(
                                 id = 'topWorst2GSpeechCssrRecordTable',
                                 style_header = dataTableStyles.style_header,
                                 columns = [{'name': '', 'id': ''}],
-                                data = [{'': ''}],
                                 include_headers_on_copy_paste = True,
                                 editable = True,
                                 row_deletable = True
                             ),
+                            html.Button('Submit', id = 'topWorst2GSpeechCssrRecordTableSubmit', n_clicks = 0),
                             html.H3('GSM DCR Records'),
+                            html.Button('Add Entry', id = 'topWorst2GSpeechDcrRecordTableClicks', n_clicks = 0),
                             dash_table.DataTable(
                                 id = 'topWorst2GSpeechDcrRecordTable',
                                 style_header = dataTableStyles.style_header,
                                 columns = [{'name': '', 'id': ''}],
-                                data = [{'': ''}],
                                 include_headers_on_copy_paste = True,
                                 editable = True,
                                 row_deletable = True
-                            )
+                            ),
+                            html.Button('Submit', id = 'topWorst2GSpeechDcrRecordTableSubmit', n_clicks = 0),
                         ]
                     )
                 ]
@@ -669,10 +673,10 @@ def updateEngDashboardTab(currentInterval, selectedTab, timeFrameDropdown, dataT
     [
         Output('topWorst4GeRabSrTable', 'columns'),
         Output('topWorst4GeRabSrTable', 'data'),
-        Output('topWorst4GeRabSrRercordTable', 'columns'),
+        Output('topWorst4GeRabSrRecordTable', 'columns'),
         Output('topWorst4GDcrTable', 'columns'),
         Output('topWorst4GDcrTable', 'data'),
-        Output('topWorst4GDcrRercordTable', 'columns'),
+        Output('topWorst4GDcrRecordTable', 'columns'),
         Output('topWorst3GPsCssrTable', 'columns'),
         Output('topWorst3GPsCssrTable', 'data'),
         Output('topWorst3GPsCssrRecordTable', 'columns'),
@@ -794,18 +798,36 @@ def updateTopWorstTab(selectedTab):
 # Callback to add rows on Top Worst Records Tab. This tab's datatable data param must be updated on this callback to avoid callback output duplication.
 @app.callback(
     [
-        Output('topWorst4GeRabSrRercordTable', 'data'), 
-        Output('topWorst4GDcrRercordTable', 'data')
+        Output('topWorst4GeRabSrRecordTable', 'data'), 
+        Output('topWorst4GDcrRecordTable', 'data'),
+        Output('topWorst3GPsCssrRecordTable', 'data'),
+        Output('topWorst3GCsCssrRecordTable', 'data'),
+        Output('topWorst3GPsDcrRecordTable', 'data'),
+        Output('topWorst3GCsDcrRecordTable', 'data'),
+        Output('topWorst2GSpeechCssrRecordTable', 'data'),
+        Output('topWorst2GSpeechDcrRecordTable', 'data')
     ],
     [
-        Input('topWorst4GeRabSrRercordTableClicks', 'n_clicks'),
-        Input('topWorst4GDcrRercordTableClicks', 'n_clicks'),
+        Input('topWorst4GeRabSrRecordTableClicks', 'n_clicks'),
+        Input('topWorst4GDcrRecordTableClicks', 'n_clicks'),
+        Input('topWorst3GPsCssrRecordTableClicks', 'n_clicks'),
+        Input('topWorst3GCsCssrRecordTableClicks', 'n_clicks'),
+        Input('topWorst3GPsDcrRecordTableClicks', 'n_clicks'),
+        Input('topWorst3GCsDcrRecordTableClicks', 'n_clicks'),
+        Input('topWorst2GSpeechCssrRecordTableClicks', 'n_clicks'),
+        Input('topWorst2GSpeechDcrRecordTableClicks', 'n_clicks'),
         Input('innerTopWorstTabContainer', 'value')
     ],
-    State('topWorst4GeRabSrRercordTable', 'columns'),
-    State('topWorst4GDcrRercordTable', 'columns')
+    State('topWorst4GeRabSrRecordTable', 'columns'),
+    State('topWorst4GDcrRecordTable', 'columns'),
+    State('topWorst3GPsCssrRecordTable', 'columns'),
+    State('topWorst3GCsCssrRecordTable', 'columns'),
+    State('topWorst3GPsDcrRecordTable', 'columns'),
+    State('topWorst3GCsDcrRecordTable', 'columns'),
+    State('topWorst2GSpeechCssrRecordTable', 'columns'),
+    State('topWorst2GSpeechDcrRecordTable', 'columns')
 )
-def addRow(topWorst4GeRabSrRercordTableClicks, topWorst4GDcrRercordTableClicks, selectedInnerTab, topWorst4GeRabSrRercordTableColumns, topWorst4GDcrRercordTableColumns):
+def addRow(topWorst4GeRabSrRecordTableClicks, topWorst4GDcrRecordTableClicks, topWorst3GPsCssrRecordTableClicks, topWorst3GCsCssrRecordTableClicks, topWorst3GPsDcrRecordTableClicks, topWorst3GCsDcrRecordTableClicks, topWorst2GCssrRecordTableClicks, topWorst2GDcrRecordTableClicks, selectedInnerTab, topWorst4GeRabSrRecordTableColumns, topWorst4GDcrRecordTableColumns, topWorst3GPsCssrRecordTableColumns, topWorst3GCsCssrRecordTableColumns, topWorst3GPsDcrRecordTableColumns, topWorst3GCsDcrRecordTableColumns, topWorst2GCssrRecordTableColumns, topWorst2GDcrRecordTableColumns):
     if selectedInnerTab == 'Records':
         # Instantiate the callback context, to find the button ID that triggered the callback
         callbackContext = dash.callback_context
@@ -816,18 +838,42 @@ def addRow(topWorst4GeRabSrRercordTableClicks, topWorst4GDcrRercordTableClicks, 
         # Connection must be buffered when executing multiple querys on DB before closing connection.
         pointer = connectr.cursor(buffered=True)
         # Fill datatable data with db table content
-        table = 'topworst4gerabsrrercord'
-        topWorst4GeRabSrRercordTableData = ran_functions.queryTopRecords(pointer, topWorst4GeRabSrRercordTableColumns, table)
-        table = 'topworst4gdcrrercord'
-        topWorst4GDcrRercordTableData = ran_functions.queryTopRecords(pointer, topWorst4GDcrRercordTableColumns, table)
-        if button_id == 'topWorst4GeRabSrRercordTableClicks':            
-            topWorst4GeRabSrRercordTableData.append({column['id']: '' for column in topWorst4GeRabSrRercordTableColumns})
-        if button_id == 'topWorst4GDcrRercordTableClicks':
-            topWorst4GDcrRercordTableData.append({column['id']: '' for column in topWorst4GDcrRercordTableColumns})
+        table = 'topworst4gerabsrrecord'
+        topWorst4GeRabSrRecordTableData = ran_functions.queryTopRecords(pointer, topWorst4GeRabSrRecordTableColumns, table)
+        table = 'topworst4gdcrrecord'
+        topWorst4GDcrRecordTableData = ran_functions.queryTopRecords(pointer, topWorst4GDcrRecordTableColumns, table)
+        table = 'topworst3gpscssrrecord'
+        topWorst3GPsCssrRecordTableData = ran_functions.queryTopRecords(pointer, topWorst3GPsCssrRecordTableColumns, table)
+        table = 'topworst3gcscssrrecord'
+        topWorst3GCsCssrRecordTableData = ran_functions.queryTopRecords(pointer, topWorst3GCsCssrRecordTableColumns, table)
+        table = 'topworst3gpsdcrrecord'
+        topWorst3GPsDcrRecordTableData = ran_functions.queryTopRecords(pointer, topWorst3GPsDcrRecordTableColumns, table)
+        table = 'topworst3gcsdcrrecord'
+        topWorst3GCsDcrRecordTableData = ran_functions.queryTopRecords(pointer, topWorst3GCsDcrRecordTableColumns, table)
+        table = 'topworst2gcssrrecord'
+        topWorst2GCssrRecordTableData = ran_functions.queryTopRecords(pointer, topWorst2GCssrRecordTableColumns, table)
+        table = 'topworst2gdcrrecord'
+        topWorst2GDcrRecordTableData = ran_functions.queryTopRecords(pointer, topWorst2GDcrRecordTableColumns, table)
+        if button_id == 'topWorst4GeRabSrRecordTableClicks':            
+            topWorst4GeRabSrRecordTableData.append({column['id']: '' for column in topWorst4GeRabSrRecordTableColumns})
+        if button_id == 'topWorst4GDcrRecordTableClicks':
+            topWorst4GDcrRecordTableData.append({column['id']: '' for column in topWorst4GDcrRecordTableColumns})
+        if button_id == 'topWorst3GPsCssrRecordTableClicks':            
+            topWorst3GPsCssrRecordTableData.append({column['id']: '' for column in topWorst3GPsCssrRecordTableColumns})
+        if button_id == 'topWorst3GCsCssrRecordTableClicks':
+            topWorst3GCsCssrRecordTableData.append({column['id']: '' for column in topWorst3GCsCssrRecordTableColumns})
+        if button_id == 'topWorst3GPsDcrRecordTableClicks':            
+            topWorst3GPsDcrRecordTableData.append({column['id']: '' for column in topWorst3GPsDcrRecordTableColumns})
+        if button_id == 'topWorst3GCsDcrRecordTableClicks':
+            topWorst3GCsDcrRecordTableData.append({column['id']: '' for column in topWorst3GCsDcrRecordTableColumns})
+        if button_id == 'topWorst2GCssrRecordTableClicks':            
+            topWorst2GCssrRecordTableData.append({column['id']: '' for column in topWorst2GCssrRecordTableColumns})
+        if button_id == 'topWorst2GDcrRecordTableClicks':
+            topWorst2GDcrRecordTableData.append({column['id']: '' for column in topWorst2GDcrRecordTableColumns})
         # Close DB Connection
         pointer.close()
         connectr.close()
-        return topWorst4GeRabSrRercordTableData, topWorst4GDcrRercordTableData
+        return topWorst4GeRabSrRecordTableData, topWorst4GDcrRecordTableData, topWorst3GPsCssrRecordTableData, topWorst3GCsCssrRecordTableData, topWorst3GPsDcrRecordTableData, topWorst3GCsDcrRecordTableData, topWorst2GCssrRecordTableData, topWorst2GDcrRecordTableData
     else:
         raise PreventUpdate
 
@@ -835,20 +881,21 @@ def addRow(topWorst4GeRabSrRercordTableClicks, topWorst4GDcrRercordTableClicks, 
 @app.callback(
     [
         # The output will be the button style, because a callback MUST have an output
-        Output('topWorst4GeRabSrRercordTableSubmit', 'style'), 
-        Output('topWorst4GDcrRercordTableSubmit', 'style')
+        Output('topWorst4GeRabSrRecordTableSubmit', 'style'), 
+        Output('topWorst4GDcrRecordTableSubmit', 'style')
     ],
     [
         # Our triggers will be the submit buttons
-        Input('topWorst4GeRabSrRercordTableSubmit', 'n_clicks'),
-        Input('topWorst4GDcrRercordTableSubmit', 'n_clicks')
+        Input('topWorst4GeRabSrRecordTableSubmit', 'n_clicks'),
+        Input('topWorst4GDcrRecordTableSubmit', 'n_clicks')
     ],
     # We must know the state of the datatable data
-    State('topWorst4GeRabSrRercordTable', 'data'),
-    State('topWorst4GeRabSrRercordTable', 'columns'),
-    State('topWorst4GDcrRercordTable', 'data')
+    State('topWorst4GeRabSrRecordTable', 'data'),
+    State('topWorst4GeRabSrRecordTable', 'columns'),
+    State('topWorst4GDcrRecordTable', 'data'),
+    State('topWorst4GDcrRecordTable', 'columns')
 )
-def insertData(topWorst4GeRabSrRercordTableSubmit, topWorst4GDcrRercordTableSubmit, topWorst4GeRabSrRercordTableData, topWorst4GeRabSrRercordTableColumns, topWorst4GDcrRercordTableData):
+def insertData(topWorst4GeRabSrRecordTableSubmit, topWorst4GDcrRecordTableSubmit, topWorst4GeRabSrRecordTableData, topWorst4GeRabSrRecordTableColumns, topWorst4GDcrRecordTableData, topWorst4GDcrRecordTableColumns):
     # Instantiate the callback context, to find the button ID that triggered the callback
     callbackContext = dash.callback_context
     # Get button ID
@@ -857,21 +904,22 @@ def insertData(topWorst4GeRabSrRercordTableSubmit, topWorst4GDcrRercordTableSubm
     connectr = mysql.connector.connect(user = dbPara.dbUsername, password = dbPara.dbPassword, host = dbPara.dbServerIp , database = dbPara.recordsDataTable)
     # Connection must be buffered when executing multiple querys on DB before closing connection.
     pointer = connectr.cursor(buffered=True)
-    if button_id == 'topWorst4GeRabSrRercordTableSubmit':
-        table = 'topworst4gerabsrrercord'
-        tempList = []
-        for i in range(len(topWorst4GeRabSrRercordTableData)):
-            tempList.append([v for v in topWorst4GeRabSrRercordTableData[i].values()])
-        for i in range(len(tempList)):
-            query = 'REPLACE INTO `datatable_data`.`' + table + '` (`enodebname`, `fddtddindicator`, `cellname`, `erabssr`, `entrydate`, `ttk`, `responsable`) VALUES (\'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\');'.format(tempList[i][0], tempList[i][1], tempList[i][2], tempList[i][3], tempList[i][4], tempList[i][5], tempList[i][6])
-            #ran_functions.insertDataTable(pointer, connectr, table, query)
-            pointer.execute(query)
-            connectr.commit()
+    if button_id == 'topWorst4GeRabSrRecordTableSubmit':
+        table = 'topworst4gerabsrrecord'
+        ran_functions.insertDataTable(pointer, connectr, table, topWorst4GeRabSrRecordTableData)
+        #tempList = []
+        #for i in range(len(topWorst4GeRabSrRecordTableData)):
+        #    tempList.append([v for v in topWorst4GeRabSrRecordTableData[i].values()])
+        #for i in range(len(tempList)):
+        #    query = 'REPLACE INTO `datatable_data`.`' + table + '` (`enodebname`, `fddtddindicator`, `cellname`, `erabssr`, `entrydate`, `ttk`, `responsable`) VALUES (\'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\', \'{}\');'.format(tempList[i][0], tempList[i][1], tempList[i][2], tempList[i][3], tempList[i][4], tempList[i][5], tempList[i][6])
+        #    #ran_functions.insertDataTable(pointer, connectr, table, query)
+        #    pointer.execute(query)
+        #    connectr.commit()
         # Close DB Connection
         pointer.close()
         connectr.close()
         return {'backgroundColor': 'green'}, {'backgroundColor': '#e7e7e7'}
-    if button_id == 'topWorst4GDcrRercordTableSubmit':
+    if button_id == 'topWorst4GDcrRecordTableSubmit':
         # Close DB Connection
         pointer.close()
         connectr.close()
@@ -1252,5 +1300,5 @@ def showTopWorstInnerTabContent(currentTab):
         return topWorstDaily, topWorstRecord
 
 if __name__ == '__main__':
-    app.run_server(debug=True, host='0.0.0.0', port='5016')
+    app.run_server(debug=True, host='0.0.0.0', port='5016', dev_tools_silence_routes_logging=False)
 

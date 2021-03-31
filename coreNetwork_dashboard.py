@@ -214,4 +214,4 @@ def showTabContent(currentTab):
         return {'display':'none'}, {'display':'none'}, {'display':'none'}, {'display':'inline'}
 
 if __name__ == '__main__':
-    app.run_server(debug=True, host='0.0.0.0', port='5010')
+    app.run_server(debug=True, host='0.0.0.0', port='5010', dev_tools_silence_routes_logging=False)
