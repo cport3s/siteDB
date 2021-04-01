@@ -26,8 +26,7 @@ def populateLteGraphs(pointer, startTime, lteBandList, volteCssrNetworkWideGraph
         queryPayload = np.array(queryRaw)
         # Transform the query payload into a dataframe
         lteDataDataframe = pd.DataFrame(queryPayload, columns=['time', 'erabssr', 'dcr'])
-        #cssrNetworkWideGraph.add_trace(go.Scatter(x=lteDataDataframe['time'], y=lteDataDataframe['erabssr'], name=band, text=topWorst4GeRabSrPerHourDataFrame['cellname']))
-        #dcrNetworkWideGraph.add_trace(go.Scatter(x=lteDataDataframe['time'], y=lteDataDataframe['dcr'], name=band, text=topWorst4GDcrPerHourDataFrame['cellname']))
+        # Add dataframe data to figure object
         cssrNetworkWideGraph.add_trace(go.Scatter(x=lteDataDataframe['time'], y=lteDataDataframe['erabssr'], name=band))
         dcrNetworkWideGraph.add_trace(go.Scatter(x=lteDataDataframe['time'], y=lteDataDataframe['dcr'], name=band))
         queryRaw.clear()
@@ -38,8 +37,6 @@ def populateLteGraphs(pointer, startTime, lteBandList, volteCssrNetworkWideGraph
             queryPayload = np.array(queryRaw)
             # Transform the query payload into a dataframe
             wttxDataDataframe = pd.DataFrame(queryPayload, columns=['time', 'volteerabssr', 'voltedcr'])
-            #volteCssrNetworkWideGraph.add_trace(go.Scatter(x=wttxDataDataframe['time'], y=wttxDataDataframe['volteerabssr'], name=band, text=topWorst4GVolteDcrPerHourDataFrame['cellname']))
-            #volteDcrNetworkWideGraph.add_trace(go.Scatter(x=wttxDataDataframe['time'], y=wttxDataDataframe['voltedcr'], name=band, text=topWorst4GvolteeRabSrPerHourDataFrame['cellname']))
             volteCssrNetworkWideGraph.add_trace(go.Scatter(x=wttxDataDataframe['time'], y=wttxDataDataframe['volteerabssr'], name=band))
             volteDcrNetworkWideGraph.add_trace(go.Scatter(x=wttxDataDataframe['time'], y=wttxDataDataframe['voltedcr'], name=band))
             queryRaw.clear()
