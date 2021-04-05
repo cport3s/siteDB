@@ -12,7 +12,7 @@ body {
     grid-row: 2 / 7;
 }
 
-.datatableGridElement h3, #topReportRecordGridContainer h3 {
+.datatableGridElement h3, #topReportRecordGridContainer div h3 {
     text-align: center;
     color: rgb(112, 100, 100);
 }

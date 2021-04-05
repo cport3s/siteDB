@@ -827,7 +827,7 @@ def updateTopWorstTab(selectedTab):
     State('topWorst2GSpeechCssrRecordTable', 'columns'),
     State('topWorst2GSpeechDcrRecordTable', 'columns')
 )
-def addRow(topWorst4GeRabSrRecordTableClicks, topWorst4GDcrRecordTableClicks, topWorst3GPsCssrRecordTableClicks, topWorst3GCsCssrRecordTableClicks, topWorst3GPsDcrRecordTableClicks, topWorst3GCsDcrRecordTableClicks, topWorst2GCssrRecordTableClicks, topWorst2GDcrRecordTableClicks, selectedInnerTab, topWorst4GeRabSrRecordTableColumns, topWorst4GDcrRecordTableColumns, topWorst3GPsCssrRecordTableColumns, topWorst3GCsCssrRecordTableColumns, topWorst3GPsDcrRecordTableColumns, topWorst3GCsDcrRecordTableColumns, topWorst2GCssrRecordTableColumns, topWorst2GDcrRecordTableColumns):
+def addRow(topWorst4GeRabSrRecordTableClicks, topWorst4GDcrRecordTableClicks, topWorst3GPsCssrRecordTableClicks, topWorst3GCsCssrRecordTableClicks, topWorst3GPsDcrRecordTableClicks, topWorst3GCsDcrRecordTableClicks, topWorst2GSpeechCssrRecordTableClicks, topWorst2GSpeechDcrRecordTableClicks, selectedInnerTab, topWorst4GeRabSrRecordTableColumns, topWorst4GDcrRecordTableColumns, topWorst3GPsCssrRecordTableColumns, topWorst3GCsCssrRecordTableColumns, topWorst3GPsDcrRecordTableColumns, topWorst3GCsDcrRecordTableColumns, topWorst2GSpeechCssrRecordTableColumns, topWorst2GSpeechDcrRecordTableColumns):
     if selectedInnerTab == 'Records':
         # Instantiate the callback context, to find the button ID that triggered the callback
         callbackContext = dash.callback_context
@@ -851,9 +851,9 @@ def addRow(topWorst4GeRabSrRecordTableClicks, topWorst4GDcrRecordTableClicks, to
         table = 'topworst3gcsdcrrecord'
         topWorst3GCsDcrRecordTableData = ran_functions.queryTopRecords(pointer, topWorst3GCsDcrRecordTableColumns, table)
         table = 'topworst2gcssrrecord'
-        topWorst2GCssrRecordTableData = ran_functions.queryTopRecords(pointer, topWorst2GCssrRecordTableColumns, table)
+        topWorst2GSpeechCssrRecordTableData = ran_functions.queryTopRecords(pointer, topWorst2GSpeechCssrRecordTableColumns, table)
         table = 'topworst2gdcrrecord'
-        topWorst2GDcrRecordTableData = ran_functions.queryTopRecords(pointer, topWorst2GDcrRecordTableColumns, table)
+        topWorst2GSpeechDcrRecordTableData = ran_functions.queryTopRecords(pointer, topWorst2GSpeechDcrRecordTableColumns, table)
         if button_id == 'topWorst4GeRabSrRecordTableClicks':            
             topWorst4GeRabSrRecordTableData.append({column['id']: '' for column in topWorst4GeRabSrRecordTableColumns})
         if button_id == 'topWorst4GDcrRecordTableClicks':
@@ -866,14 +866,14 @@ def addRow(topWorst4GeRabSrRecordTableClicks, topWorst4GDcrRecordTableClicks, to
             topWorst3GPsDcrRecordTableData.append({column['id']: '' for column in topWorst3GPsDcrRecordTableColumns})
         if button_id == 'topWorst3GCsDcrRecordTableClicks':
             topWorst3GCsDcrRecordTableData.append({column['id']: '' for column in topWorst3GCsDcrRecordTableColumns})
-        if button_id == 'topWorst2GCssrRecordTableClicks':            
-            topWorst2GCssrRecordTableData.append({column['id']: '' for column in topWorst2GCssrRecordTableColumns})
-        if button_id == 'topWorst2GDcrRecordTableClicks':
-            topWorst2GDcrRecordTableData.append({column['id']: '' for column in topWorst2GDcrRecordTableColumns})
+        if button_id == 'topWorst2GSpeechCssrRecordTableClicks':            
+            topWorst2GSpeechCssrRecordTableData.append({column['id']: '' for column in topWorst2GSpeechCssrRecordTableColumns})
+        if button_id == 'topWorst2GSpeechDcrRecordTableClicks':
+            topWorst2GSpeechDcrRecordTableData.append({column['id']: '' for column in topWorst2GSpeechDcrRecordTableColumns})
         # Close DB Connection
         pointer.close()
         connectr.close()
-        return topWorst4GeRabSrRecordTableData, topWorst4GDcrRecordTableData, topWorst3GPsCssrRecordTableData, topWorst3GCsCssrRecordTableData, topWorst3GPsDcrRecordTableData, topWorst3GCsDcrRecordTableData, topWorst2GCssrRecordTableData, topWorst2GDcrRecordTableData
+        return topWorst4GeRabSrRecordTableData, topWorst4GDcrRecordTableData, topWorst3GPsCssrRecordTableData, topWorst3GCsCssrRecordTableData, topWorst3GPsDcrRecordTableData, topWorst3GCsDcrRecordTableData, topWorst2GSpeechCssrRecordTableData, topWorst2GSpeechDcrRecordTableData
     else:
         raise PreventUpdate
 
@@ -943,42 +943,42 @@ def insertData(topWorst4GeRabSrRecordTableSubmit, topWorst4GDcrRecordTableSubmit
         connectr.close()
         return {'backgroundColor': '#e7e7e7'}, {'backgroundColor': 'green'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}
     if button_id == 'topWorst3GPsCssrRecordTableSubmit':
-        table = 'topworsts3gpscssrrecord'
+        table = 'topworst3gpscssrrecord'
         ran_functions.insertDataTable(pointer, connectr, table, topWorst3GPsCssrRecordTableData)
         # Close DB Connection
         pointer.close()
         connectr.close()
         return {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': 'green'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}
     if button_id == 'topWorst3GCsCssrRecordTableSubmit':
-        table = 'topworsts3gcscssrrecord'
+        table = 'topworst3gcscssrrecord'
         ran_functions.insertDataTable(pointer, connectr, table, topWorst3GCsCssrRecordTableData)
         # Close DB Connection
         pointer.close()
         connectr.close()
         return {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': 'green'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}
     if button_id == 'topWorst3GPsDcrRecordTableSubmit':
-        table = 'topworsts3gpsdcrrecord'
+        table = 'topworst3gpsdcrrecord'
         ran_functions.insertDataTable(pointer, connectr, table, topWorst3GPsDcrRecordTableData)
         # Close DB Connection
         pointer.close()
         connectr.close()
         return {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': 'green'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}
     if button_id == 'topWorst3GCsDcrRecordTableSubmit':
-        table = 'topworsts3gcsdcrrecord'
+        table = 'topworst3gcsdcrrecord'
         ran_functions.insertDataTable(pointer, connectr, table, topWorst3GCsDcrRecordTableData)
         # Close DB Connection
         pointer.close()
         connectr.close()
         return {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': 'green'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}
     if button_id == 'topWorst2GSpeechCssrRecordTableSubmit':
-        table = 'topworsts2gcssrrecord'
+        table = 'topworst2gcssrrecord'
         ran_functions.insertDataTable(pointer, connectr, table, topWorst2GSpeechCssrRecordTableData)
         # Close DB Connection
         pointer.close()
         connectr.close()
         return {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': '#e7e7e7'}, {'backgroundColor': 'green'}, {'backgroundColor': '#e7e7e7'}
     if button_id == 'topWorst2GSpeechDcrRecordTableSubmit':
-        table = 'topworsts2gdcrrecord'
+        table = 'topworst2gdcrrecord'
         ran_functions.insertDataTable(pointer, connectr, table, topWorst2GSpeechDcrRecordTableData)
         # Close DB Connection
         pointer.close()
@@ -1360,6 +1360,6 @@ def showTopWorstInnerTabContent(currentTab):
         return topWorstDaily, topWorstRecord
 
 if __name__ == '__main__':
-    app.run_server(debug=True, host='0.0.0.0', port='5016', dev_tools_silence_routes_logging=False)
-    #app.run_server(debug=True, host='0.0.0.0', port='5016')
+    #app.run_server(debug=True, host='0.0.0.0', port='5006', dev_tools_silence_routes_logging=False)
+    app.run_server(debug=True, host='0.0.0.0', port='5006')
 
