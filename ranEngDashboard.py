@@ -576,7 +576,7 @@ app.layout = html.Div(children=[
     ),
     dcc.Interval(
         id='dataUpateInterval', 
-        interval=300000, 
+        interval=300*1000, 
         n_intervals=0
     )
 ])
