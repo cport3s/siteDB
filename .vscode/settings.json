@@ -1,4 +1,19 @@
 {
     "python.pythonPath": "venv\\Scripts\\python.exe",
-    "git.ignoreLimitWarning": true
+    "git.ignoreLimitWarning": true,
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default"
+            },
+            "previewLimit": 50,
+            "server": "bscserver",
+            "port": 3306,
+            "driver": "MySQL",
+            "name": "RAN_DB",
+            "database": "alticedr_sitedb",
+            "username": "sitedb",
+            "password": "BSCAltice.123"
+        }
+    ]
 }
