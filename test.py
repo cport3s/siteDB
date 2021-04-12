@@ -1,6 +1,7 @@
 from ftplib import FTP
-from io import BytesIO
+from io import StringIO, BytesIO
 import pandas as pd
+from datetime import datetime
 
 class ranFtpCredentials():
     hostname = 'bscserver'
@@ -9,6 +10,20 @@ class ranFtpCredentials():
 
 topWorstFilePath = '/BSC/'
 fileName = 'testExcel.xlsx'
+currentDate = str(datetime.now().strftime('%Y%m%d'))
+
+def getFtpLatestFileName(ftpLogin, currentDate, filePath):
+    fileName = ""
+    # Instantiate FTP connection
+    ftp = FTP(host=ftpLogin.hostname)
+    ftp.login(user=ftpLogin.username, passwd=ftpLogin.password)
+    # Move to desired path
+    ftp.cwd(filePath)
+    s = StringIO()
+    # Return file as binary with retrbinary functon. Must send according RETR command as part of FTP protocol
+    ftp.retrlines('LIST', s.write)
+    fileName = str(s.getvalue())
+    return fileName
 
 def downloadFtpFile(ftpLogin, filePath, fileName):
     # Instantiate FTP connection
@@ -26,5 +41,10 @@ def downloadFtpFile(ftpLogin, filePath, fileName):
     return dataframe
     
 ftpLogin = ranFtpCredentials()
-data = downloadFtpFile(ftpLogin, topWorstFilePath, fileName)
-print(data)
+fileName = getFtpLatestFileName(ftpLogin, currentDate, topWorstFilePath)
+fileName = fileName.replace('              ', ' ')
+fileName = fileName.replace('  ', ' ')
+#fileName = fileName.split('              ')
+#for line in fileName:
+#    print(line)
+print(fileName)
