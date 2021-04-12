@@ -171,6 +171,12 @@ class coreDbCredentials():
     dbServerIp = '172.17.102.75'
     schema = 'mme_logs'
 
+# RAN FTP Server Credentials
+class ranFtpCredentials():
+    hostname = 'bscserver'
+    username = 'sitedb'
+    password = 'BSCAltice.123'
+
 class ranControllers():
     bscNameList = ['BSC_01_RRA', 'BSC_02_STGO', 'BSC_03_VM', 'BSC_04_VM', 'BSC_05_RRA', 'BSC_06_STGO']
     rncNameList = ['RNC_01_RRA', 'RNC_02_STGO', 'RNC_03_VM', 'RNC_04_VM', 'RNC_05_RRA', 'RNC_06_STGO', 'RNC_07_VM']

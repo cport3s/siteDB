@@ -1,5 +1,5 @@
 from ftplib import FTP
-from io import StringIO, BytesIO
+from io import BytesIO
 import pandas as pd
 from datetime import datetime
 
@@ -8,21 +8,21 @@ class ranFtpCredentials():
     username = 'sitedb'
     password = 'BSCAltice.123'
 
-topWorstFilePath = '/BSC/'
-fileName = 'testExcel.xlsx'
+topWorstFilePath = '/BSC/top_worst_report/'
 currentDate = str(datetime.now().strftime('%Y%m%d'))
+current2GTopWorstCssrFile = ""
+current2GTopWorstDcrFile = ""
+current3GTopWorstFile = ""
+current4GTopWorstFile = ""
 
-def getFtpLatestFileName(ftpLogin, currentDate, filePath):
+def getFtpPathFileList(ftpLogin, filePath):
     fileName = ""
     # Instantiate FTP connection
     ftp = FTP(host=ftpLogin.hostname)
     ftp.login(user=ftpLogin.username, passwd=ftpLogin.password)
     # Move to desired path
     ftp.cwd(filePath)
-    s = StringIO()
-    # Return file as binary with retrbinary functon. Must send according RETR command as part of FTP protocol
-    ftp.retrlines('LIST', s.write)
-    fileName = str(s.getvalue())
+    fileName = ftp.nlst()
     return fileName
 
 def downloadFtpFile(ftpLogin, filePath, fileName):
@@ -41,10 +41,16 @@ def downloadFtpFile(ftpLogin, filePath, fileName):
     return dataframe
     
 ftpLogin = ranFtpCredentials()
-fileName = getFtpLatestFileName(ftpLogin, currentDate, topWorstFilePath)
-fileName = fileName.replace('              ', ' ')
-fileName = fileName.replace('  ', ' ')
-#fileName = fileName.split('              ')
-#for line in fileName:
-#    print(line)
-print(fileName)
+dirList = getFtpPathFileList(ftpLogin, topWorstFilePath)
+for file in dirList:
+    if currentDate and "2G" and "CSSR" in file:
+        current2GTopWorstCssrFile = file
+    if currentDate and "2G" and "DCR" in file:
+        current2GTopWorstDcrFile = file
+    if currentDate and "3G" in file:
+        current3GTopWorstFile = file
+    if currentDate and "LTE" in file:
+        current4GTopWorstFile = file
+
+data = downloadFtpFile(ftpLogin, topWorstFilePath, current2GTopWorstCssrFile)
+print(data)
