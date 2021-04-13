@@ -17,8 +17,6 @@ import ran_functions
 app = dash.Dash(__name__, title='RAN-Ops Engineering Dashboard')
 server = app.server
 
-# Test comment
-
 # DB Connection Parameters
 dbPara = classes.dbCredentials()
 # FTP Connection Parameters
@@ -26,6 +24,7 @@ ftpLogin = classes.ranFtpCredentials()
 # Data
 ranController = classes.ranControllers()
 topWorstFilePath = "/BSC/top_worst_report/"
+zeroTrafficFilePath = "/BSC/zero_traffic/"
 
 # Styles
 tabStyles = styles.headerStyles()
@@ -191,6 +190,12 @@ app.layout = html.Div(children=[
                         selected_style = tabStyles.tabSelectedStyle
                     ),
                     dcc.Tab(
+                        label = 'Zero Traffic',
+                        value = 'Zero Traffic',
+                        style = tabStyles.tabStyle,
+                        selected_style = tabStyles.tabSelectedStyle
+                    ),
+                    dcc.Tab(
                         label = 'Records',
                         value = 'Records',
                         style = tabStyles.tabStyle,
@@ -286,6 +291,79 @@ app.layout = html.Div(children=[
                             html.H3('Top Worst GSM DCR'),
                             dash_table.DataTable(
                                 id='topWorst2GSpeechDcrTable',
+                                style_header = dataTableStyles.style_header,
+                                style_cell = dataTableStyles.style_cell
+                            )
+                        ]
+                    )
+                ]
+            ),
+            # Zero Traffic Daily Reports
+            html.Div(
+                id = 'zeroTrafficGridContainer',
+                style = dataTableStyles.zeroTrafficGridContainer,
+                children = [
+                    html.Div(
+                        className = 'datatableGridElement',
+                        children = [
+                            html.H3('LTE DL Zero Traffic'),
+                            dash_table.DataTable(
+                                id = 'zeroTraffic4GDl',
+                                style_header = dataTableStyles.style_header,
+                                style_cell = dataTableStyles.style_cell
+                            )
+                        ]
+                    ),
+                    html.Div(
+                        className = 'datatableGridElement',
+                        children = [
+                            html.H3('LTE UL Zero Traffic'),
+                            dash_table.DataTable(
+                                id = 'zeroTraffic4GUl',
+                                style_header = dataTableStyles.style_header,
+                                style_cell = dataTableStyles.style_cell
+                            )
+                        ]
+                    ),
+                    html.Div(
+                        className = 'datatableGridElement',
+                        children = [
+                            html.H3('UMTS Voice Zero Traffic'),
+                            dash_table.DataTable(
+                                id = 'zeroTraffic3GVoice',
+                                style_header = dataTableStyles.style_header,
+                                style_cell = dataTableStyles.style_cell
+                            )
+                        ]
+                    ),
+                    html.Div(
+                        className = 'datatableGridElement',
+                        children = [
+                            html.H3('UMTS HSDPA Zero Traffic'),
+                            dash_table.DataTable(
+                                id = 'zeroTraffic3GHsdpa',
+                                style_header = dataTableStyles.style_header,
+                                style_cell = dataTableStyles.style_cell
+                            )
+                        ]
+                    ),
+                    html.Div(
+                        className = 'datatableGridElement',
+                        children = [
+                            html.H3('UMTS HSUPA Zero Traffic'),
+                            dash_table.DataTable(
+                                id = 'zeroTraffic3GHsupa',
+                                style_header = dataTableStyles.style_header,
+                                style_cell = dataTableStyles.style_cell
+                            )
+                        ]
+                    ),
+                    html.Div(
+                        className = 'datatableGridElement',
+                        children = [
+                            html.H3('GSM Zero Traffic'),
+                            dash_table.DataTable(
+                                id = 'zeroTraffic2G',
                                 style_header = dataTableStyles.style_header,
                                 style_cell = dataTableStyles.style_cell
                             )
@@ -796,6 +874,63 @@ def updateTopWorstTab(selectedTab):
     else:
         raise PreventUpdate
 
+# Callback to update Zero Traffic Tab
+@app.callback(
+    [
+        Output('zeroTraffic4GDl', 'columns'),
+        Output('zeroTraffic4GDl', 'data'),
+        Output('zeroTraffic4GUl', 'columns'),
+        Output('zeroTraffic4GUl', 'data'),
+        Output('zeroTraffic3GVoice', 'columns'),
+        Output('zeroTraffic3GVoice', 'data'),
+        Output('zeroTraffic3GHsdpa', 'columns'),
+        Output('zeroTraffic3GHsdpa', 'data'),
+        Output('zeroTraffic3GHsupa', 'columns'),
+        Output('zeroTraffic3GHsupa', 'data'),
+        Output('zeroTraffic2G', 'columns'),
+        Output('zeroTraffic2G', 'data'),
+    ], 
+    Input('innerTopWorstTabContainer', 'value')
+)
+def updateZeroTrafficTab(selectedTab):
+    if selectedTab == 'Zero Traffic':
+        # Get Zero Traffic directory file list
+        zeroTrafficDirList = ran_functions.getFtpPathFileList(ftpLogin, zeroTrafficFilePath)
+        currentZeroTrafficFile = ""
+        CurrentDate = str(datetime.now().strftime('%Y%m%d'))
+        # Search for the current date on each filename on the directory
+        for file in zeroTrafficDirList:
+            if CurrentDate in file:
+                currentZeroTrafficFile = file
+        # Open all file tabs on dataframes
+        zeroTraffic4GDlDataframe = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, zeroTrafficFilePath, currentZeroTrafficFile), sheet_name='Zero Traffic LTE DL', na_values='NIL')
+        zeroTraffic4GDlDataframe = zeroTraffic4GDlDataframe.filter(items = ['eNodeB Name', 'Cell Name', 'LocalCell Id', 'Date'])
+        zeroTraffic4GDlColumns = [{'name': i, 'id': i} for i in zeroTraffic4GDlDataframe.columns]
+
+        zeroTraffic4GUlDataframe = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, zeroTrafficFilePath, currentZeroTrafficFile), sheet_name='Zero Traffic LTE UL', na_values='NIL')
+        zeroTraffic4GUlDataframe = zeroTraffic4GUlDataframe.filter(items = ['eNodeB Name', 'Cell Name', 'LocalCell Id', 'Date'])
+        zeroTraffic4GUlColumns = [{'name': i, 'id': i} for i in zeroTraffic4GUlDataframe.columns]
+
+        zeroTraffic3GVoiceDataframe = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, zeroTrafficFilePath, currentZeroTrafficFile), sheet_name='Zero Traffic 3G Voice', na_values='NIL')
+        zeroTraffic3GVoiceDataframe = zeroTraffic3GVoiceDataframe.filter(items = ['RNC', 'CELLNAME', 'CellId', 'Date'])
+        zeroTraffic3GVoiceColumns = [{'name': i, 'id': i} for i in zeroTraffic3GVoiceDataframe.columns]
+
+        zeroTraffic3GHsdpaDataframe = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, zeroTrafficFilePath, currentZeroTrafficFile), sheet_name='Zero Traffic HSDPA', na_values='NIL')
+        zeroTraffic3GHsdpaDataframe = zeroTraffic3GHsdpaDataframe.filter(items = ['RNC', 'CELLNAME', 'CellId', 'Date'])
+        zeroTraffic3GHsdpaColumns = [{'name': i, 'id': i} for i in zeroTraffic3GHsdpaDataframe.columns]
+
+        zeroTraffic3GHsupaDataframe = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, zeroTrafficFilePath, currentZeroTrafficFile), sheet_name='Zero Traffic HSUPA', na_values='NIL')
+        zeroTraffic3GHsupaDataframe = zeroTraffic3GHsupaDataframe.filter(items = ['RNC', 'CELLNAME', 'CellId', 'Date'])
+        zeroTraffic3GHsupaColumns = [{'name': i, 'id': i} for i in zeroTraffic3GHsupaDataframe.columns]
+
+        zeroTraffic2GDataframe = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, zeroTrafficFilePath, currentZeroTrafficFile), sheet_name='Zero Traffic 2G', na_values='NIL')
+        zeroTraffic2GDataframe = zeroTraffic2GDataframe.filter(items = ['GBSC', 'Site Name', 'Cell Name', 'Date'])
+        zeroTraffic2GColumns = [{'name': i, 'id': i} for i in zeroTraffic2GDataframe.columns]
+
+        return zeroTraffic4GDlColumns, zeroTraffic4GDlDataframe.to_dict('records'), zeroTraffic4GUlColumns, zeroTraffic4GUlDataframe.to_dict('records'), zeroTraffic3GVoiceColumns, zeroTraffic3GVoiceDataframe.to_dict('records'), zeroTraffic3GHsdpaColumns, zeroTraffic3GHsdpaDataframe.to_dict('records'), zeroTraffic3GHsupaColumns, zeroTraffic3GHsupaDataframe.to_dict('records'), zeroTraffic2GColumns, zeroTraffic2GDataframe.to_dict('records')
+    else:
+        raise PreventUpdate
+
 # Callback to add rows on Top Worst Records Tab. This tab's datatable data param must be updated on this callback to avoid callback output duplication.
 @app.callback(
     [
@@ -878,7 +1013,7 @@ def addRow(topWorst4GeRabSrRecordTableClicks, topWorst4GDcrRecordTableClicks, to
     else:
         raise PreventUpdate
 
-# Callback to insert data to db
+# Callback to insert data to db (Top Worst Report Records)
 @app.callback(
     [
         # The output will be the button style, because a callback MUST have an output
@@ -1344,21 +1479,30 @@ def showTabContent(currentTab):
 @app.callback(
     [
         Output('datatableGridContainer', 'style'),
+        Output('zeroTrafficGridContainer', 'style'),
         Output('topReportRecordGridContainer', 'style')
     ], 
     Input('innerTopWorstTabContainer', 'value')
 )
 def showTopWorstInnerTabContent(currentTab):
     topWorstDaily = dataTableStyles.datatableGridContainer
+    zeroTrafficDaily = dataTableStyles.zeroTrafficGridContainer
     topWorstRecord = dataTableStyles.topWorstRecordGridContainer
     if currentTab == 'Daily Report':
         topWorstDaily['display'] = 'grid'
+        zeroTrafficDaily['display'] = 'none'
         topWorstRecord['display'] = 'none'
-        return topWorstDaily, topWorstRecord
+        return topWorstDaily, zeroTrafficDaily, topWorstRecord
+    elif currentTab == 'Zero Traffic':
+        topWorstDaily['display'] = 'none'
+        zeroTrafficDaily['display'] = 'grid'
+        topWorstRecord['display'] = 'none'
+        return topWorstDaily, zeroTrafficDaily, topWorstRecord
     else:
         topWorstDaily['display'] = 'none'
+        zeroTrafficDaily['display'] = 'grid'
         topWorstRecord['display'] = 'grid'
-        return topWorstDaily, topWorstRecord
+        return topWorstDaily, zeroTrafficDaily, topWorstRecord
 
 if __name__ == '__main__':
     app.run_server(debug=True, host='0.0.0.0', port='5006', dev_tools_silence_routes_logging=False)

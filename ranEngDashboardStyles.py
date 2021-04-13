@@ -121,6 +121,13 @@ class topWorstTab():
         'border': '1px solid white'
     }
 
+    zeroTrafficGridContainer = {
+        'display': 'grid',
+        'gridTemplate': 'auto repeat(1, 1fr) / repeat(2, 1fr)',
+        'width': '100%',
+        'border': '1px solid white'
+    }
+
 class networkCheckTab():
     networkCheckGridContainer = {
         'display': 'grid',
