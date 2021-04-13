@@ -6,14 +6,10 @@ from dash.exceptions import PreventUpdate
 import dash_table
 import plotly.express as px
 from plotly.subplots import make_subplots
-import plotly.graph_objects as go
 import pandas as pd
 import mysql.connector
 import numpy as np
-import time
 from datetime import datetime, timedelta
-import os
-import csv
 import classes
 import ranEngDashboardStyles as styles
 import ran_functions
@@ -23,9 +19,11 @@ server = app.server
 
 # DB Connection Parameters
 dbPara = classes.dbCredentials()
+# FTP Connection Parameters
+ftpLogin = classes.ranFtpCredentials()
 # Data
 ranController = classes.ranControllers()
-topWorstFilePath = "D:\\ftproot\\BSC\\top_worst_report\\"
+topWorstFilePath = "/BSC/top_worst_report/"
 
 # Styles
 tabStyles = styles.headerStyles()
@@ -701,6 +699,7 @@ def updateEngDashboardTab(currentInterval, selectedTab, timeFrameDropdown, dataT
 def updateTopWorstTab(selectedTab):
     # Ensure to refresh top worst tables only if that tab is selected
     if selectedTab == 'Top Worst Report':
+        topWorstDirList = ran_functions.getFtpPathFileList(ftpLogin, topWorstFilePath)
         # Top Worst Reports Variables
         current2GTopWorstDcrFile = ""
         current2GTopWorstCssrFile = ""
@@ -708,7 +707,7 @@ def updateTopWorstTab(selectedTab):
         current4GTopWorstFile = ""
         topWorstCurrentDate = str(datetime.now().strftime('%Y%m%d'))
         # find the latest file on the directory
-        for file in os.listdir(topWorstFilePath):
+        for file in topWorstDirList:
             if topWorstCurrentDate and "2G" and "CSSR" in file:
                 current2GTopWorstCssrFile = file
             if topWorstCurrentDate and "2G" and "DCR" in file:
@@ -718,11 +717,11 @@ def updateTopWorstTab(selectedTab):
             if topWorstCurrentDate and "LTE" in file:
                 current4GTopWorstFile = file
         # Open the latest files as dataframes
-        current4GTopWorstDcrDataframe = pd.read_excel(topWorstFilePath + current4GTopWorstFile, sheet_name='TOP 50 Drop LTE', na_values='NIL')
-        current4GTopWorsteRabSrDataframe = pd.read_excel(topWorstFilePath + current4GTopWorstFile, sheet_name='TOP 50 E-RAB Setup', na_values='NIL')
-        current3GTopWorstDataframe = pd.read_excel(topWorstFilePath + current3GTopWorstFile, na_values=['NIL', '/0'])
-        current2GTopWorstCssrDataframe = pd.read_excel(topWorstFilePath + current2GTopWorstCssrFile, na_values='NIL')
-        current2GTopWorstDcrDataframe = pd.read_excel(topWorstFilePath + current2GTopWorstDcrFile, na_values='NIL')
+        current4GTopWorstDcrDataframe = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, topWorstFilePath, current4GTopWorstFile), sheet_name='TOP 50 Drop LTE', na_values='NIL')
+        current4GTopWorsteRabSrDataframe = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, topWorstFilePath, current4GTopWorstFile), sheet_name='TOP 50 E-RAB Setup', na_values='NIL')
+        current3GTopWorstDataframe = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, topWorstFilePath, current3GTopWorstFile), na_values=['NIL', '/0'])
+        current2GTopWorstCssrDataframe = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, topWorstFilePath, current2GTopWorstCssrFile), na_values='NIL')
+        current2GTopWorstDcrDataframe = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, topWorstFilePath, current2GTopWorstDcrFile), na_values='NIL')
         # Filter the selected columns
         topWorst4GeRabSrDataframe = current4GTopWorsteRabSrDataframe.filter(items = ['eNodeB Name', 'Cell FDD TDD Indication', 'Cell Name', 'E-RAB Setup Success Rate (ALL)[%](%)', 'Date'])
         # Fill N/A values as 0

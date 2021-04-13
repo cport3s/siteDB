@@ -1,20 +1,12 @@
-import dash
-import dash_core_components as dcc
-import dash_html_components as html
-from dash.dependencies import Input, Output
-import dash_table
 import plotly.express as px
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 import pandas as pd
-import mysql.connector
 import numpy as np
-import time
-from datetime import datetime
-from datetime import timedelta
-import os
-import csv
+from datetime import datetime, timedelta
 import classes
+from ftplib import FTP
+from io import BytesIO
 
 neList = classes.ranControllers()
 
@@ -229,3 +221,28 @@ def insertDataTable(pointer, connectr, dbTable, dataTableData):
     query += ";"
     pointer.execute(query)
     connectr.commit()
+
+def getFtpPathFileList(ftpLogin, filePath):
+    fileName = ""
+    # Instantiate FTP connection
+    ftp = FTP(host=ftpLogin.hostname)
+    ftp.login(user=ftpLogin.username, passwd=ftpLogin.password)
+    # Move to desired path
+    ftp.cwd(filePath)
+    fileName = ftp.nlst()
+    return fileName
+
+def downloadFtpFile(ftpLogin, filePath, fileName):
+    # Instantiate FTP connection
+    ftp = FTP(host=ftpLogin.hostname)
+    ftp.login(user=ftpLogin.username, passwd=ftpLogin.password)
+    # Move to desired path
+    ftp.cwd(filePath)
+    # Instantiate a BytesIO object to temp store the xlsx file from the FTP server
+    b = BytesIO()
+    # Return file as binary with retrbinary functon. Must send according RETR command as part of FTP protocol
+    ftp.retrbinary('RETR ' + fileName, b.write)
+    # Open as Dataframe
+    b
+    ftp.quit()
+    return b
