@@ -1500,7 +1500,7 @@ def showTopWorstInnerTabContent(currentTab):
         return topWorstDaily, zeroTrafficDaily, topWorstRecord
     else:
         topWorstDaily['display'] = 'none'
-        zeroTrafficDaily['display'] = 'grid'
+        zeroTrafficDaily['display'] = 'none'
         topWorstRecord['display'] = 'grid'
         return topWorstDaily, zeroTrafficDaily, topWorstRecord
 
