@@ -35,8 +35,6 @@ networkCheckStyles = styles.networkCheckTab()
 graphColors = styles.NetworkWideGraphColors()
 graphInsightStyles = styles.graphInsightTab()
 txCheckStyles = styles.txCheckTab()
-
-#rows = []
 graphTitleFontSize = 18
 
 app.layout = html.Div(children=[

@@ -3,16 +3,12 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 import dash_table
-import plotly.express as px
 from plotly.subplots import make_subplots
 import pandas as pd
 import mysql.connector
 import numpy as np
-import time
-from datetime import datetime
-from datetime import timedelta
+from datetime import datetime, timedelta
 import os
-import csv
 # Custom libraries
 import classes
 import ranShowcaseDashboardStyles as styles
@@ -23,6 +19,8 @@ server = app.server
 
 # DB Connection Parameters
 dbPara = classes.dbCredentials()
+# FTP Connection Parameters
+ftpLogin = classes.ranFtpCredentials()
 ranController = classes.ranControllers()
 graphColors = styles.NetworkWideGraphColors()
 # Instantiate styles class
@@ -30,7 +28,9 @@ gridContainerStyles = styles.gridContainer()
 gridelementStyles = styles.gridElement()
 dataTableStyles = styles.datatableHeaderStyle()
 # RAN Report Variables
-ranReportFilepath = "D:\\ftproot\\BSC\\ran_report\\"
+ranReportFilepath = "/BSC/ran_report/"
+currentKPIGridFilePath = "/BSC/current_kpi_per_hour/"
+
 ranReportLteColumns = [{'name':'KPI\\Object', 'id':'KPI\\Object'}, {'name':'Whole Network', 'id':'Whole Network'}, {'name':'Threshold', 'id':'Threshold'}]
 ranReportLteTable = pd.DataFrame(data={'KPI\\Oject':[], 'Whole Network':[], 'Threshold':[]})
 ranReportUmtsColumns = [{'name':'KPI\\Object', 'id':'KPI\\Object'}, {'name':'Whole Network', 'id':'Whole Network'}, {'name':'Threshold', 'id':'Threshold'}]
@@ -461,15 +461,18 @@ def updateDatatable(currentInterval):
         currentDateTime = str(int(currentDateTime[:-2]) - 1)
     else:
         currentDateTime = currentDateTime[:-2]
-    for file in os.listdir(ranReportFilepath):
+    #for file in os.listdir(ranReportFilepath):
+    #    if currentDateTime in file:
+    #        latestRanReport = ranReportFilepath + file
+    ranReportDirList = ran_functions.getFtpPathFileList(ftpLogin, ranReportFilepath)
+    for file in ranReportDirList:
         if currentDateTime in file:
             latestRanReport = ranReportFilepath + file
-    
-    ranReportLteTable = pd.read_excel(latestRanReport, sheet_name='4G Table')
+    ranReportLteTable = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, ranReportFilepath, latestRanReport), sheet_name='4G Table')
     ranReportLteTable['Threshold'] = ['< 0.13%', '>= 99%', '>= 99%', '', '>= 6500', '', '', '', '', '', '']
-    ranReportUmtsTable = pd.read_excel(latestRanReport, sheet_name='3G Table')
+    ranReportUmtsTable = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, ranReportFilepath, latestRanReport), sheet_name='3G Table')
     ranReportUmtsTable['Threshold'] = ['< 0.17%', '>= 99.87%', '', '', '', '', '<= 0.30%', '<= 0.30%', '>= 99%', '>= 99%', '', '', '']
-    ranReportGsmTable = pd.read_excel(latestRanReport, sheet_name='2G Table')
+    ranReportGsmTable = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, ranReportFilepath, latestRanReport), sheet_name='2G Table')
     ranReportGsmTable['Threshold'] = ['>= 99.87%', '>= 99.87%', '', '', '', '']
     ranReportLteColumns = [{'name': i, 'id': i} for i in ranReportLteTable.columns]
     ranReportUmtsColumns = [{'name': i, 'id': i} for i in ranReportUmtsTable.columns]
@@ -484,12 +487,22 @@ def updateDatatable(currentInterval):
     ],  
     Input('viewUpateInterval', 'n_intervals'))
 def updateView(currentInterval):
-    if currentInterval%3 == 0:
-        return {'display':'grid'}, {'display':'none'}, {'display':'none'}
-    elif currentInterval%3 == 1:
-        return {'display':'none'}, {'display':'grid'}, {'display':'none'}
-    elif currentInterval%3 == 2:
-        return {'display':'none'}, {'display':'none'}, {'display':'grid'}
+    gsmGraphGridContainer = gridContainerStyles.gsmGraphGridContainerStyle
+    umtsGraphGridContainer = gridContainerStyles.umtsGraphGridContainerStyle
+    lteGraphGridContainer = gridContainerStyles.lteGraphGridContainerStyle
+    if currentInterval % 3 == 0:
+        gsmGraphGridContainer['display'] = 'grid'
+        umtsGraphGridContainer['display'] = 'none'
+        lteGraphGridContainer['display'] = 'none'
+    elif currentInterval % 3 == 1:
+        gsmGraphGridContainer['display'] = 'none'
+        umtsGraphGridContainer['display'] = 'grid'
+        lteGraphGridContainer['display'] = 'none'
+    elif currentInterval % 3 == 2:
+        gsmGraphGridContainer['display'] = 'none'
+        umtsGraphGridContainer['display'] = 'none'
+        lteGraphGridContainer['display'] = 'grid'
+    return gsmGraphGridContainer, umtsGraphGridContainer, lteGraphGridContainer
 
 if __name__ == '__main__':
-    app.run_server(debug=True, host='0.0.0.0', port='5015')
+    app.run_server(debug=True, host='0.0.0.0', port='5005', dev_tools_silence_routes_logging=False)
