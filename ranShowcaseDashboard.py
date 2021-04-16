@@ -28,15 +28,22 @@ gridContainerStyles = styles.gridContainer()
 gridelementStyles = styles.gridElement()
 dataTableStyles = styles.datatableHeaderStyle()
 # RAN Report Variables
-ranReportFilepath = "/BSC/ran_report/"
+#ranReportFilepath = "/BSC/ran_report/"
 currentKPIGridFilePath = "/BSC/current_kpi_per_hour/"
 
-ranReportLteColumns = [{'name':'KPI\\Object', 'id':'KPI\\Object'}, {'name':'Whole Network', 'id':'Whole Network'}, {'name':'Threshold', 'id':'Threshold'}]
-ranReportLteTable = pd.DataFrame(data={'KPI\\Oject':[], 'Whole Network':[], 'Threshold':[]})
-ranReportUmtsColumns = [{'name':'KPI\\Object', 'id':'KPI\\Object'}, {'name':'Whole Network', 'id':'Whole Network'}, {'name':'Threshold', 'id':'Threshold'}]
-ranReportUmtsTable = pd.DataFrame(data={'KPI\\Oject':[], 'Whole Network':[], 'Threshold':[]})
-ranReportGsmColumns = [{'name':'KPI\\Object', 'id':'KPI\\Object'}, {'name':'Whole Network', 'id':'Whole Network'}, {'name':'Threshold', 'id':'Threshold'}]
-ranReportGsmTable = pd.DataFrame(data={'KPI\\Oject':[], 'Whole Network':[], 'Threshold':[]})
+#ranReportLteColumns = [{'name':'KPI\\Object', 'id':'KPI\\Object'}, {'name':'Whole Network', 'id':'Whole Network'}, {'name':'Threshold', 'id':'Threshold'}]
+#ranReportLteTable = pd.DataFrame(data={'KPI\\Oject':[], 'Whole Network':[], 'Threshold':[]})
+#ranReportUmtsColumns = [{'name':'KPI\\Object', 'id':'KPI\\Object'}, {'name':'Whole Network', 'id':'Whole Network'}, {'name':'Threshold', 'id':'Threshold'}]
+#ranReportUmtsTable = pd.DataFrame(data={'KPI\\Oject':[], 'Whole Network':[], 'Threshold':[]})
+#ranReportGsmColumns = [{'name':'KPI\\Object', 'id':'KPI\\Object'}, {'name':'Whole Network', 'id':'Whole Network'}, {'name':'Threshold', 'id':'Threshold'}]
+#ranReportGsmTable = pd.DataFrame(data={'KPI\\Oject':[], 'Whole Network':[], 'Threshold':[]})
+
+ranReportLteColumns = [{'name':'KPI\\Object', 'id':'KPI\\Object'}, {'name':'Latest Hour', 'id':'Latest Hour'}, {'name':'Threshold', 'id':'Threshold'}]
+ranReportLteTable = pd.DataFrame(data={'KPI\\Object':[], 'Latest Hour':[], 'Threshold':[]})
+ranReportUmtsColumns = [{'name':'KPI\\Object', 'id':'KPI\\Object'}, {'name':'Latest Hour', 'id':'Latest Hour'}, {'name':'Threshold', 'id':'Threshold'}]
+ranReportUmtsTable = pd.DataFrame(data={'KPI\\Object':[], 'Latest Hour':[], 'Threshold':[]})
+ranReportGsmColumns = [{'name':'KPI\\Object', 'id':'KPI\\Object'}, {'name':'Latest Hour', 'id':'Latest Hour'}, {'name':'Threshold', 'id':'Threshold'}]
+ranReportGsmTable = pd.DataFrame(data={'KPI\\Object':[], 'Latest Hour':[], 'Threshold':[]})
 
 app.layout = html.Div(children=[
     html.H1(
@@ -456,24 +463,62 @@ def updateGraph(currentInterval):
     Input('graphUpateInterval', 'n_intervals'))
 def updateDatatable(currentInterval):
     currentDateTime = str(datetime.now().strftime('%Y%m%d%H%M'))
-    # If current time minutes is less than 30 minutes, set currentDateTime to the last hour. Reports are generated every 30 minutes past the hour
-    if int(currentDateTime[-2:]) < 30:
+    # If current time minutes is less than 15 minutes, set currentDateTime to the last hour. Reports are generated every 15 minutes past the hour
+    if int(currentDateTime[-2:]) < 15:
         currentDateTime = str(int(currentDateTime[:-2]) - 1)
     else:
         currentDateTime = currentDateTime[:-2]
-    #for file in os.listdir(ranReportFilepath):
+    #ranReportDirList = ran_functions.getFtpPathFileList(ftpLogin, ranReportFilepath)
+    #for file in ranReportDirList:
     #    if currentDateTime in file:
     #        latestRanReport = ranReportFilepath + file
-    ranReportDirList = ran_functions.getFtpPathFileList(ftpLogin, ranReportFilepath)
-    for file in ranReportDirList:
+    currentKPIDirList = ran_functions.getFtpPathFileList(ftpLogin, currentKPIGridFilePath)
+    for file in currentKPIDirList:
         if currentDateTime in file:
-            latestRanReport = ranReportFilepath + file
-    ranReportLteTable = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, ranReportFilepath, latestRanReport), sheet_name='4G Table')
-    ranReportLteTable['Threshold'] = ['< 0.13%', '>= 99%', '>= 99%', '', '>= 6500', '', '', '', '', '', '']
-    ranReportUmtsTable = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, ranReportFilepath, latestRanReport), sheet_name='3G Table')
-    ranReportUmtsTable['Threshold'] = ['< 0.17%', '>= 99.87%', '', '', '', '', '<= 0.30%', '<= 0.30%', '>= 99%', '>= 99%', '', '', '']
-    ranReportGsmTable = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, ranReportFilepath, latestRanReport), sheet_name='2G Table')
-    ranReportGsmTable['Threshold'] = ['>= 99.87%', '>= 99.87%', '', '', '', '']
+            latestRanReport = currentKPIGridFilePath + file
+    ranReportLteTableTmp = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, currentKPIGridFilePath, latestRanReport), sheet_name='4G Whole Network')
+    # Copy dataframe columns as rows on the KPI\Object column
+    ranReportLteTable['KPI\\Object'] = ranReportLteTableTmp.columns
+    # Copy data on first row
+    ranReportLteTable['Latest Hour'] = list(ranReportLteTableTmp.iloc[0])
+    ranReportLteTable['Threshold'] = ['', '', '', '< 0.13%', '>= 99%', '>= 99%', '', '>= 6500', '', '', '', '', '', '']
+    ranReportUmtsTableTmp = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, currentKPIGridFilePath, latestRanReport), sheet_name='3G Whole Network')
+    # Copy dataframe columns as rows on the KPI\Object column
+    ranReportUmtsTable['KPI\\Object'] = ranReportUmtsTableTmp.columns
+    # Adjust data
+    ranReportUmtsTable['Latest Hour'][0] = ranReportUmtsTableTmp['Time'][0]
+    ranReportUmtsTable['Latest Hour'][1] = 'Whole Network'
+    ranReportUmtsTable['Latest Hour'][2] = ranReportUmtsTableTmp['Integrity'][0]
+    ranReportUmtsTable['Latest Hour'][3] = ranReportUmtsTableTmp['PS Traffic'].sum()
+    ranReportUmtsTable['Latest Hour'][4] = ranReportUmtsTableTmp['CS Traffic(Erl)'].sum()
+    ranReportUmtsTable['Latest Hour'][5] = ranReportUmtsTableTmp['HSDPA DCR(%)'].mean()
+    ranReportUmtsTable['Latest Hour'][6] = ranReportUmtsTableTmp['HSUPA DCR(%)'].mean()
+    ranReportUmtsTable['Latest Hour'][7] = ranReportUmtsTableTmp['CS DCR(%)'].mean()
+    ranReportUmtsTable['Latest Hour'][8] = ranReportUmtsTableTmp['HSDPA CSSR(%)'].mean()
+    ranReportUmtsTable['Latest Hour'][9] = ranReportUmtsTableTmp['HSUPA CSSR(%)'].mean()
+    ranReportUmtsTable['Latest Hour'][10] = ranReportUmtsTableTmp['CS CSSR'].mean()
+    ranReportUmtsTable['Latest Hour'][11] = ranReportUmtsTableTmp['HSDPA Users'].sum()
+    ranReportUmtsTable['Latest Hour'][12] = ranReportUmtsTableTmp['DL Throughput(kbit/s)'].mean()
+    ranReportUmtsTable['Latest Hour'][13] = ranReportUmtsTableTmp['CSSR CSFB(%)'].mean()
+    ranReportUmtsTable['Latest Hour'][14] = ranReportUmtsTableTmp['MOC CSFB SR(%)'].mean()
+    ranReportUmtsTable['Latest Hour'][15] = ranReportUmtsTableTmp['MTC CSFB SR(%)'].mean()
+    ranReportUmtsTable['Threshold'] = ['', '', '', '', '', '< 0.17%', '< 0.17%', '< 0.17%', '>= 99.87%', '>= 99.87%', '>= 99.87%', '', '', '>= 99%', '>= 99%', '>= 99%']
+    ranReportGsmTableTmp = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, currentKPIGridFilePath, latestRanReport), sheet_name='2G Whole Network')
+    # Copy dataframe columns as rows on the KPI\Object column
+    ranReportGsmTable['KPI\\Object'] = ranReportGsmTableTmp.columns
+    # Adjust data
+    ranReportGsmTable['Latest Hour'][0] = ranReportGsmTableTmp['Time'][0]
+    ranReportGsmTable['Latest Hour'][1] = 'Whole Network'
+    ranReportGsmTable['Latest Hour'][2] = ranReportGsmTableTmp['Integrity'][0]
+    ranReportGsmTable['Latest Hour'][3] = ranReportGsmTableTmp['CS Traffic(Erl)'].sum()
+    ranReportGsmTable['Latest Hour'][4] = ranReportGsmTableTmp['CS CSSR'].sum()
+    ranReportGsmTable['Latest Hour'][5] = ranReportGsmTableTmp['CS DCR'].mean()
+    ranReportGsmTable['Latest Hour'][6] = ranReportGsmTableTmp['TCH Client Perceived Congestion'].mean()
+    ranReportGsmTable['Latest Hour'][7] = ranReportGsmTableTmp['RA333A:BSS Call Establishment Success Rate(%)'].mean()
+    ranReportGsmTable['Latest Hour'][8] = ranReportGsmTableTmp['PS Traffic'].mean()
+    ranReportGsmTable['Latest Hour'][9] = ranReportGsmTableTmp['PS CSSR'].mean()
+    ranReportGsmTable['Threshold'] = ['', '', '', '', '>= 99.87%', '<= 0.30%', '', '', '', '']
+
     ranReportLteColumns = [{'name': i, 'id': i} for i in ranReportLteTable.columns]
     ranReportUmtsColumns = [{'name': i, 'id': i} for i in ranReportUmtsTable.columns]
     ranReportGsmColumns = [{'name': i, 'id': i} for i in ranReportGsmTable.columns]
@@ -506,3 +551,4 @@ def updateView(currentInterval):
 
 if __name__ == '__main__':
     app.run_server(debug=True, host='0.0.0.0', port='5005', dev_tools_silence_routes_logging=False)
+    #app.run_server(debug=True, host='0.0.0.0', port='5005')
