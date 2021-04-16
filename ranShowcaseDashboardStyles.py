@@ -1,4 +1,10 @@
 class gridContainer():
+    currentKPIGridContainer = {
+        'display':'grid',
+        'gridTemplate':'repeat(3, 1fr) / repeat(6, 1fr)',
+        'width':'100%'
+    }
+
     gsmGraphGridContainerStyle = {
         'display':'grid',
         'gridTemplate':'repeat(2, 1fr) / repeat(3, 1fr)',
@@ -25,28 +31,28 @@ class gridElement():
     }
 
     gsmPsCssrStyle={
-        'grid-column':'2 / 3',
+        'grid-column':'2 / 4',
         'grid-row':'1 / 2'
     }
 
     gsmCsDcrStyle={
-        'grid-column':'3 / 4',
-        'grid-row':'1 / 2'
+        'grid-column':'1 / 4',
+        'grid-row':'2 / 3'
     }
 
     lteGeneralKPITableStyle={
         'grid-column':'1 / 2',
-        'grid-row':'2 / 3'
+        'grid-row':'1 / 2'
     }
 
     umtsGeneralKPITableStyle={
-        'grid-column':'2 / 3',
+        'grid-column':'1 / 2',
         'grid-row':'2 / 3'
     }
 
     gsmGeneralKPITableStyle={
-        'grid-column':'3 / 4',
-        'grid-row':'2 / 3'
+        'grid-column':'1 / 2',
+        'grid-row':'3 / 4'
     }
 
     umtsDcrStyle={

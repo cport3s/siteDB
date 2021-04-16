@@ -28,48 +28,30 @@ gridContainerStyles = styles.gridContainer()
 gridelementStyles = styles.gridElement()
 dataTableStyles = styles.datatableHeaderStyle()
 # RAN Report Variables
-#ranReportFilepath = "/BSC/ran_report/"
 currentKPIGridFilePath = "/BSC/current_kpi_per_hour/"
 
-#ranReportLteColumns = [{'name':'KPI\\Object', 'id':'KPI\\Object'}, {'name':'Whole Network', 'id':'Whole Network'}, {'name':'Threshold', 'id':'Threshold'}]
-#ranReportLteTable = pd.DataFrame(data={'KPI\\Oject':[], 'Whole Network':[], 'Threshold':[]})
-#ranReportUmtsColumns = [{'name':'KPI\\Object', 'id':'KPI\\Object'}, {'name':'Whole Network', 'id':'Whole Network'}, {'name':'Threshold', 'id':'Threshold'}]
-#ranReportUmtsTable = pd.DataFrame(data={'KPI\\Oject':[], 'Whole Network':[], 'Threshold':[]})
-#ranReportGsmColumns = [{'name':'KPI\\Object', 'id':'KPI\\Object'}, {'name':'Whole Network', 'id':'Whole Network'}, {'name':'Threshold', 'id':'Threshold'}]
-#ranReportGsmTable = pd.DataFrame(data={'KPI\\Oject':[], 'Whole Network':[], 'Threshold':[]})
+ranReportLteColumns = [{'name':'KPI\\Object', 'id':'KPI\\Object'}, {'name':'Threshold', 'id':'Threshold'}, {'name':'Latest Hour', 'id':'Latest Hour'}]
+ranReportLteTable = pd.DataFrame(data={'KPI\\Object':[], 'Threshold':[], 'Latest Hour':[]})
+ranReportUmtsColumns = [{'name':'KPI\\Object', 'id':'KPI\\Object'}, {'name':'Threshold', 'id':'Threshold'}, {'name':'Latest Hour', 'id':'Latest Hour'}]
+ranReportUmtsTable = pd.DataFrame(data={'KPI\\Object':[], 'Threshold':[], 'Latest Hour':[]})
+ranReportGsmColumns = [{'name':'KPI\\Object', 'id':'KPI\\Object'}, {'name':'Threshold', 'id':'Threshold'}, {'name':'Latest Hour', 'id':'Latest Hour'}]
+ranReportGsmTable = pd.DataFrame(data={'KPI\\Object':[], 'Threshold':[], 'Latest Hour':[]})
 
-ranReportLteColumns = [{'name':'KPI\\Object', 'id':'KPI\\Object'}, {'name':'Latest Hour', 'id':'Latest Hour'}, {'name':'Threshold', 'id':'Threshold'}]
-ranReportLteTable = pd.DataFrame(data={'KPI\\Object':[], 'Latest Hour':[], 'Threshold':[]})
-ranReportUmtsColumns = [{'name':'KPI\\Object', 'id':'KPI\\Object'}, {'name':'Latest Hour', 'id':'Latest Hour'}, {'name':'Threshold', 'id':'Threshold'}]
-ranReportUmtsTable = pd.DataFrame(data={'KPI\\Object':[], 'Latest Hour':[], 'Threshold':[]})
-ranReportGsmColumns = [{'name':'KPI\\Object', 'id':'KPI\\Object'}, {'name':'Latest Hour', 'id':'Latest Hour'}, {'name':'Threshold', 'id':'Threshold'}]
-ranReportGsmTable = pd.DataFrame(data={'KPI\\Object':[], 'Latest Hour':[], 'Threshold':[]})
-
-app.layout = html.Div(children=[
-    html.H1(
+app.layout = html.Div(
+    children=[
+        html.H1(
         className='showCasetitleHeader',
         children='RAN Ops Dashboard', 
         style={
             'text-align': 'center',
             'color':'white'
             }
-    ),
-    html.Div(
-        id='gsmGraphGridContainer',
-        style=gridContainerStyles.gsmGraphGridContainerStyle,
-        children=[
-            dcc.Graph(
-                id='gsmCsCssr',
-                style=gridelementStyles.gsmCsCssrStyle
-            ),
-            dcc.Graph(
-                id='gsmPsCssr',
-                style=gridelementStyles.gsmPsCssrStyle
-            ),
-            dcc.Graph(
-                id='gsmCsDcr',
-                style=gridelementStyles.gsmCsDcrStyle
-            ),
+        ),
+        # Current KPI View
+        html.Div(
+        id='currentKPIGridContainer',
+        style = gridContainerStyles.currentKPIGridContainer,
+        children = [
             html.Div(
                 id = 'lteGeneralKPITable',
                 style=gridelementStyles.lteGeneralKPITableStyle,
@@ -90,17 +72,27 @@ app.layout = html.Div(children=[
                         style_data_conditional = [
                             {
                                 # LTE DCR style rule
-                                'if':{'column_id':'Whole Network', 'row_index':0, 'filter_query':'{Whole Network} >= 0.13'},
+                                'if':{'column_id':'Latest Hour', 'row_index':3, 'filter_query':'{Latest Hour} >= 0.13'},
                                 'backgroundColor':'red'
                             },
                             {
                                 # LTE RRC SSR style rule
-                                'if':{'column_id':'Whole Network', 'row_index':1, 'filter_query':'{Whole Network} < 99'},
+                                'if':{'column_id':'Latest Hour', 'row_index':4, 'filter_query':'{Latest Hour} < 99'},
                                 'backgroundColor':'red'
                             },
                             {
                                 # LTE eRAB SSR style rule
-                                'if':{'column_id':'Whole Network', 'row_index':2, 'filter_query':'{Whole Network} < 99'},
+                                'if':{'column_id':'Latest Hour', 'row_index':5, 'filter_query':'{Latest Hour} < 99'},
+                                'backgroundColor':'red'
+                            },
+                            {
+                                # VoLTE DCR style rule
+                                'if':{'column_id':'Latest Hour', 'row_index':11, 'filter_query':'{Latest Hour} >= 0.13'},
+                                'backgroundColor':'red'
+                            },
+                            {
+                                # VoLTE eRAB SSR style rule
+                                'if':{'column_id':'Latest Hour', 'row_index':13, 'filter_query':'{Latest Hour} < 99'},
                                 'backgroundColor':'red'
                             }
                         ]
@@ -126,35 +118,35 @@ app.layout = html.Div(children=[
                             ],
                         style_data_conditional = [
                             {
-                                # UMTS DCR style rule
-                                'if':{'column_id':'Whole Network', 'row_index':0, 'filter_query':'{Whole Network} >= 0.17'},
-                                'backgroundColor':'red'
-                            },
-                            {
-                                # UMTS CSSR style rule
-                                'if':{'column_id':'Whole Network', 'row_index':1, 'filter_query':'{Whole Network} < 99.87'},
-                                'backgroundColor':'red'
-                            },
-                            {
                                 # HSDPA DCR style rule
-                                'if':{'column_id':'Whole Network', 'row_index':6, 'filter_query':'{Whole Network} > 0.30'},
+                                'if':{'column_id':'Latest Hour', 'row_index':5, 'filter_query':'{Latest Hour} >= 0.17'},
                                 'backgroundColor':'red'
                             },
                             {
                                 # HSUPA DCR style rule
-                                'if':{'column_id':'Whole Network', 'row_index':7, 'filter_query':'{Whole Network} > 0.30'},
+                                'if':{'column_id':'Latest Hour', 'row_index':6, 'filter_query':'{Latest Hour} >= 0.17'},
+                                'backgroundColor':'red'
+                            },
+                            {
+                                # UMTS DCR style rule
+                                'if':{'column_id':'Latest Hour', 'row_index':7, 'filter_query':'{Latest Hour} >= 0.17'},
                                 'backgroundColor':'red'
                             },
                             {
                                 # HSDPA CSSR style rule
-                                'if':{'column_id':'Whole Network', 'row_index':8, 'filter_query':'{Whole Network} < 99'},
+                                'if':{'column_id':'Latest Hour', 'row_index':8, 'filter_query':'{Latest Hour} < 99.87'},
                                 'backgroundColor':'red'
                             },
                             {
                                 # HSUPA CSSR style rule
-                                'if':{'column_id':'Whole Network', 'row_index':9, 'filter_query':'{Whole Network} < 99'},
+                                'if':{'column_id':'Latest Hour', 'row_index':9, 'filter_query':'{Latest Hour} < 99.87'},
                                 'backgroundColor':'red'
                             },
+                            {
+                                # UMTS CSSR style rule
+                                'if':{'column_id':'Latest Hour', 'row_index':10, 'filter_query':'{Latest Hour} < 99.87'},
+                                'backgroundColor':'red'
+                            }
                         ]
                     )
                 ]
@@ -179,12 +171,12 @@ app.layout = html.Div(children=[
                         style_data_conditional = [
                             {
                                 # GSM CS DCR style rule
-                                'if':{'column_id':'Whole Network', 'row_index':0, 'filter_query':'{Whole Network} >= 0.3'},
+                                'if':{'column_id':'Latest Hour', 'row_index':4, 'filter_query':'{Latest Hour} < 99.87'},
                                 'backgroundColor':'red'
                             },
                             {
                                 # GSM CS CSSR style rule
-                                'if':{'column_id':'Whole Network', 'row_index':1, 'filter_query':'{Whole Network} < 99.87'},
+                                'if':{'column_id':'Latest Hour', 'row_index':5, 'filter_query':'{Latest Hour} >= 0.3'},
                                 'backgroundColor':'red'
                             }
                         ]
@@ -192,8 +184,28 @@ app.layout = html.Div(children=[
                 ]
             )
         ]
-    ),
-    html.Div(
+        ),
+        # GSM Graph View
+        html.Div(
+        id='gsmGraphGridContainer',
+        style=gridContainerStyles.gsmGraphGridContainerStyle,
+        children=[
+            dcc.Graph(
+                id='gsmCsCssr',
+                style=gridelementStyles.gsmCsCssrStyle
+            ),
+            dcc.Graph(
+                id='gsmPsCssr',
+                style=gridelementStyles.gsmPsCssrStyle
+            ),
+            dcc.Graph(
+                id='gsmCsDcr',
+                style=gridelementStyles.gsmCsDcrStyle
+            )
+        ]
+        ),
+        # UMTS Graph View
+        html.Div(
         id='umtsGraphGridContainer',
         style=gridContainerStyles.umtsGraphGridContainerStyle,
         children=[
@@ -222,9 +234,9 @@ app.layout = html.Div(children=[
                 style=gridelementStyles.hsupaCssrStyle
             )
         ]
-    )
-    ,
-    html.Div(
+        ),
+        # LTE Graph View
+        html.Div(
         id='lteGraphGridContainer',
         style=gridContainerStyles.lteGraphGridContainerStyle,
         children=[
@@ -245,20 +257,21 @@ app.layout = html.Div(children=[
                 style=gridelementStyles.lteDataDcrStyle
             )
         ]
-    ),
-    dcc.Interval(
-        id='graphUpateInterval',
-        # interval is expressed in milliseconds (evey 30mins)
-        interval=1800000, 
-        n_intervals=0
-    ),
-    dcc.Interval(
-        id='viewUpateInterval',
-        # interval is expressed in milliseconds (evey 1min)
-        interval=20000, 
-        n_intervals=0
-    )
-])
+        ),
+        dcc.Interval(
+            id='graphUpateInterval',
+            # interval is expressed in milliseconds (evey 30mins)
+            interval=1800*1000, 
+            n_intervals=0
+        ),
+        dcc.Interval(
+            id='viewUpateInterval',
+            # interval is expressed in milliseconds (evey 1min)
+            interval=20*1000, 
+            n_intervals=0
+        )
+    ]
+)
 
 # Callback to update the graph data
 @app.callback([
@@ -468,10 +481,7 @@ def updateDatatable(currentInterval):
         currentDateTime = str(int(currentDateTime[:-2]) - 1)
     else:
         currentDateTime = currentDateTime[:-2]
-    #ranReportDirList = ran_functions.getFtpPathFileList(ftpLogin, ranReportFilepath)
-    #for file in ranReportDirList:
-    #    if currentDateTime in file:
-    #        latestRanReport = ranReportFilepath + file
+    
     currentKPIDirList = ran_functions.getFtpPathFileList(ftpLogin, currentKPIGridFilePath)
     for file in currentKPIDirList:
         if currentDateTime in file:
@@ -481,7 +491,7 @@ def updateDatatable(currentInterval):
     ranReportLteTable['KPI\\Object'] = ranReportLteTableTmp.columns
     # Copy data on first row
     ranReportLteTable['Latest Hour'] = list(ranReportLteTableTmp.iloc[0])
-    ranReportLteTable['Threshold'] = ['', '', '', '< 0.13%', '>= 99%', '>= 99%', '', '>= 6500', '', '', '', '', '', '']
+    ranReportLteTable['Threshold'] = ['', '', '', '< 0.13%', '>= 99%', '>= 99%', '', '', '', '', '', '< 0.13%', '', '>= 99%']
     ranReportUmtsTableTmp = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, currentKPIGridFilePath, latestRanReport), sheet_name='3G Whole Network')
     # Copy dataframe columns as rows on the KPI\Object column
     ranReportUmtsTable['KPI\\Object'] = ranReportUmtsTableTmp.columns
@@ -511,43 +521,55 @@ def updateDatatable(currentInterval):
     ranReportGsmTable['Latest Hour'][1] = 'Whole Network'
     ranReportGsmTable['Latest Hour'][2] = ranReportGsmTableTmp['Integrity'][0]
     ranReportGsmTable['Latest Hour'][3] = ranReportGsmTableTmp['CS Traffic(Erl)'].sum()
-    ranReportGsmTable['Latest Hour'][4] = ranReportGsmTableTmp['CS CSSR'].sum()
+    ranReportGsmTable['Latest Hour'][4] = ranReportGsmTableTmp['CS CSSR'].mean()
     ranReportGsmTable['Latest Hour'][5] = ranReportGsmTableTmp['CS DCR'].mean()
     ranReportGsmTable['Latest Hour'][6] = ranReportGsmTableTmp['TCH Client Perceived Congestion'].mean()
     ranReportGsmTable['Latest Hour'][7] = ranReportGsmTableTmp['RA333A:BSS Call Establishment Success Rate(%)'].mean()
-    ranReportGsmTable['Latest Hour'][8] = ranReportGsmTableTmp['PS Traffic'].mean()
+    ranReportGsmTable['Latest Hour'][8] = ranReportGsmTableTmp['PS Traffic'].sum()
     ranReportGsmTable['Latest Hour'][9] = ranReportGsmTableTmp['PS CSSR'].mean()
     ranReportGsmTable['Threshold'] = ['', '', '', '', '>= 99.87%', '<= 0.30%', '', '', '', '']
-
+    # Format columns data
     ranReportLteColumns = [{'name': i, 'id': i} for i in ranReportLteTable.columns]
     ranReportUmtsColumns = [{'name': i, 'id': i} for i in ranReportUmtsTable.columns]
     ranReportGsmColumns = [{'name': i, 'id': i} for i in ranReportGsmTable.columns]
+
     return ranReportLteColumns, ranReportLteTable.to_dict('records'), ranReportUmtsColumns, ranReportUmtsTable.to_dict('records'), ranReportGsmColumns, ranReportGsmTable.to_dict('records')
 
 # Callback to update the view
-@app.callback([
+@app.callback(
+    [
+        Output('currentKPIGridContainer', 'style'),
         Output('gsmGraphGridContainer', 'style'),  
         Output('umtsGraphGridContainer', 'style'), 
         Output('lteGraphGridContainer', 'style'),
     ],  
     Input('viewUpateInterval', 'n_intervals'))
 def updateView(currentInterval):
+    currentKPIGridContainer = gridContainerStyles.currentKPIGridContainer
     gsmGraphGridContainer = gridContainerStyles.gsmGraphGridContainerStyle
     umtsGraphGridContainer = gridContainerStyles.umtsGraphGridContainerStyle
     lteGraphGridContainer = gridContainerStyles.lteGraphGridContainerStyle
-    if currentInterval % 3 == 0:
+    if currentInterval % 4 == 0:
+        currentKPIGridContainer['display'] = 'grid'
+        gsmGraphGridContainer['display'] = 'none'
+        umtsGraphGridContainer['display'] = 'none'
+        lteGraphGridContainer['display'] = 'none'
+    elif currentInterval % 4 == 1:
+        currentKPIGridContainer['display'] = 'none'
         gsmGraphGridContainer['display'] = 'grid'
         umtsGraphGridContainer['display'] = 'none'
         lteGraphGridContainer['display'] = 'none'
-    elif currentInterval % 3 == 1:
+    elif currentInterval % 4 == 2:
+        currentKPIGridContainer['display'] = 'none'
         gsmGraphGridContainer['display'] = 'none'
         umtsGraphGridContainer['display'] = 'grid'
         lteGraphGridContainer['display'] = 'none'
-    elif currentInterval % 3 == 2:
+    elif currentInterval % 4 == 3:
+        currentKPIGridContainer['display'] = 'none'
         gsmGraphGridContainer['display'] = 'none'
         umtsGraphGridContainer['display'] = 'none'
         lteGraphGridContainer['display'] = 'grid'
-    return gsmGraphGridContainer, umtsGraphGridContainer, lteGraphGridContainer
+    return currentKPIGridContainer, gsmGraphGridContainer, umtsGraphGridContainer, lteGraphGridContainer
 
 if __name__ == '__main__':
     app.run_server(debug=True, host='0.0.0.0', port='5005', dev_tools_silence_routes_logging=False)
