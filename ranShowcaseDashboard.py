@@ -9,6 +9,7 @@ import mysql.connector
 import numpy as np
 from datetime import datetime, timedelta
 import os
+from dash.exceptions import PreventUpdate
 # Custom libraries
 import classes
 import ranShowcaseDashboardStyles as styles
@@ -32,6 +33,7 @@ gridelementStyles = styles.gridElement()
 dataTableStyles = styles.datatableHeaderStyle()
 # RAN Report Variables
 currentKPIGridFilePath = "/BSC/current_kpi_per_hour/"
+weeklyKPIGridFilePath = "/BSC/current_kpi_per_week/"
 
 ranReportLteColumns = [{'name':'RAT', 'id':'RAT'}, {'name':'KPI\\Object', 'id':'KPI\\Object'}, {'name':'Threshold', 'id':'Threshold'}, {'name':'Latest Hour', 'id':'Latest Hour'}]
 ranReportLteTable = pd.DataFrame(data={'RAT':[], 'KPI\\Object':[], 'Threshold':[], 'Latest Hour':[]})
@@ -85,27 +87,27 @@ app.layout = html.Div(
                         style_data_conditional = [
                             {
                                 # LTE DCR style rule
-                                'if':{'column_id':'Latest Hour', 'row_index':3, 'filter_query':'{Latest Hour} >= 0.13'},
+                                'if':{'column_id':'Latest Hour', 'row_index':2, 'filter_query':'{Latest Hour} >= 0.13'},
                                 'backgroundColor':'red'
                             },
                             {
                                 # LTE RRC SSR style rule
-                                'if':{'column_id':'Latest Hour', 'row_index':4, 'filter_query':'{Latest Hour} < 99'},
+                                'if':{'column_id':'Latest Hour', 'row_index':3, 'filter_query':'{Latest Hour} < 99'},
                                 'backgroundColor':'red'
                             },
                             {
                                 # LTE eRAB SSR style rule
-                                'if':{'column_id':'Latest Hour', 'row_index':5, 'filter_query':'{Latest Hour} < 99'},
+                                'if':{'column_id':'Latest Hour', 'row_index':4, 'filter_query':'{Latest Hour} < 99'},
                                 'backgroundColor':'red'
                             },
                             {
                                 # VoLTE DCR style rule
-                                'if':{'column_id':'Latest Hour', 'row_index':11, 'filter_query':'{Latest Hour} >= 0.13'},
+                                'if':{'column_id':'Latest Hour', 'row_index':10, 'filter_query':'{Latest Hour} >= 0.13'},
                                 'backgroundColor':'red'
                             },
                             {
                                 # VoLTE eRAB SSR style rule
-                                'if':{'column_id':'Latest Hour', 'row_index':13, 'filter_query':'{Latest Hour} < 99'},
+                                'if':{'column_id':'Latest Hour', 'row_index':12, 'filter_query':'{Latest Hour} < 99'},
                                 'backgroundColor':'red'
                             }
                         ]
@@ -142,32 +144,32 @@ app.layout = html.Div(
                         style_data_conditional = [
                             {
                                 # HSDPA DCR style rule
-                                'if':{'column_id':'Latest Hour', 'row_index':5, 'filter_query':'{Latest Hour} >= 0.17'},
+                                'if':{'column_id':'Latest Hour', 'row_index':2, 'filter_query':'{Latest Hour} >= 0.17'},
                                 'backgroundColor':'red'
                             },
                             {
                                 # HSUPA DCR style rule
-                                'if':{'column_id':'Latest Hour', 'row_index':6, 'filter_query':'{Latest Hour} >= 0.17'},
+                                'if':{'column_id':'Latest Hour', 'row_index':3, 'filter_query':'{Latest Hour} >= 0.17'},
                                 'backgroundColor':'red'
                             },
                             {
                                 # UMTS DCR style rule
-                                'if':{'column_id':'Latest Hour', 'row_index':7, 'filter_query':'{Latest Hour} >= 0.17'},
+                                'if':{'column_id':'Latest Hour', 'row_index':4, 'filter_query':'{Latest Hour} >= 0.17'},
                                 'backgroundColor':'red'
                             },
                             {
                                 # HSDPA CSSR style rule
-                                'if':{'column_id':'Latest Hour', 'row_index':8, 'filter_query':'{Latest Hour} < 99.87'},
+                                'if':{'column_id':'Latest Hour', 'row_index':5, 'filter_query':'{Latest Hour} < 99.87'},
                                 'backgroundColor':'red'
                             },
                             {
                                 # HSUPA CSSR style rule
-                                'if':{'column_id':'Latest Hour', 'row_index':9, 'filter_query':'{Latest Hour} < 99.87'},
+                                'if':{'column_id':'Latest Hour', 'row_index':6, 'filter_query':'{Latest Hour} < 99.87'},
                                 'backgroundColor':'red'
                             },
                             {
                                 # UMTS CSSR style rule
-                                'if':{'column_id':'Latest Hour', 'row_index':10, 'filter_query':'{Latest Hour} < 99.87'},
+                                'if':{'column_id':'Latest Hour', 'row_index':7, 'filter_query':'{Latest Hour} < 99.87'},
                                 'backgroundColor':'red'
                             }
                         ]
@@ -204,12 +206,12 @@ app.layout = html.Div(
                         style_data_conditional = [
                             {
                                 # GSM CS DCR style rule
-                                'if':{'column_id':'Latest Hour', 'row_index':4, 'filter_query':'{Latest Hour} < 99.87'},
+                                'if':{'column_id':'Latest Hour', 'row_index':1, 'filter_query':'{Latest Hour} < 99.87'},
                                 'backgroundColor':'red'
                             },
                             {
                                 # GSM CS CSSR style rule
-                                'if':{'column_id':'Latest Hour', 'row_index':5, 'filter_query':'{Latest Hour} >= 0.3'},
+                                'if':{'column_id':'Latest Hour', 'row_index':2, 'filter_query':'{Latest Hour} >= 0.3'},
                                 'backgroundColor':'red'
                             }
                         ]
@@ -300,7 +302,13 @@ app.layout = html.Div(
         dcc.Interval(
             id='viewUpateInterval',
             # interval is expressed in milliseconds (evey 1min)
-            interval=200*1000, 
+            interval=20*1000, 
+            n_intervals=0
+        ),
+        dcc.Interval(
+            id='currentKPIWeeklyInterval',
+            # interval is expressed in milliseconds (evey 1min)
+            interval=86400*1000, 
             n_intervals=0
         )
     ]
@@ -497,8 +505,9 @@ def updateGraph(currentInterval):
     connectr.close()
     return gsmCsCssr, gsmPsCssr, gsmCsDcr, umtsCssr, hsdpaCssr, hsupaCssr, umtsDcr, hsdpaDcr, hsupaDcr, lteVolteDcr, lteDataDcr, lteVolteCssr, lteDataCssr
 
-# Callback to update the Network Check Datatable
-@app.callback([
+# Callback to update the General KPI Datatable
+@app.callback(
+    [
         Output('ranReportLteTable', 'columns'),
         Output('ranReportLteTable', 'data'),
         Output('ranReportUmtsTable', 'columns'),
@@ -506,15 +515,27 @@ def updateGraph(currentInterval):
         Output('ranReportGsmTable', 'columns'),
         Output('ranReportGsmTable', 'data')
     ],  
-    Input('graphUpateInterval', 'n_intervals'))
-def updateDatatable(currentInterval):
+    [
+        # Triggered by the view interval
+        Input('viewUpateInterval', 'n_intervals'),
+        # Triggered by the weekly update interval
+        Input('currentKPIWeeklyInterval', 'n_intervals')
+    ]
+)
+def updateDatatable(currentInterval, weeklyInterval):
     currentDateTime = str(datetime.now().strftime('%Y%m%d%H%M'))
+    # Instantiate the callback context, to find the button ID that triggered the callback
+    callbackContext = dash.callback_context
+    # Get button ID
+    timer_id = callbackContext.triggered[0]['prop_id'].split('.')[0]
+    # If the trigger is the weekly interval, update accordingly
+    if timer_id == 'currentKPIWeeklyInterval':
+        pass
     # If current time minutes is less than 15 minutes, set currentDateTime to the last hour. Reports are generated every 15 minutes past the hour
     if int(currentDateTime[-2:]) < 15:
         currentDateTime = str(int(currentDateTime[:-2]) - 1)
     else:
         currentDateTime = currentDateTime[:-2]
-    
     currentKPIDirList = ran_functions.getFtpPathFileList(ftpLogin, currentKPIGridFilePath)
     for file in currentKPIDirList:
         if currentDateTime in file:
@@ -564,7 +585,6 @@ def updateDatatable(currentInterval):
     ranReportLteColumns = [{'name': i, 'id': i} for i in ranReportLteTable.columns]
     ranReportUmtsColumns = [{'name': i, 'id': i} for i in ranReportUmtsTable.columns]
     ranReportGsmColumns = [{'name': i, 'id': i} for i in ranReportGsmTable.columns]
-
     return ranReportLteColumns, ranReportLteTable.to_dict('records'), ranReportUmtsColumns, ranReportUmtsTable.to_dict('records'), ranReportGsmColumns, ranReportGsmTable.to_dict('records')
 
 # Callback to update the view
