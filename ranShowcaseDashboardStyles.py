@@ -1,21 +1,21 @@
 class gridContainer():
     currentKPIGridContainer = {
         'display':'grid',
-        'gridTemplate':'repeat(3, 1fr) / repeat(6, 1fr)',
+        'gridTemplate':' auto repeat(3, 1fr) / repeat(6, 1fr)',
+        'gap': '1px',
         'width':'100%'
     }
 
     gsmGraphGridContainerStyle = {
         'display':'grid',
-        'gridTemplate':'repeat(2, 1fr) / repeat(3, 1fr)',
+        'gridTemplate':'repeat(2, 1fr) / repeat(2, 1fr)',
         'width':'100%'
     }
 
     umtsGraphGridContainerStyle = {
         'display':'grid',
         'gridTemplate':'repeat(2, 1fr) / repeat(3, 1fr)',
-        'width':'100%',
-        'height':'2000'
+        'width':'100%'
     }
 
     lteGraphGridContainerStyle = {
@@ -31,12 +31,12 @@ class gridElement():
     }
 
     gsmPsCssrStyle={
-        'grid-column':'2 / 4',
+        'grid-column':'2 / 3',
         'grid-row':'1 / 2'
     }
 
     gsmCsDcrStyle={
-        'grid-column':'1 / 4',
+        'grid-column':'1 / 3',
         'grid-row':'2 / 3'
     }
 
@@ -117,11 +117,15 @@ class datatableHeaderStyle():
     style_header = {
         'backgroundColor':'black',
         'color':'white',
-        'fontSize':'30px'
+        'fontSize':'24px',
+        'whiteSpace': 'normal',
+        'height': 'auto'
     }
 
     style_cell = {
         'backgroundColor':'black',
         'color':'white',
-        'fontSize':'30px'
+        'fontSize':'24px',
+        'whiteSpace': 'normal',
+        'height': 'auto'
     }

@@ -17,6 +17,9 @@ import ran_functions
 app = dash.Dash(__name__, title='RAN-Ops Dashboard')
 server = app.server
 
+dataTableObjectColumnWidth = '430px'
+dataTableRatColumnWidth = '50px'
+
 # DB Connection Parameters
 dbPara = classes.dbCredentials()
 # FTP Connection Parameters
@@ -30,12 +33,12 @@ dataTableStyles = styles.datatableHeaderStyle()
 # RAN Report Variables
 currentKPIGridFilePath = "/BSC/current_kpi_per_hour/"
 
-ranReportLteColumns = [{'name':'KPI\\Object', 'id':'KPI\\Object'}, {'name':'Threshold', 'id':'Threshold'}, {'name':'Latest Hour', 'id':'Latest Hour'}]
-ranReportLteTable = pd.DataFrame(data={'KPI\\Object':[], 'Threshold':[], 'Latest Hour':[]})
-ranReportUmtsColumns = [{'name':'KPI\\Object', 'id':'KPI\\Object'}, {'name':'Threshold', 'id':'Threshold'}, {'name':'Latest Hour', 'id':'Latest Hour'}]
-ranReportUmtsTable = pd.DataFrame(data={'KPI\\Object':[], 'Threshold':[], 'Latest Hour':[]})
-ranReportGsmColumns = [{'name':'KPI\\Object', 'id':'KPI\\Object'}, {'name':'Threshold', 'id':'Threshold'}, {'name':'Latest Hour', 'id':'Latest Hour'}]
-ranReportGsmTable = pd.DataFrame(data={'KPI\\Object':[], 'Threshold':[], 'Latest Hour':[]})
+ranReportLteColumns = [{'name':'RAT', 'id':'RAT'}, {'name':'KPI\\Object', 'id':'KPI\\Object'}, {'name':'Threshold', 'id':'Threshold'}, {'name':'Latest Hour', 'id':'Latest Hour'}]
+ranReportLteTable = pd.DataFrame(data={'RAT':[], 'KPI\\Object':[], 'Threshold':[], 'Latest Hour':[]})
+ranReportUmtsColumns = [{'name':'RAT', 'id':'RAT'}, {'name':'KPI\\Object', 'id':'KPI\\Object'}, {'name':'Threshold', 'id':'Threshold'}, {'name':'Latest Hour', 'id':'Latest Hour'}]
+ranReportUmtsTable = pd.DataFrame(data={'RAT':[], 'KPI\\Object':[], 'Threshold':[], 'Latest Hour':[]})
+ranReportGsmColumns = [{'name':'RAT', 'id':'RAT'}, {'name':'KPI\\Object', 'id':'KPI\\Object'}, {'name':'Threshold', 'id':'Threshold'}, {'name':'Latest Hour', 'id':'Latest Hour'}]
+ranReportGsmTable = pd.DataFrame(data={'RAT':[], 'KPI\\Object':[], 'Threshold':[], 'Latest Hour':[]})
 
 app.layout = html.Div(
     children=[
@@ -56,7 +59,7 @@ app.layout = html.Div(
                 id = 'lteGeneralKPITable',
                 style=gridelementStyles.lteGeneralKPITableStyle,
                 children = [
-                    html.H3('LTE General Network KPI'),
+                    #html.H3('LTE General Network KPI'),
                     dash_table.DataTable(
                         id = 'ranReportLteTable',
                         columns = ranReportLteColumns,
@@ -66,7 +69,17 @@ app.layout = html.Div(
                         style_cell_conditional = [
                             {
                                 'if':{'column_id':'KPI\\Object'},
-                                'textAlign':'left'
+                                'textAlign':'left',
+                                'minWidth': dataTableObjectColumnWidth,
+                                'width': dataTableObjectColumnWidth,
+                                'maxWidth': dataTableObjectColumnWidth
+                            },
+                            {
+                                'if':{'column_id':'RAT'},
+                                'textAlign':'center',
+                                'minWidth': dataTableRatColumnWidth,
+                                'width': dataTableRatColumnWidth,
+                                'maxWidth': dataTableRatColumnWidth
                             }
                             ],
                         style_data_conditional = [
@@ -103,7 +116,7 @@ app.layout = html.Div(
                 id = 'umtsGeneralKPITable',
                 style=gridelementStyles.umtsGeneralKPITableStyle,
                 children = [
-                    html.H3('UMTS General Network KPI'), 
+                    #html.H3('UMTS General Network KPI'), 
                     dash_table.DataTable(
                         id = 'ranReportUmtsTable',
                         columns = ranReportUmtsColumns,
@@ -113,7 +126,17 @@ app.layout = html.Div(
                         style_cell_conditional = [
                             {
                                 'if':{'column_id':'KPI\\Object'},
-                                'textAlign':'left'
+                                'textAlign':'left',
+                                'minWidth': dataTableObjectColumnWidth,
+                                'width': dataTableObjectColumnWidth,
+                                'maxWidth': dataTableObjectColumnWidth
+                            },
+                            {
+                                'if':{'column_id':'RAT'},
+                                'textAlign':'center',
+                                'minWidth': dataTableRatColumnWidth,
+                                'width': dataTableRatColumnWidth,
+                                'maxWidth': dataTableRatColumnWidth
                             }
                             ],
                         style_data_conditional = [
@@ -155,7 +178,7 @@ app.layout = html.Div(
                 id = 'gsmGeneralKPITable',
                 style=gridelementStyles.gsmGeneralKPITableStyle,
                 children = [
-                    html.H3('GSM General Network KPI'),
+                    #html.H3('GSM General Network KPI'),
                     dash_table.DataTable(
                         id = 'ranReportGsmTable',
                         columns = ranReportGsmColumns,
@@ -165,7 +188,17 @@ app.layout = html.Div(
                         style_cell_conditional = [
                             {
                                 'if':{'column_id':'KPI\\Object'},
-                                'textAlign':'left'
+                                'textAlign':'left',
+                                'minWidth': dataTableObjectColumnWidth,
+                                'width': dataTableObjectColumnWidth,
+                                'maxWidth': dataTableObjectColumnWidth
+                            },
+                            {
+                                'if':{'column_id':'RAT'},
+                                'textAlign':'center',
+                                'minWidth': dataTableRatColumnWidth,
+                                'width': dataTableRatColumnWidth,
+                                'maxWidth': dataTableRatColumnWidth
                             }
                             ],
                         style_data_conditional = [
@@ -267,7 +300,7 @@ app.layout = html.Div(
         dcc.Interval(
             id='viewUpateInterval',
             # interval is expressed in milliseconds (evey 1min)
-            interval=20*1000, 
+            interval=200*1000, 
             n_intervals=0
         )
     ]
@@ -487,47 +520,46 @@ def updateDatatable(currentInterval):
         if currentDateTime in file:
             latestRanReport = currentKPIGridFilePath + file
     ranReportLteTableTmp = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, currentKPIGridFilePath, latestRanReport), sheet_name='4G Whole Network')
+    # Drop columns
+    ranReportLteTableTmp = ranReportLteTableTmp.drop('Integrity', axis=1)
     # Copy dataframe columns as rows on the KPI\Object column
     ranReportLteTable['KPI\\Object'] = ranReportLteTableTmp.columns
+    ranReportLteTable['RAT'] = '4G'
     # Copy data on first row
     ranReportLteTable['Latest Hour'] = list(ranReportLteTableTmp.iloc[0])
-    ranReportLteTable['Threshold'] = ['', '', '', '< 0.13%', '>= 99%', '>= 99%', '', '', '', '', '', '< 0.13%', '', '>= 99%']
+    ranReportLteTable['Threshold'] = ['', '', '< 0.13%', '>= 99%', '>= 99%', '', '', '', '', '', '< 0.13%', '', '>= 99%']
     ranReportUmtsTableTmp = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, currentKPIGridFilePath, latestRanReport), sheet_name='3G Whole Network')
     # Copy dataframe columns as rows on the KPI\Object column
-    ranReportUmtsTable['KPI\\Object'] = ranReportUmtsTableTmp.columns
+    ranReportUmtsTable['KPI\\Object'] = ranReportUmtsTableTmp.columns[3:]
+    ranReportUmtsTable['RAT'] = '3G'
     # Adjust data
-    ranReportUmtsTable['Latest Hour'][0] = ranReportUmtsTableTmp['Time'][0]
-    ranReportUmtsTable['Latest Hour'][1] = 'Whole Network'
-    ranReportUmtsTable['Latest Hour'][2] = ranReportUmtsTableTmp['Integrity'][0]
-    ranReportUmtsTable['Latest Hour'][3] = ranReportUmtsTableTmp['PS Traffic'].sum()
-    ranReportUmtsTable['Latest Hour'][4] = ranReportUmtsTableTmp['CS Traffic(Erl)'].sum()
-    ranReportUmtsTable['Latest Hour'][5] = ranReportUmtsTableTmp['HSDPA DCR(%)'].mean()
-    ranReportUmtsTable['Latest Hour'][6] = ranReportUmtsTableTmp['HSUPA DCR(%)'].mean()
-    ranReportUmtsTable['Latest Hour'][7] = ranReportUmtsTableTmp['CS DCR(%)'].mean()
-    ranReportUmtsTable['Latest Hour'][8] = ranReportUmtsTableTmp['HSDPA CSSR(%)'].mean()
-    ranReportUmtsTable['Latest Hour'][9] = ranReportUmtsTableTmp['HSUPA CSSR(%)'].mean()
-    ranReportUmtsTable['Latest Hour'][10] = ranReportUmtsTableTmp['CS CSSR'].mean()
-    ranReportUmtsTable['Latest Hour'][11] = ranReportUmtsTableTmp['HSDPA Users'].sum()
-    ranReportUmtsTable['Latest Hour'][12] = ranReportUmtsTableTmp['DL Throughput(kbit/s)'].mean()
-    ranReportUmtsTable['Latest Hour'][13] = ranReportUmtsTableTmp['CSSR CSFB(%)'].mean()
-    ranReportUmtsTable['Latest Hour'][14] = ranReportUmtsTableTmp['MOC CSFB SR(%)'].mean()
-    ranReportUmtsTable['Latest Hour'][15] = ranReportUmtsTableTmp['MTC CSFB SR(%)'].mean()
-    ranReportUmtsTable['Threshold'] = ['', '', '', '', '', '< 0.17%', '< 0.17%', '< 0.17%', '>= 99.87%', '>= 99.87%', '>= 99.87%', '', '', '>= 99%', '>= 99%', '>= 99%']
+    ranReportUmtsTable['Latest Hour'][0] = ranReportUmtsTableTmp['PS Traffic'].sum()
+    ranReportUmtsTable['Latest Hour'][1] = ranReportUmtsTableTmp['CS Traffic(Erl)'].sum()
+    ranReportUmtsTable['Latest Hour'][2] = ranReportUmtsTableTmp['HSDPA DCR(%)'].mean()
+    ranReportUmtsTable['Latest Hour'][3] = ranReportUmtsTableTmp['HSUPA DCR(%)'].mean()
+    ranReportUmtsTable['Latest Hour'][4] = ranReportUmtsTableTmp['CS DCR(%)'].mean()
+    ranReportUmtsTable['Latest Hour'][5] = ranReportUmtsTableTmp['HSDPA CSSR(%)'].mean()
+    ranReportUmtsTable['Latest Hour'][6] = ranReportUmtsTableTmp['HSUPA CSSR(%)'].mean()
+    ranReportUmtsTable['Latest Hour'][7] = ranReportUmtsTableTmp['CS CSSR'].mean()
+    ranReportUmtsTable['Latest Hour'][8] = ranReportUmtsTableTmp['HSDPA Users'].sum()
+    ranReportUmtsTable['Latest Hour'][9] = ranReportUmtsTableTmp['DL Throughput(kbit/s)'].mean()
+    ranReportUmtsTable['Latest Hour'][10] = ranReportUmtsTableTmp['CSSR CSFB(%)'].mean()
+    ranReportUmtsTable['Latest Hour'][11] = ranReportUmtsTableTmp['MOC CSFB SR(%)'].mean()
+    ranReportUmtsTable['Latest Hour'][12] = ranReportUmtsTableTmp['MTC CSFB SR(%)'].mean()
+    ranReportUmtsTable['Threshold'] = ['', '', '< 0.17%', '< 0.17%', '< 0.17%', '>= 99.87%', '>= 99.87%', '>= 99.87%', '', '', '>= 99%', '>= 99%', '>= 99%']
     ranReportGsmTableTmp = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, currentKPIGridFilePath, latestRanReport), sheet_name='2G Whole Network')
     # Copy dataframe columns as rows on the KPI\Object column
-    ranReportGsmTable['KPI\\Object'] = ranReportGsmTableTmp.columns
+    ranReportGsmTable['KPI\\Object'] = ranReportGsmTableTmp.columns[3:]
+    ranReportGsmTable['RAT'] = '2G'
     # Adjust data
-    ranReportGsmTable['Latest Hour'][0] = ranReportGsmTableTmp['Time'][0]
-    ranReportGsmTable['Latest Hour'][1] = 'Whole Network'
-    ranReportGsmTable['Latest Hour'][2] = ranReportGsmTableTmp['Integrity'][0]
-    ranReportGsmTable['Latest Hour'][3] = ranReportGsmTableTmp['CS Traffic(Erl)'].sum()
-    ranReportGsmTable['Latest Hour'][4] = ranReportGsmTableTmp['CS CSSR'].mean()
-    ranReportGsmTable['Latest Hour'][5] = ranReportGsmTableTmp['CS DCR'].mean()
-    ranReportGsmTable['Latest Hour'][6] = ranReportGsmTableTmp['TCH Client Perceived Congestion'].mean()
-    ranReportGsmTable['Latest Hour'][7] = ranReportGsmTableTmp['RA333A:BSS Call Establishment Success Rate(%)'].mean()
-    ranReportGsmTable['Latest Hour'][8] = ranReportGsmTableTmp['PS Traffic'].sum()
-    ranReportGsmTable['Latest Hour'][9] = ranReportGsmTableTmp['PS CSSR'].mean()
-    ranReportGsmTable['Threshold'] = ['', '', '', '', '>= 99.87%', '<= 0.30%', '', '', '', '']
+    ranReportGsmTable['Latest Hour'][0] = ranReportGsmTableTmp['CS Traffic(Erl)'].sum()
+    ranReportGsmTable['Latest Hour'][1] = ranReportGsmTableTmp['CS CSSR'].mean()
+    ranReportGsmTable['Latest Hour'][2] = ranReportGsmTableTmp['CS DCR'].mean()
+    ranReportGsmTable['Latest Hour'][3] = ranReportGsmTableTmp['TCH Client Perceived Congestion'].mean()
+    ranReportGsmTable['Latest Hour'][4] = ranReportGsmTableTmp['RA333A:BSS Call Establishment Success Rate(%)'].mean()
+    ranReportGsmTable['Latest Hour'][5] = ranReportGsmTableTmp['PS Traffic'].sum()
+    ranReportGsmTable['Latest Hour'][6] = ranReportGsmTableTmp['PS CSSR'].mean()
+    ranReportGsmTable['Threshold'] = ['', '>= 99.87%', '<= 0.30%', '', '', '', '']
     # Format columns data
     ranReportLteColumns = [{'name': i, 'id': i} for i in ranReportLteTable.columns]
     ranReportUmtsColumns = [{'name': i, 'id': i} for i in ranReportUmtsTable.columns]
