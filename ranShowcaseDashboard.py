@@ -302,13 +302,14 @@ app.layout = html.Div(
         dcc.Interval(
             id='viewUpateInterval',
             # interval is expressed in milliseconds (evey 1min)
-            interval=20*1000, 
+            interval=200*1000, 
             n_intervals=0
         ),
         dcc.Interval(
             id='currentKPIWeeklyInterval',
             # interval is expressed in milliseconds (evey 1min)
-            interval=86400*1000, 
+            #interval=86400*1000, 
+            interval=20*1000,
             n_intervals=0
         )
     ]
@@ -528,9 +529,6 @@ def updateDatatable(currentInterval, weeklyInterval):
     callbackContext = dash.callback_context
     # Get button ID
     timer_id = callbackContext.triggered[0]['prop_id'].split('.')[0]
-    # If the trigger is the weekly interval, update accordingly
-    if timer_id == 'currentKPIWeeklyInterval':
-        pass
     # If current time minutes is less than 15 minutes, set currentDateTime to the last hour. Reports are generated every 15 minutes past the hour
     if int(currentDateTime[-2:]) < 15:
         currentDateTime = str(int(currentDateTime[:-2]) - 1)
@@ -581,6 +579,53 @@ def updateDatatable(currentInterval, weeklyInterval):
     ranReportGsmTable['Latest Hour'][5] = ranReportGsmTableTmp['PS Traffic'].sum()
     ranReportGsmTable['Latest Hour'][6] = ranReportGsmTableTmp['PS CSSR'].mean()
     ranReportGsmTable['Threshold'] = ['', '>= 99.87%', '<= 0.30%', '', '', '', '']
+
+    # If the trigger is the weekly interval, update accordingly
+    if timer_id == 'currentKPIWeeklyInterval':
+        currentKPIDirList = ran_functions.getFtpPathFileList(ftpLogin, weeklyKPIGridFilePath)
+        for file in currentKPIDirList:
+            # Filename date is stored between these indexes
+            currentFileDate = datetime.strptime(file[53:61], '%Y%m%d')
+            # If the file date is within the last 7 days, then get the complete filepath
+            if currentFileDate > (datetime.now() - timedelta(days=7)):
+                latestWeeklyRanReport = weeklyKPIGridFilePath + file
+                #print(latestWeeklyRanReport)
+        currentWeekNum = 'Week-' + str(currentFileDate.isocalendar()[1])
+        #ranReportLteTable[currentWeekNum] = ''
+        ranReportLteTableTmp = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, weeklyKPIGridFilePath, latestWeeklyRanReport), sheet_name='4G Whole Network')
+        # Drop columns
+        ranReportLteTableTmp = ranReportLteTableTmp.drop('Integrity', axis=1)
+        ranReportLteTable[currentWeekNum] = list(ranReportLteTableTmp.iloc[0])
+        # Add new column to DF
+        ranReportUmtsTable[currentWeekNum] = ''
+        # Read UMTS Data
+        ranReportUmtsTableTmp = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, weeklyKPIGridFilePath, latestWeeklyRanReport), sheet_name='3G Whole Network')
+        # Adjust data
+        ranReportUmtsTable[currentWeekNum][0] = ranReportUmtsTableTmp['PS Traffic'].sum()
+        ranReportUmtsTable[currentWeekNum][1] = ranReportUmtsTableTmp['CS Traffic(Erl)'].sum()
+        ranReportUmtsTable[currentWeekNum][2] = ranReportUmtsTableTmp['HSDPA DCR(%)'].mean()
+        ranReportUmtsTable[currentWeekNum][3] = ranReportUmtsTableTmp['HSUPA DCR(%)'].mean()
+        ranReportUmtsTable[currentWeekNum][4] = ranReportUmtsTableTmp['CS DCR(%)'].mean()
+        ranReportUmtsTable[currentWeekNum][5] = ranReportUmtsTableTmp['HSDPA CSSR(%)'].mean()
+        ranReportUmtsTable[currentWeekNum][6] = ranReportUmtsTableTmp['HSUPA CSSR(%)'].mean()
+        ranReportUmtsTable[currentWeekNum][7] = ranReportUmtsTableTmp['CS CSSR'].mean()
+        ranReportUmtsTable[currentWeekNum][8] = ranReportUmtsTableTmp['HSDPA Users'].sum()
+        ranReportUmtsTable[currentWeekNum][9] = ranReportUmtsTableTmp['DL Throughput(kbit/s)'].mean()
+        ranReportUmtsTable[currentWeekNum][10] = ranReportUmtsTableTmp['CSSR CSFB(%)'].mean()
+        ranReportUmtsTable[currentWeekNum][11] = ranReportUmtsTableTmp['MOC CSFB SR(%)'].mean()
+        ranReportUmtsTable[currentWeekNum][12] = ranReportUmtsTableTmp['MTC CSFB SR(%)'].mean()
+        # Add new column to DF
+        ranReportGsmTable[currentWeekNum] = ''
+        # Read GSM Data
+        ranReportGsmTableTmp = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, weeklyKPIGridFilePath, latestWeeklyRanReport), sheet_name='2G Whole Network')
+        # Adjust data
+        ranReportGsmTable[currentWeekNum][0] = ranReportGsmTableTmp['CS Traffic(Erl)'].sum()
+        ranReportGsmTable[currentWeekNum][1] = ranReportGsmTableTmp['CS CSSR'].mean()
+        ranReportGsmTable[currentWeekNum][2] = ranReportGsmTableTmp['CS DCR'].mean()
+        ranReportGsmTable[currentWeekNum][3] = ranReportGsmTableTmp['TCH Client Perceived Congestion'].mean()
+        ranReportGsmTable[currentWeekNum][4] = ranReportGsmTableTmp['RA333A:BSS Call Establishment Success Rate(%)'].mean()
+        ranReportGsmTable[currentWeekNum][5] = ranReportGsmTableTmp['PS Traffic'].sum()
+        ranReportGsmTable[currentWeekNum][6] = ranReportGsmTableTmp['PS CSSR'].mean()
     # Format columns data
     ranReportLteColumns = [{'name': i, 'id': i} for i in ranReportLteTable.columns]
     ranReportUmtsColumns = [{'name': i, 'id': i} for i in ranReportUmtsTable.columns]
