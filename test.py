@@ -52,5 +52,4 @@
 #    if currentDate and "LTE" in file:
 #        current4GTopWorstFile = file
 #
-#data = downloadFtpFile(ftpLogin, topWorstFilePath, current2GTopWorstCssrFile)
-#print(data)
+#print(current2GTopWorstCssrFile)

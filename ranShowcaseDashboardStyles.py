@@ -1,15 +1,21 @@
 class gridContainer():
+    currentKPIGridContainer = {
+        'display':'grid',
+        'gridTemplate':' auto repeat(3, 1fr) / repeat(6, 1fr)',
+        'gap': '1px',
+        'width':'100%'
+    }
+
     gsmGraphGridContainerStyle = {
         'display':'grid',
-        'gridTemplate':'repeat(2, 1fr) / repeat(3, 1fr)',
+        'gridTemplate':'repeat(2, 1fr) / repeat(2, 1fr)',
         'width':'100%'
     }
 
     umtsGraphGridContainerStyle = {
         'display':'grid',
         'gridTemplate':'repeat(2, 1fr) / repeat(3, 1fr)',
-        'width':'100%',
-        'height':'2000'
+        'width':'100%'
     }
 
     lteGraphGridContainerStyle = {
@@ -30,23 +36,23 @@ class gridElement():
     }
 
     gsmCsDcrStyle={
-        'grid-column':'3 / 4',
-        'grid-row':'1 / 2'
+        'grid-column':'1 / 3',
+        'grid-row':'2 / 3'
     }
 
     lteGeneralKPITableStyle={
         'grid-column':'1 / 2',
-        'grid-row':'2 / 3'
+        'grid-row':'1 / 2'
     }
 
     umtsGeneralKPITableStyle={
-        'grid-column':'2 / 3',
+        'grid-column':'1 / 2',
         'grid-row':'2 / 3'
     }
 
     gsmGeneralKPITableStyle={
-        'grid-column':'3 / 4',
-        'grid-row':'2 / 3'
+        'grid-column':'1 / 2',
+        'grid-row':'3 / 4'
     }
 
     umtsDcrStyle={
@@ -111,11 +117,15 @@ class datatableHeaderStyle():
     style_header = {
         'backgroundColor':'black',
         'color':'white',
-        'fontSize':'30px'
+        'fontSize':'24px',
+        'whiteSpace': 'normal',
+        'height': 'auto'
     }
 
     style_cell = {
         'backgroundColor':'black',
         'color':'white',
-        'fontSize':'30px'
+        'fontSize':'24px',
+        'whiteSpace': 'normal',
+        'height': 'auto'
     }
