@@ -309,7 +309,6 @@ app.layout = html.Div(
             id='currentKPIWeeklyInterval',
             # interval is expressed in milliseconds (evey 1min)
             interval=10800*1000, 
-            #interval=20*1000,
             n_intervals=0
         )
     ]
