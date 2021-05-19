@@ -798,8 +798,8 @@ def updateTopWorstTab(selectedTab):
         current4GTopWorstDcrDataframe = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, topWorstFilePath, current4GTopWorstFile), sheet_name='TOP 50 Drop LTE', na_values='NIL')
         current4GTopWorsteRabSrDataframe = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, topWorstFilePath, current4GTopWorstFile), sheet_name='TOP 50 E-RAB Setup', na_values='NIL')
         current3GTopWorstDataframe = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, topWorstFilePath, current3GTopWorstFile), na_values=['NIL', '/0'])
-        current2GTopWorstCssrDataframe = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, topWorstFilePath, current2GTopWorstCssrFile), na_values='NIL')
-        current2GTopWorstDcrDataframe = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, topWorstFilePath, current2GTopWorstDcrFile), na_values='NIL')
+        current2GTopWorstCssrDataframe = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, topWorstFilePath, current2GTopWorstCssrFile), sheet_name='Subreport 1', na_values='NIL')
+        current2GTopWorstDcrDataframe = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, topWorstFilePath, current2GTopWorstDcrFile), sheet_name='Subreport 1', na_values='NIL')
         # Filter the selected columns
         topWorst4GeRabSrDataframe = current4GTopWorsteRabSrDataframe.filter(items = ['eNodeB Name', 'Cell FDD TDD Indication', 'Cell Name', 'E-RAB Setup Success Rate (ALL)[%](%)', 'Date'])
         # Fill N/A values as 0
