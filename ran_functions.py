@@ -6,7 +6,7 @@ import numpy as np
 from datetime import datetime, timedelta
 import classes
 from ftplib import FTP
-from io import BytesIO
+from io import BytesIO,StringIO
 
 neList = classes.ranControllers()
 
@@ -246,3 +246,18 @@ def downloadFtpFile(ftpLogin, filePath, fileName):
     b
     ftp.quit()
     return b
+
+# Takes ftpLogin object, filepath and file name and returns file content in memory
+def downloadFtpFileString(ftpLogin, filePath, fileName):
+    # Instantiate FTP connection
+    ftp = FTP(host=ftpLogin.hostname)
+    ftp.login(user=ftpLogin.username, passwd=ftpLogin.password)
+    # Move to desired path
+    ftp.cwd(filePath)
+    # Instantiate a StringIO object to temp store the file from the FTP server
+    s = StringIO()
+    # Return file as string with retrlines functon. Must send according RETR command as part of FTP protocol
+    ftp.retrlines('RETR ' + fileName, s.write)
+    # Open as Dataframe
+    ftp.quit()
+    return s

@@ -13,6 +13,7 @@ from datetime import datetime, timedelta
 import classes
 import ranEngDashboardStyles as styles
 import ran_functions
+import csv
 
 app = dash.Dash(__name__, title='RAN-Ops Engineering Dashboard')
 server = app.server
@@ -23,6 +24,7 @@ dbPara = classes.dbCredentials()
 ftpLogin = classes.ranFtpCredentials()
 # Data
 ranController = classes.ranControllers()
+networkAlarmFilePath = "/configuration_files/NBI_FM/{}/".format(str(datetime.now().strftime('%Y%m%d')))
 topWorstFilePath = "/BSC/top_worst_report/"
 zeroTrafficFilePath = "/BSC/zero_traffic/"
 
@@ -168,6 +170,17 @@ app.layout = html.Div(children=[
                     )
                 ]
             ),
+            html.Div(
+                className = 'gridElement',
+                id = 'neOosGraphContainer',
+                style = engDashboardStyles.neOosGraphContainer,
+                children = [
+                    'NE OOS',
+                    dcc.Graph(
+                        id = 'neOosGraph'
+                    )
+                ]
+            )
         ]
     ),
     # Top Worst Reports Tab
@@ -733,6 +746,8 @@ def updateEngDashboardTab(currentInterval, selectedTab, timeFrameDropdown, dataT
             font_size=graphTitleFontSize,
             title='TRX Load per Interface'
         )
+        # NE OOS Graph
+        
         # Close DB Connection
         pointer.close()
         connectr.close()
