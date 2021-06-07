@@ -89,6 +89,15 @@ def rncHighRefreshQuery(pointer, startTime, rncHighRefresh, rncNameList, umtsGra
         queryRaw.clear()
     return rncHighRefresh
 
+def neOosGraph(pointer, startTime):
+    #pointer.execute('select locationinformation from datatable_data.networkcurrentalarms where alarmname = \'NE Is Disconnected\' and created_at > \'' + startTime + '\';')
+    #queryRaw = pointer.fetchone()
+    #queryPayload = np.array(queryRaw)
+    #neOosDataframe = pd.DataFrame(queryPayload, columns=['locationinformation'])
+    #pieChartGraph = px.pie()
+    #return pieChartGraph
+    pass
+
 def graphInsightQuery(currentGraph, startTime, selectedKPI, pointer):
     startTimeNetworkWide = (datetime.now()-timedelta(days=startTime)).strftime("%Y-%m-%d")
     kpiDict = {'LTE Data CSSR':'erabssr', 'LTE Data DCR': 'dcr', 'VoLTE CSSR': 'volteerabssr', 'VoLTE DCR': 'voltedcr', 'GSM CS CSSR': 'cscssr', 'GSM PS CSSR': 'pscssr', 'GSM CS DCR': 'csdcr', 'UMTS CSSR': 'cscssr', 'UMTS DCR': 'csdcr', 'HSDPA CSSR': 'hsdpacssr', 'HSDPA DCR': 'hsdpadcr', 'HSUPA CSSR': 'hsupacssr', 'HSUPA DCR': 'hsupadcr'}

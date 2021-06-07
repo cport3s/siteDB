@@ -747,7 +747,8 @@ def updateEngDashboardTab(currentInterval, selectedTab, timeFrameDropdown, dataT
             title='TRX Load per Interface'
         )
         # NE OOS Graph
-        
+        startTime = (datetime.now() - timedelta(minutes=10)).strftime("%Y/%m/%d %H:%M:%S")
+        neOosPieChart = ran_functions.neOosGraph(pointer, startTime)
         # Close DB Connection
         pointer.close()
         connectr.close()
