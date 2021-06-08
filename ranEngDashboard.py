@@ -37,7 +37,7 @@ networkCheckStyles = styles.networkCheckTab()
 graphColors = styles.NetworkWideGraphColors()
 graphInsightStyles = styles.graphInsightTab()
 txCheckStyles = styles.txCheckTab()
-graphTitleFontSize = 18
+graphTitleFontSize = 14
 
 app.layout = html.Div(children=[
     # Header & tabbed menu
@@ -675,7 +675,8 @@ app.layout = html.Div(children=[
     [
         Output('bscGraph', 'figure'), 
         Output('rncGraph', 'figure'), 
-        Output('trxUsageGraph', 'figure')
+        Output('trxUsageGraph', 'figure'),
+        Output('neOosGraph', 'figure')
     ], 
     [
         # We use the update interval function and both dropdown menus as inputs for the callback
@@ -749,10 +750,19 @@ def updateEngDashboardTab(currentInterval, selectedTab, timeFrameDropdown, dataT
         # NE OOS Graph
         startTime = (datetime.now() - timedelta(minutes=10)).strftime("%Y/%m/%d %H:%M:%S")
         neOosPieChart = ran_functions.neOosGraph(pointer, startTime)
+        neOosPieChart.update_layout(
+            plot_bgcolor='#000000', 
+            paper_bgcolor='#000000', 
+            font_color='#FFFFFF', 
+            title_font_size=graphTitleFontSize,
+            font_size=graphTitleFontSize,
+            title='NE OOS Chart',
+            showlegend=False
+        )
         # Close DB Connection
         pointer.close()
         connectr.close()
-        return bscHighRefresh, rncHighRefresh, trxUsageGraph
+        return bscHighRefresh, rncHighRefresh, trxUsageGraph, neOosPieChart
     else:
         # Close DB Connection
         pointer.close()

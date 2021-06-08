@@ -90,13 +90,21 @@ def rncHighRefreshQuery(pointer, startTime, rncHighRefresh, rncNameList, umtsGra
     return rncHighRefresh
 
 def neOosGraph(pointer, startTime):
-    #pointer.execute('select locationinformation from datatable_data.networkcurrentalarms where alarmname = \'NE Is Disconnected\' and created_at > \'' + startTime + '\';')
-    #queryRaw = pointer.fetchone()
-    #queryPayload = np.array(queryRaw)
-    #neOosDataframe = pd.DataFrame(queryPayload, columns=['locationinformation'])
-    #pieChartGraph = px.pie()
-    #return pieChartGraph
-    pass
+    pointer.execute('select locationinformation from datatable_data.networkcurrentalarms where alarmname = \'NE Is Disconnected\' and created_at > \'' + startTime + '\';')
+    queryRaw = pointer.fetchall()
+    queryPayload = np.array(queryRaw)
+    neOosDataframe = pd.DataFrame(queryPayload, columns=['locationinformation'])
+    tmpList = []
+    for i in range(len(neOosDataframe['locationinformation'])):
+        startIndex = neOosDataframe['locationinformation'][i].find('Error message=') + 14
+        endIndex = neOosDataframe['locationinformation'][i].find(',', startIndex)
+        neOosDataframe['locationinformation'][i] = neOosDataframe['locationinformation'][i][startIndex:endIndex]
+        tmpList.append(1)
+    neOosDataframe['count'] = tmpList
+    neOosDataframe = neOosDataframe.groupby('locationinformation').count().reset_index()
+    print(neOosDataframe)
+    pieChartGraph = px.pie(neOosDataframe, values='count', names='locationinformation')
+    return pieChartGraph
 
 def graphInsightQuery(currentGraph, startTime, selectedKPI, pointer):
     startTimeNetworkWide = (datetime.now()-timedelta(days=startTime)).strftime("%Y-%m-%d")
