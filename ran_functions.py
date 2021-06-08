@@ -102,7 +102,6 @@ def neOosGraph(pointer, startTime):
         tmpList.append(1)
     neOosDataframe['count'] = tmpList
     neOosDataframe = neOosDataframe.groupby('locationinformation').count().reset_index()
-    print(neOosDataframe)
     pieChartGraph = px.pie(neOosDataframe, values='count', names='locationinformation')
     return pieChartGraph
 

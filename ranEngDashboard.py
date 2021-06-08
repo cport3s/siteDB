@@ -755,9 +755,9 @@ def updateEngDashboardTab(currentInterval, selectedTab, timeFrameDropdown, dataT
             paper_bgcolor='#000000', 
             font_color='#FFFFFF', 
             title_font_size=graphTitleFontSize,
-            font_size=graphTitleFontSize,
+            font_size=10,
             title='NE OOS Chart',
-            showlegend=False
+            margin=dict(l=10, r=10, t=10, b=10)
         )
         # Close DB Connection
         pointer.close()
