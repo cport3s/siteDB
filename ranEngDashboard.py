@@ -13,6 +13,7 @@ from datetime import datetime, timedelta
 import classes
 import ranEngDashboardStyles as styles
 import ran_functions
+import csv
 
 app = dash.Dash(__name__, title='RAN-Ops Engineering Dashboard')
 server = app.server
@@ -23,6 +24,7 @@ dbPara = classes.dbCredentials()
 ftpLogin = classes.ranFtpCredentials()
 # Data
 ranController = classes.ranControllers()
+networkAlarmFilePath = "/configuration_files/NBI_FM/{}/".format(str(datetime.now().strftime('%Y%m%d')))
 topWorstFilePath = "/BSC/top_worst_report/"
 zeroTrafficFilePath = "/BSC/zero_traffic/"
 
@@ -35,7 +37,7 @@ networkCheckStyles = styles.networkCheckTab()
 graphColors = styles.NetworkWideGraphColors()
 graphInsightStyles = styles.graphInsightTab()
 txCheckStyles = styles.txCheckTab()
-graphTitleFontSize = 18
+graphTitleFontSize = 14
 
 app.layout = html.Div(children=[
     # Header & tabbed menu
@@ -168,6 +170,17 @@ app.layout = html.Div(children=[
                     )
                 ]
             ),
+            html.Div(
+                className = 'gridElement',
+                id = 'neOosGraphContainer',
+                style = engDashboardStyles.neOosGraphContainer,
+                children = [
+                    'NE OOS',
+                    dcc.Graph(
+                        id = 'neOosGraph'
+                    )
+                ]
+            )
         ]
     ),
     # Top Worst Reports Tab
@@ -662,7 +675,8 @@ app.layout = html.Div(children=[
     [
         Output('bscGraph', 'figure'), 
         Output('rncGraph', 'figure'), 
-        Output('trxUsageGraph', 'figure')
+        Output('trxUsageGraph', 'figure'),
+        Output('neOosGraph', 'figure')
     ], 
     [
         # We use the update interval function and both dropdown menus as inputs for the callback
@@ -733,10 +747,22 @@ def updateEngDashboardTab(currentInterval, selectedTab, timeFrameDropdown, dataT
             font_size=graphTitleFontSize,
             title='TRX Load per Interface'
         )
+        # NE OOS Graph
+        startTime = (datetime.now() - timedelta(minutes=10)).strftime("%Y/%m/%d %H:%M:%S")
+        neOosPieChart = ran_functions.neOosGraph(pointer, startTime)
+        neOosPieChart.update_layout(
+            plot_bgcolor='#000000', 
+            paper_bgcolor='#000000', 
+            font_color='#FFFFFF', 
+            title_font_size=graphTitleFontSize,
+            font_size=10,
+            title='NE OOS Chart',
+            margin=dict(l=10, r=10, t=10, b=10)
+        )
         # Close DB Connection
         pointer.close()
         connectr.close()
-        return bscHighRefresh, rncHighRefresh, trxUsageGraph
+        return bscHighRefresh, rncHighRefresh, trxUsageGraph, neOosPieChart
     else:
         # Close DB Connection
         pointer.close()
@@ -798,8 +824,8 @@ def updateTopWorstTab(selectedTab):
         current4GTopWorstDcrDataframe = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, topWorstFilePath, current4GTopWorstFile), sheet_name='TOP 50 Drop LTE', na_values='NIL')
         current4GTopWorsteRabSrDataframe = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, topWorstFilePath, current4GTopWorstFile), sheet_name='TOP 50 E-RAB Setup', na_values='NIL')
         current3GTopWorstDataframe = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, topWorstFilePath, current3GTopWorstFile), na_values=['NIL', '/0'])
-        current2GTopWorstCssrDataframe = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, topWorstFilePath, current2GTopWorstCssrFile), na_values='NIL')
-        current2GTopWorstDcrDataframe = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, topWorstFilePath, current2GTopWorstDcrFile), na_values='NIL')
+        current2GTopWorstCssrDataframe = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, topWorstFilePath, current2GTopWorstCssrFile), sheet_name='Subreport 1', na_values='NIL')
+        current2GTopWorstDcrDataframe = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, topWorstFilePath, current2GTopWorstDcrFile), sheet_name='Subreport 1', na_values='NIL')
         # Filter the selected columns
         topWorst4GeRabSrDataframe = current4GTopWorsteRabSrDataframe.filter(items = ['eNodeB Name', 'Cell FDD TDD Indication', 'Cell Name', 'E-RAB Setup Success Rate (ALL)[%](%)', 'Date'])
         # Fill N/A values as 0

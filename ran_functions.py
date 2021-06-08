@@ -6,7 +6,7 @@ import numpy as np
 from datetime import datetime, timedelta
 import classes
 from ftplib import FTP
-from io import BytesIO
+from io import BytesIO,StringIO
 
 neList = classes.ranControllers()
 
@@ -88,6 +88,22 @@ def rncHighRefreshQuery(pointer, startTime, rncHighRefresh, rncNameList, umtsGra
         rncHighRefresh.add_trace(go.Scatter(x=df["Time"], y=df[dataTypeDropdown], name=rnc))
         queryRaw.clear()
     return rncHighRefresh
+
+def neOosGraph(pointer, startTime):
+    pointer.execute('select locationinformation from datatable_data.networkcurrentalarms where alarmname = \'NE Is Disconnected\' and created_at > \'' + startTime + '\';')
+    queryRaw = pointer.fetchall()
+    queryPayload = np.array(queryRaw)
+    neOosDataframe = pd.DataFrame(queryPayload, columns=['locationinformation'])
+    tmpList = []
+    for i in range(len(neOosDataframe['locationinformation'])):
+        startIndex = neOosDataframe['locationinformation'][i].find('Error message=') + 14
+        endIndex = neOosDataframe['locationinformation'][i].find(',', startIndex)
+        neOosDataframe['locationinformation'][i] = neOosDataframe['locationinformation'][i][startIndex:endIndex]
+        tmpList.append(1)
+    neOosDataframe['count'] = tmpList
+    neOosDataframe = neOosDataframe.groupby('locationinformation').count().reset_index()
+    pieChartGraph = px.pie(neOosDataframe, values='count', names='locationinformation')
+    return pieChartGraph
 
 def graphInsightQuery(currentGraph, startTime, selectedKPI, pointer):
     startTimeNetworkWide = (datetime.now()-timedelta(days=startTime)).strftime("%Y-%m-%d")
@@ -246,3 +262,18 @@ def downloadFtpFile(ftpLogin, filePath, fileName):
     b
     ftp.quit()
     return b
+
+# Takes ftpLogin object, filepath and file name and returns file content in memory
+def downloadFtpFileString(ftpLogin, filePath, fileName):
+    # Instantiate FTP connection
+    ftp = FTP(host=ftpLogin.hostname)
+    ftp.login(user=ftpLogin.username, passwd=ftpLogin.password)
+    # Move to desired path
+    ftp.cwd(filePath)
+    # Instantiate a StringIO object to temp store the file from the FTP server
+    s = StringIO()
+    # Return file as string with retrlines functon. Must send according RETR command as part of FTP protocol
+    ftp.retrlines('RETR ' + fileName, s.write)
+    # Open as Dataframe
+    ftp.quit()
+    return s
