@@ -8,12 +8,10 @@ import plotly.express as px
 from plotly.subplots import make_subplots
 import pandas as pd
 import mysql.connector
-import numpy as np
-from datetime import datetime, timedelta
+from datetime import datetime,timedelta
 import classes
 import ranEngDashboardStyles as styles
 import ran_functions
-import csv
 
 app = dash.Dash(__name__, title='RAN-Ops Engineering Dashboard')
 server = app.server
