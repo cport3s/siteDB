@@ -75,8 +75,8 @@ class engDashboardTab():
     }
 
     neOosGraphContainer={
-        'grid-column': '3 / 5',
-        'grid-row': '3 / 4'
+        'grid-column': '1 / 5',
+        'grid-row': '4 / 5'
     }
 
 class graphStyles():
