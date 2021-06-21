@@ -680,7 +680,7 @@ app.layout = html.Div(children=[
         # We use the update interval function and both dropdown menus as inputs for the callback
         Input('dataUpateInterval', 'n_intervals'),
         Input('tabsContainer', 'value'),
-        Input('timeFrameDropdown', 'value'), 
+        Input('timeFrameDropdown', 'value'),
         Input('dataTypeDropdown', 'value')
     ]
 )
