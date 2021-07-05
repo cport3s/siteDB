@@ -25,6 +25,7 @@ ranController = classes.ranControllers()
 networkAlarmFilePath = "/configuration_files/NBI_FM/{}/".format(str(datetime.now().strftime('%Y%m%d')))
 topWorstFilePath = "/BSC/top_worst_report/"
 zeroTrafficFilePath = "/BSC/zero_traffic/"
+neOosLineChartDf = pd.DataFrame()
 
 # Styles
 tabStyles = styles.headerStyles()
@@ -746,16 +747,22 @@ def updateEngDashboardTab(currentInterval, selectedTab, timeFrameDropdown, dataT
             title='TRX Load per Interface'
         )
         # NE OOS Graph
-        startTime = (datetime.now() - timedelta(minutes=10)).strftime("%Y/%m/%d %H:%M:%S")
-        neOosPieChart = ran_functions.neOosGraph(pointer, startTime)
+        startTime = (datetime.now() - timedelta(minutes=5)).strftime("%Y/%m/%d %H:%M:%S")
+        neOosLineChart = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
+        neOosPieChart, neOosLineChart = ran_functions.neOosGraph(pointer, startTime, neOosLineChart)
         neOosPieChart.update_layout(
             plot_bgcolor='#000000', 
             paper_bgcolor='#000000', 
             font_color='#FFFFFF', 
-            title_font_size=graphTitleFontSize,
-            font_size=14,
-            title='NE OOS Chart',
-            margin=dict(l=10, r=10, t=10, b=10)
+            title_font_size=graphTitleFontSize, 
+            font_size=14, 
+            title='NE OOS Chart', 
+            margin=dict(l=10, r=10, t=40, b=10), 
+            legend=dict(orientation='h')
+        )
+        neOosPieChart.update_traces(
+            textinfo = 'percent',
+            hoverinfo = 'all'
         )
         # Close DB Connection
         pointer.close()

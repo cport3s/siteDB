@@ -70,13 +70,13 @@ class engDashboardTab():
     }
 
     trxGraphContainer={
-        'grid-column': '1 / 3',
-        'grid-row': '3 / 4'
+        'grid-column': '1 / 5',
+        'grid-row': '4 / 5'
     }
 
     neOosGraphContainer={
-        'grid-column': '1 / 5',
-        'grid-row': '4 / 5'
+        'grid-column': '1 / 3',
+        'grid-row': '3 / 4'
     }
 
 class graphStyles():
