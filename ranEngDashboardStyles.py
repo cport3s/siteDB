@@ -79,6 +79,11 @@ class engDashboardTab():
         'grid-row': '3 / 4'
     }
 
+    neOosLineChartContainer={
+        'grid-column': '3 / 5',
+        'grid-row': '3 / 4'
+    }
+
 class graphStyles():
     plot_bgcolor='#2F2F2F'
     paper_bgcolor='#000000'

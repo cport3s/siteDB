@@ -25,7 +25,8 @@ ranController = classes.ranControllers()
 networkAlarmFilePath = "/configuration_files/NBI_FM/{}/".format(str(datetime.now().strftime('%Y%m%d')))
 topWorstFilePath = "/BSC/top_worst_report/"
 zeroTrafficFilePath = "/BSC/zero_traffic/"
-neOosLineChartDf = pd.DataFrame()
+neOosLineChartDf = pd.DataFrame(data={'time':[datetime.now().strftime("%Y/%m/%d %H:%M:%S")], 'counter':[0]})
+
 
 # Styles
 tabStyles = styles.headerStyles()
@@ -179,6 +180,29 @@ app.layout = html.Div(children=[
                         id = 'neOosGraph'
                     )
                 ]
+            ),
+            html.Div(
+                className = 'gridElement',
+                id = 'neOosLineChartContainer',
+                style = engDashboardStyles.neOosLineChartContainer,
+                children = [
+                    'NE OOS',
+                    dcc.Graph(
+                        id = 'neOosLineChart'
+                    )
+                ]
+            )
+        ]
+    ),
+    html.Div(
+        # Hidden datatable to store graph values
+        className = 'hiddenElement',
+        style = {'display':'none'},
+        children = [
+            dash_table.DataTable(
+                id = 'hiddenNeOosLineChartDatatable',
+                columns = [{'name': i, 'id': i} for i in neOosLineChartDf.columns],
+                data = neOosLineChartDf.to_dict('records')
             )
         ]
     ),
@@ -675,7 +699,9 @@ app.layout = html.Div(children=[
         Output('bscGraph', 'figure'), 
         Output('rncGraph', 'figure'), 
         Output('trxUsageGraph', 'figure'),
-        Output('neOosGraph', 'figure')
+        Output('neOosGraph', 'figure'),
+        Output('neOosLineChart', 'figure'),
+        Output('hiddenNeOosLineChartDatatable', 'data')
     ], 
     [
         # We use the update interval function and both dropdown menus as inputs for the callback
@@ -683,9 +709,10 @@ app.layout = html.Div(children=[
         Input('tabsContainer', 'value'),
         Input('timeFrameDropdown', 'value'),
         Input('dataTypeDropdown', 'value')
-    ]
+    ],
+    State('hiddenNeOosLineChartDatatable', 'data')
 )
-def updateEngDashboardTab(currentInterval, selectedTab, timeFrameDropdown, dataTypeDropdown):
+def updateEngDashboardTab(currentInterval, selectedTab, timeFrameDropdown, dataTypeDropdown, hiddenNeOosLineChartDatatableValue):
     # Connect to DB
     connectr = mysql.connector.connect(user = dbPara.dbUsername, password = dbPara.dbPassword, host = dbPara.dbServerIp , database = dbPara.dataTable)
     # Connection must be buffered when executing multiple querys on DB before closing connection.
@@ -749,7 +776,7 @@ def updateEngDashboardTab(currentInterval, selectedTab, timeFrameDropdown, dataT
         # NE OOS Graph
         startTime = (datetime.now() - timedelta(minutes=5)).strftime("%Y/%m/%d %H:%M:%S")
         neOosLineChart = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
-        neOosPieChart, neOosLineChart = ran_functions.neOosGraph(pointer, startTime, neOosLineChart)
+        neOosPieChart, neOosLineChart, hiddenNeOosLineChartDatatableValue = ran_functions.neOosGraph(pointer, startTime, neOosLineChart, hiddenNeOosLineChartDatatableValue)
         neOosPieChart.update_layout(
             plot_bgcolor='#000000', 
             paper_bgcolor='#000000', 
@@ -767,7 +794,7 @@ def updateEngDashboardTab(currentInterval, selectedTab, timeFrameDropdown, dataT
         # Close DB Connection
         pointer.close()
         connectr.close()
-        return bscHighRefresh, rncHighRefresh, trxUsageGraph, neOosPieChart
+        return bscHighRefresh, rncHighRefresh, trxUsageGraph, neOosPieChart, neOosLineChart, hiddenNeOosLineChartDatatableValue
     else:
         # Close DB Connection
         pointer.close()
