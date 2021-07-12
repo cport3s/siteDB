@@ -25,7 +25,8 @@ ranController = classes.ranControllers()
 networkAlarmFilePath = "/configuration_files/NBI_FM/{}/".format(str(datetime.now().strftime('%Y%m%d')))
 topWorstFilePath = "/BSC/top_worst_report/"
 zeroTrafficFilePath = "/BSC/zero_traffic/"
-neOosLineChartDf = pd.DataFrame(data={'time':[datetime.now().strftime("%Y/%m/%d %H:%M:%S")], 'counter':[0]})
+#neOosLineChartDf = pd.DataFrame(data={'time':[datetime.now().strftime("%Y/%m/%d %H:%M:%S")], 'counter':[0]})
+neOosLineChartDf = pd.DataFrame(data={'time':[], 'counter':[]})
 
 
 # Styles
@@ -194,8 +195,8 @@ app.layout = html.Div(children=[
             )
         ]
     ),
+    # Hidden datatable to store graph values
     html.Div(
-        # Hidden datatable to store graph values
         className = 'hiddenElement',
         style = {'display':'none'},
         children = [
