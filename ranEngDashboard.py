@@ -791,6 +791,14 @@ def updateEngDashboardTab(currentInterval, selectedTab, timeFrameDropdown, dataT
             textinfo = 'percent',
             hoverinfo = 'all'
         )
+        # Set Graph background colores & title font size
+        neOosLineChart.update_layout(
+            plot_bgcolor=graphSyles.plot_bgcolor, 
+            paper_bgcolor=graphSyles.paper_bgcolor, 
+            font_color=graphSyles.font_color,  
+            title_font_size=graphTitleFontSize,
+            margin=dict(l=10, r=10, t=10, b=10),
+        )
         # Close DB Connection
         pointer.close()
         connectr.close()
