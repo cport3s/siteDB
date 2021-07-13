@@ -25,7 +25,6 @@ ranController = classes.ranControllers()
 networkAlarmFilePath = "/configuration_files/NBI_FM/{}/".format(str(datetime.now().strftime('%Y%m%d')))
 topWorstFilePath = "/BSC/top_worst_report/"
 zeroTrafficFilePath = "/BSC/zero_traffic/"
-#neOosLineChartDf = pd.DataFrame(data={'time':[datetime.now().strftime("%Y/%m/%d %H:%M:%S")], 'counter':[0]})
 neOosLineChartDf = pd.DataFrame(data={'time':[], 'counter':[]})
 
 
@@ -734,6 +733,7 @@ def updateEngDashboardTab(currentInterval, selectedTab, timeFrameDropdown, dataT
             paper_bgcolor=graphSyles.paper_bgcolor, 
             font_color=graphSyles.font_color, 
             title_font_size=graphTitleFontSize,
+            font_size=12,
             margin=dict(l=10, r=10, t=10, b=10),
             legend=dict(orientation='h')
         )
@@ -744,6 +744,7 @@ def updateEngDashboardTab(currentInterval, selectedTab, timeFrameDropdown, dataT
             paper_bgcolor=graphSyles.paper_bgcolor, 
             font_color=graphSyles.font_color,  
             title_font_size=graphTitleFontSize,
+            font_size=12,
             margin=dict(l=10, r=10, t=10, b=10),
             legend=dict(orientation='h')
         )
@@ -783,7 +784,7 @@ def updateEngDashboardTab(currentInterval, selectedTab, timeFrameDropdown, dataT
             paper_bgcolor='#000000', 
             font_color='#FFFFFF', 
             title_font_size=graphTitleFontSize, 
-            font_size=14, 
+            font_size=12, 
             title='NE OOS Chart', 
             margin=dict(l=10, r=10, t=40, b=10), 
             legend=dict(orientation='h')
