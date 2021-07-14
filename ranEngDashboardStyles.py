@@ -60,18 +60,18 @@ class engDashboardTab():
     }
 
     bscGraphContainer={
-        'grid-column': '1 / 3',
-        'grid-row': '2 / 3'
+        'grid-column': '3 / 5',
+        'grid-row': '3 / 4'
     }
 
     rncGraphContainer={
-        'grid-column': '1 / 3',
+        'grid-column': '5 / 7',
         'grid-row': '3 / 4'
     }
 
     trxGraphContainer={
-        'grid-column': '3 / 7',
-        'grid-row': '3 / 4'
+        'grid-column': '1 / 7',
+        'grid-row': '4 / 5'
     }
 
     neOosGraphContainer={
@@ -82,6 +82,11 @@ class engDashboardTab():
     neOosLineChartContainer={
         'grid-column': '5 / 7',
         'grid-row': '2 / 3'
+    }
+
+    neOosListContainer={
+        'grid-column': '1 / 3',
+        'grid-row': '1 / 4'
     }
 
 class graphStyles():

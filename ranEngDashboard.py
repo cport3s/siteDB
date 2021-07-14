@@ -191,6 +191,18 @@ app.layout = html.Div(children=[
                         id = 'neOosLineChart'
                     )
                 ]
+            ),
+            html.Div(
+                className = 'gridElement',
+                style = engDashboardStyles.neOosListContainer,
+                children = [
+                    html.H3('Top NE OOS'),
+                    dash_table.DataTable(
+                        id = 'neOosListDataTable',
+                        style_header = dataTableStyles.style_header,
+                        style_cell = dataTableStyles.style_cell
+                    )
+                ]
             )
         ]
     ),
@@ -701,7 +713,9 @@ app.layout = html.Div(children=[
         Output('trxUsageGraph', 'figure'),
         Output('neOosGraph', 'figure'),
         Output('neOosLineChart', 'figure'),
-        Output('hiddenNeOosLineChartDatatable', 'data')
+        Output('hiddenNeOosLineChartDatatable', 'data'),
+        Output('neOosListDataTable', 'columns'),
+        Output('neOosListDataTable', 'data')
     ], 
     [
         # We use the update interval function and both dropdown menus as inputs for the callback
@@ -778,7 +792,7 @@ def updateEngDashboardTab(currentInterval, selectedTab, timeFrameDropdown, dataT
         # NE OOS Graph
         startTime = (datetime.now() - timedelta(minutes=5)).strftime("%Y/%m/%d %H:%M:%S")
         neOosLineChart = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
-        neOosPieChart, neOosLineChart, hiddenNeOosLineChartDatatableValue = ran_functions.neOosGraph(pointer, startTime, neOosLineChart, hiddenNeOosLineChartDatatableValue)
+        neOosPieChart, neOosLineChart, hiddenNeOosLineChartDatatableValue, neOosListDataTableData = ran_functions.neOosGraph(pointer, startTime, neOosLineChart, hiddenNeOosLineChartDatatableValue)
         neOosPieChart.update_layout(
             plot_bgcolor='#000000', 
             paper_bgcolor='#000000', 
@@ -790,7 +804,7 @@ def updateEngDashboardTab(currentInterval, selectedTab, timeFrameDropdown, dataT
             legend=dict(orientation='h')
         )
         neOosPieChart.update_traces(
-            textinfo = 'percent',
+            textinfo = 'value',
             hoverinfo = 'all'
         )
         # Set Graph background colores & title font size
@@ -801,10 +815,12 @@ def updateEngDashboardTab(currentInterval, selectedTab, timeFrameDropdown, dataT
             title_font_size=graphTitleFontSize,
             margin=dict(l=10, r=10, t=10, b=10),
         )
+        neOosListDataTableColumns = [{'name':'NE', 'id':'NE'}, {'name':'Reason', 'id':'Reason'}]
+        #neOosListDataTableData = [{'NE':'Test', 'Reason':'Power'}]
         # Close DB Connection
         pointer.close()
         connectr.close()
-        return bscHighRefresh, rncHighRefresh, trxUsageGraph, neOosPieChart, neOosLineChart, hiddenNeOosLineChartDatatableValue
+        return bscHighRefresh, rncHighRefresh, trxUsageGraph, neOosPieChart, neOosLineChart, hiddenNeOosLineChartDatatableValue, neOosListDataTableColumns, neOosListDataTableData
     else:
         # Close DB Connection
         pointer.close()

@@ -98,6 +98,7 @@ def neOosGraph(pointer, startTime, neOosLineChart, hiddenNeOosLineChartDatatable
     neOosDataframe = pd.DataFrame(queryPayload, columns=['locationinformation'])
     # Temporal list to store ne oos reasons quantity
     tmpList = []
+    neOosListDataTableData = []
     for i in range(len(neOosDataframe['locationinformation'])):
         # Filter NE Name from data
         neNameStartIndex = neOosDataframe['locationinformation'][i].find('neName=') + 7
@@ -109,6 +110,8 @@ def neOosGraph(pointer, startTime, neOosLineChart, hiddenNeOosLineChartDatatable
             startIndex = neOosDataframe['locationinformation'][i].find('Error message=') + 14
             endIndex = neOosDataframe['locationinformation'][i].find(',', startIndex)
             neOosDataframe['locationinformation'][i] = neOosDataframe['locationinformation'][i][startIndex:endIndex]
+            # Append data to datatable value list
+            neOosListDataTableData.append({'NE':neName, 'Reason':neOosDataframe['locationinformation'][i]})
             # Append reason quantity (so we can construct pie chart later on)
             tmpList.append(1)
         else:
@@ -117,11 +120,12 @@ def neOosGraph(pointer, startTime, neOosLineChart, hiddenNeOosLineChartDatatable
     neOosDataframe['count'] = tmpList
     # Append current data to NE OOS line chart
     hiddenNeOosLineChartDatatableValue.append({'time':datetime.now().strftime("%Y/%m/%d %H:%M:%S"), 'counter':len(tmpList)})
+    # Construct temporary dataframe to pass parameters to plot
     tmpDataFrame = pd.DataFrame(hiddenNeOosLineChartDatatableValue)
     neOosDataframe = neOosDataframe.groupby('locationinformation').count().reset_index()
     pieChartGraph = px.pie(neOosDataframe, values='count', names='locationinformation')
     neOosLineChart.add_trace(go.Scatter(x=tmpDataFrame['time'], y=tmpDataFrame['counter'], name=''))
-    return pieChartGraph, neOosLineChart, hiddenNeOosLineChartDatatableValue
+    return pieChartGraph, neOosLineChart, hiddenNeOosLineChartDatatableValue, neOosListDataTableData
 
 def graphInsightQuery(currentGraph, startTime, selectedKPI, pointer):
     startTimeNetworkWide = (datetime.now()-timedelta(days=startTime)).strftime("%Y-%m-%d")
