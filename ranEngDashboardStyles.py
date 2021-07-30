@@ -60,8 +60,8 @@ class engDashboardTab():
     }
 
     bscGraphContainer={
-        'grid-column': '3 / 5',
-        'grid-row': '3 / 4'
+        'grid-column': '5 / 7',
+        'grid-row': '2 / 3'
     }
 
     rncGraphContainer={
@@ -80,8 +80,8 @@ class engDashboardTab():
     }
 
     neOosLineChartContainer={
-        'grid-column': '5 / 7',
-        'grid-row': '2 / 3'
+        'grid-column': '3 / 5',
+        'grid-row': '3 / 4'
     }
 
     neOosListContainer={
@@ -166,6 +166,10 @@ class graphInsightTab():
     }
 
     graphInsightRat = {
+        'width': '100%'
+    }
+
+    graphInsightGraphGroup = {
         'width': '100%'
     }
 

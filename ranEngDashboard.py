@@ -662,6 +662,11 @@ app.layout = html.Div(children=[
                         value = 'LTE'
                     ),
                     dcc.Dropdown(
+                        id = 'graphInsightGraphGroup',
+                        style = graphInsightStyles.graphInsightGraphGroup,
+                        value = 'None'
+                    ),
+                    dcc.Dropdown(
                         id = 'graphInsightGraphType',
                         style = graphInsightStyles.graphInsightGraphType,
                         value = 'None'
@@ -1392,32 +1397,61 @@ def updateNetworkCheckTab(selectedTab, currentInterval):
 
 #Callback to update Graph Insight Dropdown
 @app.callback(
-    Output('graphInsightGraphType', 'options'),
+    [
+        Output('graphInsightGraphType', 'options'),
+        Output('graphInsightGraphGroup', 'options')
+    ],
     Input('graphInsightRat', 'value')
 )
 def updateGraphInsightDropdown(selectedRAT):
-    returnList = ['None']
+    startTime = 7
+    # Connect to DB
+    connectr = mysql.connector.connect(user = dbPara.dbUsername, password = dbPara.dbPassword, host = dbPara.dbServerIp , database = dbPara.dataTable)
+    # Connection must be buffered when executing multiple querys on DB before closing connection.
+    pointer = connectr.cursor(buffered=True)
+    #startTimeNetworkWide = (datetime.now()-timedelta(days=startTime)).strftime("%Y-%m-%d")
+    typeReturnList = ['None']
+    groupReturnList = [{'label':'none', 'value':'none'}]
+    ratTypeTable = ''
+    tableColumn = ''
     if selectedRAT == 'LTE':
-        returnList = [{'label':'LTE Data DCR', 'value':'LTE Data DCR'}, {'label':'LTE Data CSSR', 'value':'LTE Data CSSR'}, {'label':'VoLTE DCR', 'value':'VoLTE DCR'}, {'label':'VoLTE CSSR', 'value':'VoLTE CSSR'}]
+        ratTypeTable = 'ran_report_4g_report_network_wide'
+        tableColumn = 'ltecellgroup'
+        typeReturnList = [{'label':'LTE Data DCR', 'value':'LTE Data DCR'}, {'label':'LTE Data CSSR', 'value':'LTE Data CSSR'}, {'label':'VoLTE DCR', 'value':'VoLTE DCR'}, {'label':'VoLTE CSSR', 'value':'VoLTE CSSR'}]
     elif selectedRAT == 'UMTS':
-        returnList = [{'label':'UMTS DCR', 'value':'UMTS DCR'}, {'label':'UMTS CSSR', 'value':'UMTS CSSR'}, {'label':'HSDPA DCR', 'value':'HSDPA DCR'}, {'label':'HSDPA CSSR', 'value':'HSDPA CSSR'}, {'label':'HSUPA DCR', 'value':'HSUPA DCR'}, {'label':'HSUPA CSSR', 'value':'HSUPA CSSR'}]
+        ratTypeTable = 'ran_report_3g_report_network_wide'
+        tableColumn = 'rncname'
+        typeReturnList = [{'label':'UMTS DCR', 'value':'UMTS DCR'}, {'label':'UMTS CSSR', 'value':'UMTS CSSR'}, {'label':'HSDPA DCR', 'value':'HSDPA DCR'}, {'label':'HSDPA CSSR', 'value':'HSDPA CSSR'}, {'label':'HSUPA DCR', 'value':'HSUPA DCR'}, {'label':'HSUPA CSSR', 'value':'HSUPA CSSR'}]
     else:
-        returnList = [{'label':'GSM CS CSSR', 'value':'GSM CS CSSR'}, {'label':'GSM PS CSSR', 'value':'GSM PS CSSR'}, {'label':'GSM CS DCR', 'value':'GSM CS DCR'}]
-    return returnList
+        ratTypeTable = 'ran_report_2g_report_network_wide'
+        tableColumn = 'gbsc'
+        typeReturnList = [{'label':'GSM CS CSSR', 'value':'GSM CS CSSR'}, {'label':'GSM PS CSSR', 'value':'GSM PS CSSR'}, {'label':'GSM CS DCR', 'value':'GSM CS DCR'}]
+    # Execute query to get graph group list
+    pointer.execute('SELECT ' + tableColumn + ' FROM ran_pf_data.' + ratTypeTable + ' group by ' + tableColumn + ';')
+    queryRaw = pointer.fetchall()
+    groupReturnList = [{'label':i[0], 'value':i[0]} for i in queryRaw]
+    groupReturnList.append({'label':'All', 'value':'All'})
+    # Close DB connection
+    pointer.close()
+    connectr.close()
+    return typeReturnList, groupReturnList
 
 # Callback to update Graph Inisight Graph
 @app.callback(
     Output('graphInsightGraph', 'figure'),
-    Input('graphInsightGraphType', 'value')
+    [
+        Input('graphInsightGraphType', 'value'),
+        Input('graphInsightGraphGroup', 'value')
+    ]
 )
-def updateGraphInsightGraph(selectedKPI):
+def updateGraphInsightGraph(selectedKPI, selectedGroup):
     startTime = 7
     # Connect to DB
     connectr = mysql.connector.connect(user = dbPara.dbUsername, password = dbPara.dbPassword, host = dbPara.dbServerIp , database = dbPara.dataTable)
     # Connection must be buffered when executing multiple querys on DB before closing connection.
     pointer = connectr.cursor(buffered=True)
     currentGraph = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
-    currentGraph = ran_functions.graphInsightQuery(currentGraph, startTime, selectedKPI, pointer)
+    currentGraph = ran_functions.graphInsightQuery(currentGraph, startTime, selectedKPI, pointer, selectedGroup)
     currentGraph.update_layout(
         plot_bgcolor=graphColors.plot_bgcolor, 
         paper_bgcolor=graphColors.paper_bgcolor, 

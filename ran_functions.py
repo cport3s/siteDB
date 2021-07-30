@@ -127,7 +127,7 @@ def neOosGraph(pointer, startTime, neOosLineChart, hiddenNeOosLineChartDatatable
     neOosLineChart.add_trace(go.Scatter(x=tmpDataFrame['time'], y=tmpDataFrame['counter'], name=''))
     return pieChartGraph, neOosLineChart, hiddenNeOosLineChartDatatableValue, neOosListDataTableData
 
-def graphInsightQuery(currentGraph, startTime, selectedKPI, pointer):
+def graphInsightQuery(currentGraph, startTime, selectedKPI, pointer, selectedGroup):
     startTimeNetworkWide = (datetime.now()-timedelta(days=startTime)).strftime("%Y-%m-%d")
     kpiDict = {'LTE Data CSSR':'erabssr', 'LTE Data DCR': 'dcr', 'VoLTE CSSR': 'volteerabssr', 'VoLTE DCR': 'voltedcr', 'GSM CS CSSR': 'cscssr', 'GSM PS CSSR': 'pscssr', 'GSM CS DCR': 'csdcr', 'UMTS CSSR': 'cscssr', 'UMTS DCR': 'csdcr', 'HSDPA CSSR': 'hsdpacssr', 'HSDPA DCR': 'hsdpadcr', 'HSUPA CSSR': 'hsupacssr', 'HSUPA DCR': 'hsupadcr'}
     kpiSpecificDict = {'LTE Data CSSR':'dataerabssr', 'LTE Data DCR': 'datadcr', 'VoLTE CSSR': 'volteerabssr', 'VoLTE DCR': 'voltedcr', 'GSM CS CSSR': 'cscssr', 'GSM PS CSSR': 'pscssr', 'GSM CS DCR': 'csdcr', 'UMTS CSSR': 'cscssr', 'UMTS DCR': 'csdcr', 'HSDPA CSSR': 'hsdpacssr', 'HSDPA DCR': 'hsdpadcr', 'HSUPA CSSR': 'hsupacssr', 'HSUPA DCR': 'hsupadcr'}
@@ -137,17 +137,26 @@ def graphInsightQuery(currentGraph, startTime, selectedKPI, pointer):
     order = ''
     currentList = ''
     if 'LTE' in selectedKPI or 'VoLTE' in selectedKPI:
-        currentList = neList.lteBandList
+        if selectedGroup == 'All':
+            currentList = neList.lteBandList
+        else:
+            currentList = [selectedGroup]
         networkWidetable = 'ran_report_4g_report_network_wide'
         topTable = 'ran_report_4g_report_specific'
         condition = 'ltecellgroup = \''
     elif 'UMTS' in selectedKPI or 'HSDPA' in selectedKPI or 'HSUPA' in selectedKPI:
-        currentList = neList.rncNameList
+        if selectedGroup == 'All':
+            currentList = neList.rncNameList
+        else:
+            currentList = [selectedGroup]
         networkWidetable = 'ran_report_3g_report_network_wide'
         topTable = 'ran_report_3g_report_specific'
         condition = 'rncname = \''
     elif 'GSM' in selectedKPI:
-        currentList = neList.bscNameList
+        if selectedGroup == 'All':
+            currentList = neList.bscNameList
+        else:
+            currentList = [selectedGroup]
         networkWidetable = 'ran_report_2g_report_network_wide'
         topTable = 'ran_report_2g_report_specific'
         condition = 'gbsc = \''
@@ -166,6 +175,7 @@ def graphInsightQuery(currentGraph, startTime, selectedKPI, pointer):
     queryPayload = np.array(queryRaw)
     topWorstPerHourDataFrame = pd.DataFrame(queryPayload, columns=['time', 'cellname', kpiSpecificDict[selectedKPI]])
     queryRaw.clear()
+    # Plot graph
     for ne in currentList:
         query = 'select time,' + kpiDict[selectedKPI] + ' from ran_pf_data.' + networkWidetable + ' where ' + condition + ne + '\' and time > \'' + str(startTimeNetworkWide) + '\';'
         pointer.execute(query)
@@ -173,6 +183,11 @@ def graphInsightQuery(currentGraph, startTime, selectedKPI, pointer):
         queryPayload = np.array(queryRaw)
         DataDataframe = pd.DataFrame(queryPayload, columns=['time', kpiDict[selectedKPI]])
         currentGraph.add_trace(go.Scatter(x=DataDataframe['time'], y=DataDataframe[kpiDict[selectedKPI]], name=ne, text=topWorstPerHourDataFrame['cellname']))
+        # If there's only 1 NE selected, then add graph average threshold
+        if len(currentList) == 1:
+            # Construct the average value list, needed to plot
+            avgList = [DataDataframe[kpiDict[selectedKPI]].mean() for y in DataDataframe['time']]
+            currentGraph.add_trace(go.Scatter(x=DataDataframe['time'], y=avgList, name='Graph Average'))
         queryRaw.clear()
     return currentGraph
 
