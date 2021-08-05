@@ -187,7 +187,9 @@ def graphInsightQuery(currentGraph, startTime, selectedKPI, pointer, selectedGro
         if len(currentList) == 1:
             # Construct the average value list, needed to plot
             avgList = [DataDataframe[kpiDict[selectedKPI]].mean() for y in DataDataframe['time']]
+            maxList = [DataDataframe[kpiDict[selectedKPI]].max() for y in DataDataframe['time']]
             currentGraph.add_trace(go.Scatter(x=DataDataframe['time'], y=avgList, name='Graph Average'))
+            currentGraph.add_trace(go.Scatter(x=DataDataframe['time'], y=maxList, name='Graph Max'))
         queryRaw.clear()
     return currentGraph
 
