@@ -200,7 +200,8 @@ app.layout = html.Div(children=[
                     dash_table.DataTable(
                         id = 'neOosListDataTable',
                         style_header = dataTableStyles.style_header,
-                        style_cell = dataTableStyles.style_cell
+                        style_cell = dataTableStyles.style_cell,
+                        sort_action = 'native'
                     )
                 ]
             )
@@ -685,7 +686,7 @@ app.layout = html.Div(children=[
             html.Div(
                 dash_table.DataTable(
                     id = 'graphInsightTable',
-                    columns = [{'name':'Value','id':'Value'}, {'name':'Last Week','id':'Last Week'}, {'name':'Now','id':'Now'}]
+                    columns = [{'name':'Parameter','id':'Parameter'}, {'name':'Last Week','id':'Last Week'}, {'name':'Current','id':'Current'}, {'name':'Delta','id':'Delta'}]
                 )
             )
         ]
@@ -1455,6 +1456,8 @@ def updateGraphInsightDropdown(selectedRAT):
 )
 def updateGraphInsightGraph(selectedKPI, selectedGroup):
     startTime = 7
+    graphInsightValueList = []
+    graphInsightValueDict = {}
     # Connect to DB
     connectr = mysql.connector.connect(user = dbPara.dbUsername, password = dbPara.dbPassword, host = dbPara.dbServerIp , database = dbPara.dataTable)
     # Connection must be buffered when executing multiple querys on DB before closing connection.
@@ -1471,8 +1474,12 @@ def updateGraphInsightGraph(selectedKPI, selectedGroup):
         title_font=dict(size=graphColors.graphTitleFontSize),
         legend_font_size=graphColors.legend_font_size
     )
-    graphInsightValue = [{'Data':'DCR', 'Value':'0.5'}]
-    return currentGraph,graphInsightValue
+    graphInsightValueDict['Parameter'] = selectedKPI
+    graphInsightValueDict['Last Week'] = 0.5
+    graphInsightValueDict['Current'] = 0.7
+    graphInsightValueDict['Delta'] = graphInsightValueDict['Current'] - graphInsightValueDict['Last Week']
+    graphInsightValueList.append(graphInsightValueDict)
+    return currentGraph, graphInsightValueList
 
 # Callback to update Network Check Tab
 @app.callback(
