@@ -1463,7 +1463,8 @@ def updateGraphInsightGraph(selectedKPI, selectedGroup):
     # Connection must be buffered when executing multiple querys on DB before closing connection.
     pointer = connectr.cursor(buffered=True)
     currentGraph = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
-    currentGraph = ran_functions.graphInsightQuery(currentGraph, startTime, selectedKPI, pointer, selectedGroup)
+    currentGraph, graphInsightValueDict = ran_functions.graphInsightQuery(currentGraph, startTime, selectedKPI, pointer, selectedGroup, graphInsightValueDict)
+    # Set graph visual theme
     currentGraph.update_layout(
         plot_bgcolor=graphColors.plot_bgcolor, 
         paper_bgcolor=graphColors.paper_bgcolor, 
@@ -1474,10 +1475,6 @@ def updateGraphInsightGraph(selectedKPI, selectedGroup):
         title_font=dict(size=graphColors.graphTitleFontSize),
         legend_font_size=graphColors.legend_font_size
     )
-    graphInsightValueDict['Parameter'] = selectedKPI
-    graphInsightValueDict['Last Week'] = 0.5
-    graphInsightValueDict['Current'] = 0.7
-    graphInsightValueDict['Delta'] = graphInsightValueDict['Current'] - graphInsightValueDict['Last Week']
     graphInsightValueList.append(graphInsightValueDict)
     return currentGraph, graphInsightValueList
 

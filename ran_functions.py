@@ -127,7 +127,7 @@ def neOosGraph(pointer, startTime, neOosLineChart, hiddenNeOosLineChartDatatable
     neOosLineChart.add_trace(go.Scatter(x=tmpDataFrame['time'], y=tmpDataFrame['counter'], name=''))
     return pieChartGraph, neOosLineChart, hiddenNeOosLineChartDatatableValue, neOosListDataTableData
 
-def graphInsightQuery(currentGraph, startTime, selectedKPI, pointer, selectedGroup):
+def graphInsightQuery(currentGraph, startTime, selectedKPI, pointer, selectedGroup, graphInsightValueDict):
     startTimeNetworkWide = (datetime.now()-timedelta(days=startTime)).strftime("%Y-%m-%d")
     kpiDict = {'LTE Data CSSR':'erabssr', 'LTE Data DCR': 'dcr', 'VoLTE CSSR': 'volteerabssr', 'VoLTE DCR': 'voltedcr', 'GSM CS CSSR': 'cscssr', 'GSM PS CSSR': 'pscssr', 'GSM CS DCR': 'csdcr', 'UMTS CSSR': 'cscssr', 'UMTS DCR': 'csdcr', 'HSDPA CSSR': 'hsdpacssr', 'HSDPA DCR': 'hsdpadcr', 'HSUPA CSSR': 'hsupacssr', 'HSUPA DCR': 'hsupadcr'}
     kpiSpecificDict = {'LTE Data CSSR':'dataerabssr', 'LTE Data DCR': 'datadcr', 'VoLTE CSSR': 'volteerabssr', 'VoLTE DCR': 'voltedcr', 'GSM CS CSSR': 'cscssr', 'GSM PS CSSR': 'pscssr', 'GSM CS DCR': 'csdcr', 'UMTS CSSR': 'cscssr', 'UMTS DCR': 'csdcr', 'HSDPA CSSR': 'hsdpacssr', 'HSDPA DCR': 'hsdpadcr', 'HSUPA CSSR': 'hsupacssr', 'HSUPA DCR': 'hsupadcr'}
@@ -161,14 +161,14 @@ def graphInsightQuery(currentGraph, startTime, selectedKPI, pointer, selectedGro
         topTable = 'ran_report_2g_report_specific'
         condition = 'gbsc = \''
     else:
-        return currentGraph
+        return currentGraph, graphInsightValueDict
 
     if 'DCR' in selectedKPI:
         order = 'desc'
     elif 'CSSR' in selectedKPI:
         order = 'asc'
     else:
-        return currentGraph
+        return currentGraph, graphInsightValueDict
     # Query TOP cell names from DB
     pointer.execute('select b.time,b.cellname,b.' + kpiSpecificDict[selectedKPI] + ' from (select a.time,a.cellname,a.' + kpiSpecificDict[selectedKPI] + ',row_number() over (partition by a.time order by a.' + kpiSpecificDict[selectedKPI] + ' ' + order + ') as rn from ran_pf_data.' + topTable + ' a where a.time >= \'' + str(startTimeNetworkWide) + '\') b where b.rn = 1')
     queryRaw = pointer.fetchall()
@@ -191,7 +191,16 @@ def graphInsightQuery(currentGraph, startTime, selectedKPI, pointer, selectedGro
             currentGraph.add_trace(go.Scatter(x=DataDataframe['time'], y=avgList, name='Graph Average'))
             currentGraph.add_trace(go.Scatter(x=DataDataframe['time'], y=maxList, name='Graph Max'))
         queryRaw.clear()
-    return currentGraph
+    # Query current and week-ago data
+    query = 'SELECT ' + kpiDict[selectedKPI] + ' FROM ran_pf_data.' + networkWidetable + ' where ' + condition + ne + '\' and time > date_sub(current_timestamp(), interval 171 hour) order by time desc;'
+    pointer.execute(query)
+    queryRaw = pointer.fetchall()
+    print(queryRaw)
+    graphInsightValueDict['Parameter'] = selectedKPI
+    graphInsightValueDict['Last Week'] = float(queryRaw[-1][0])
+    graphInsightValueDict['Current'] = float(queryRaw[0][0])
+    graphInsightValueDict['Delta'] = graphInsightValueDict['Current'] - graphInsightValueDict['Last Week']
+    return currentGraph, graphInsightValueDict
 
 def queryTxData(pointer, startTime, bscNameList, rncNameList, umtsNetworkPacketLossGraph, umtsNetworkDelayGraph, gsmNetworkPacketLossGraph, gsmNetworkDelayGraph):
     startTimeNetworkWide = (datetime.now()-timedelta(days=startTime)).strftime("%Y-%m-%d")
