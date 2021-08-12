@@ -681,6 +681,12 @@ app.layout = html.Div(children=[
                         id = 'graphInsightGraph'
                     )
                 ]
+            ),
+            html.Div(
+                dash_table.DataTable(
+                    id = 'graphInsightTable',
+                    columns = [{'name':'Value','id':'Value'}, {'name':'Last Week','id':'Last Week'}, {'name':'Now','id':'Now'}]
+                )
             )
         ]
     ),
@@ -1438,7 +1444,10 @@ def updateGraphInsightDropdown(selectedRAT):
 
 # Callback to update Graph Inisight Graph
 @app.callback(
-    Output('graphInsightGraph', 'figure'),
+    [
+        Output('graphInsightGraph', 'figure'),
+        Output('graphInsightTable', 'data')
+    ],
     [
         Input('graphInsightGraphType', 'value'),
         Input('graphInsightGraphGroup', 'value')
@@ -1462,7 +1471,8 @@ def updateGraphInsightGraph(selectedKPI, selectedGroup):
         title_font=dict(size=graphColors.graphTitleFontSize),
         legend_font_size=graphColors.legend_font_size
     )
-    return currentGraph
+    graphInsightValue = [{'Data':'DCR', 'Value':'0.5'}]
+    return currentGraph,graphInsightValue
 
 # Callback to update Network Check Tab
 @app.callback(
