@@ -195,7 +195,6 @@ def graphInsightQuery(currentGraph, startTime, selectedKPI, pointer, selectedGro
     query = 'SELECT ' + kpiDict[selectedKPI] + ' FROM ran_pf_data.' + networkWidetable + ' where ' + condition + ne + '\' and time > date_sub(current_timestamp(), interval 171 hour) order by time desc;'
     pointer.execute(query)
     queryRaw = pointer.fetchall()
-    print(queryRaw)
     graphInsightValueDict['Parameter'] = selectedKPI
     graphInsightValueDict['Last Week'] = float(queryRaw[-1][0])
     graphInsightValueDict['Current'] = float(queryRaw[0][0])
