@@ -185,11 +185,18 @@ def graphInsightQuery(currentGraph, startTime, selectedKPI, pointer, selectedGro
         currentGraph.add_trace(go.Scatter(x=DataDataframe['time'], y=DataDataframe[kpiDict[selectedKPI]], name=ne, text=topWorstPerHourDataFrame['cellname']))
         # If there's only 1 NE selected, then add graph average threshold
         if len(currentList) == 1:
-            # Construct the average value list, needed to plot
-            avgList = [DataDataframe[kpiDict[selectedKPI]].mean() for y in DataDataframe['time']]
-            maxList = [DataDataframe[kpiDict[selectedKPI]].max() for y in DataDataframe['time']]
+            # Copy original dataframe
+            avgBusyHourDataframe = DataDataframe.copy()
+            # Transform time column to datetime type and set index
+            avgBusyHourDataframe['time'] = pd.to_datetime(avgBusyHourDataframe['time'], format='%Y-%m-%d %H:%M:%S')
+            avgBusyHourDataframe = avgBusyHourDataframe.set_index(pd.DatetimeIndex(avgBusyHourDataframe['time']))
+            # Filter data in busy hour
+            avgBusyHourDataframe = avgBusyHourDataframe.loc[avgBusyHourDataframe['time'].between_time('08:00:00', '20:00:00')]
+            # Construct the average value list, needed to plot. We loop through DataDataframe to populate all time values, regardless of busy hour
+            avgBusyHourList = [avgBusyHourDataframe[kpiDict[selectedKPI]].mean() for y in DataDataframe['time']]            
+            avgList = [avgBusyHourDataframe[kpiDict[selectedKPI]].mean()+0.02 for y in DataDataframe['time']]
             currentGraph.add_trace(go.Scatter(x=DataDataframe['time'], y=avgList, name='Graph Average'))
-            currentGraph.add_trace(go.Scatter(x=DataDataframe['time'], y=maxList, name='Graph Max'))
+            currentGraph.add_trace(go.Scatter(x=DataDataframe['time'], y=avgBusyHourList, name='Graph Busy Hour Average'))
         queryRaw.clear()
     # Query current and week-ago data
     query = 'SELECT ' + kpiDict[selectedKPI] + ' FROM ran_pf_data.' + networkWidetable + ' where ' + condition + ne + '\' and time > date_sub(current_timestamp(), interval 171 hour) order by time desc;'

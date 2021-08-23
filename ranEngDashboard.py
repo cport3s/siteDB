@@ -1476,6 +1476,9 @@ def updateGraphInsightGraph(selectedKPI, selectedGroup):
         legend_font_size=graphColors.legend_font_size
     )
     graphInsightValueList.append(graphInsightValueDict)
+    # Close DB connection
+    pointer.close()
+    connectr.close()
     return currentGraph, graphInsightValueList
 
 # Callback to update Network Check Tab
