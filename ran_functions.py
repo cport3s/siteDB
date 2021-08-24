@@ -136,6 +136,7 @@ def graphInsightQuery(currentGraph, startTime, selectedKPI, pointer, selectedGro
     condition = ''
     order = ''
     currentList = ''
+    delta = 0
     if 'LTE' in selectedKPI or 'VoLTE' in selectedKPI:
         if selectedGroup == 'All':
             currentList = neList.lteBandList
@@ -185,6 +186,16 @@ def graphInsightQuery(currentGraph, startTime, selectedKPI, pointer, selectedGro
         currentGraph.add_trace(go.Scatter(x=DataDataframe['time'], y=DataDataframe[kpiDict[selectedKPI]], name=ne, text=topWorstPerHourDataFrame['cellname']))
         # If there's only 1 NE selected, then add graph average threshold
         if len(currentList) == 1:
+            # If selected KPI is DCR, delta must be positive
+            if '4g' in networkWidetable and 'DCR' in selectedKPI:
+                delta = 0.02
+            # If it's CSSR, delta must be negative. Delta value varies due to graph min & max peaks.
+            if '4g' in networkWidetable and 'CSSR' in selectedKPI:
+                delta = -0.2
+            if '2g' in networkWidetable and 'DCR' in selectedKPI:
+                delta = 0.2
+            if '2g' in networkWidetable and 'CSSR' in selectedKPI:
+                delta = -0.2
             # Copy original dataframe
             avgBusyHourDataframe = DataDataframe.copy()
             # Transform time column to datetime type and set index
@@ -194,9 +205,9 @@ def graphInsightQuery(currentGraph, startTime, selectedKPI, pointer, selectedGro
             avgBusyHourDataframe = avgBusyHourDataframe.loc[avgBusyHourDataframe['time'].between_time('08:00:00', '20:00:00')]
             # Construct the average value list, needed to plot. We loop through DataDataframe to populate all time values, regardless of busy hour
             avgBusyHourList = [avgBusyHourDataframe[kpiDict[selectedKPI]].mean() for y in DataDataframe['time']]            
-            avgList = [avgBusyHourDataframe[kpiDict[selectedKPI]].mean()+0.02 for y in DataDataframe['time']]
-            currentGraph.add_trace(go.Scatter(x=DataDataframe['time'], y=avgList, name='Graph Average'))
-            currentGraph.add_trace(go.Scatter(x=DataDataframe['time'], y=avgBusyHourList, name='Graph Busy Hour Average'))
+            deltaRangeList = [avgBusyHourDataframe[kpiDict[selectedKPI]].mean()+delta for y in DataDataframe['time']]
+            currentGraph.add_trace(go.Scatter(x=DataDataframe['time'], y=deltaRangeList, name='Busy Hour Delta Range'))
+            currentGraph.add_trace(go.Scatter(x=DataDataframe['time'], y=avgBusyHourList, name='Busy Hour Average'))
         queryRaw.clear()
     # Query current and week-ago data
     query = 'SELECT ' + kpiDict[selectedKPI] + ' FROM ran_pf_data.' + networkWidetable + ' where ' + condition + ne + '\' and time > date_sub(current_timestamp(), interval 171 hour) order by time desc;'
