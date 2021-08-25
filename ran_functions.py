@@ -188,14 +188,18 @@ def graphInsightQuery(currentGraph, startTime, selectedKPI, pointer, selectedGro
         if len(currentList) == 1:
             # If selected KPI is DCR, delta must be positive
             if '4g' in networkWidetable and 'DCR' in selectedKPI:
-                delta = 0.02
+                delta = 1.2
             # If it's CSSR, delta must be negative. Delta value varies due to graph min & max peaks.
             if '4g' in networkWidetable and 'CSSR' in selectedKPI:
-                delta = -0.2
+                delta = 0.999
+            if '3g' in networkWidetable and 'DCR' in selectedKPI:
+                delta = 1.2
+            if '3g' in networkWidetable and 'CSSR' in selectedKPI:
+                delta = 0.999
             if '2g' in networkWidetable and 'DCR' in selectedKPI:
-                delta = 0.2
+                delta = 1.2
             if '2g' in networkWidetable and 'CSSR' in selectedKPI:
-                delta = -0.2
+                delta = 0.999
             # Copy original dataframe
             avgBusyHourDataframe = DataDataframe.copy()
             # Transform time column to datetime type and set index
@@ -205,7 +209,7 @@ def graphInsightQuery(currentGraph, startTime, selectedKPI, pointer, selectedGro
             avgBusyHourDataframe = avgBusyHourDataframe.loc[avgBusyHourDataframe['time'].between_time('08:00:00', '20:00:00')]
             # Construct the average value list, needed to plot. We loop through DataDataframe to populate all time values, regardless of busy hour
             avgBusyHourList = [avgBusyHourDataframe[kpiDict[selectedKPI]].mean() for y in DataDataframe['time']]            
-            deltaRangeList = [avgBusyHourDataframe[kpiDict[selectedKPI]].mean()+delta for y in DataDataframe['time']]
+            deltaRangeList = [avgBusyHourDataframe[kpiDict[selectedKPI]].mean()*delta for y in DataDataframe['time']]
             currentGraph.add_trace(go.Scatter(x=DataDataframe['time'], y=deltaRangeList, name='Busy Hour Delta Range'))
             currentGraph.add_trace(go.Scatter(x=DataDataframe['time'], y=avgBusyHourList, name='Busy Hour Average'))
         queryRaw.clear()
