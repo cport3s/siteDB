@@ -828,7 +828,6 @@ def updateEngDashboardTab(currentInterval, selectedTab, timeFrameDropdown, dataT
             margin=dict(l=10, r=10, t=10, b=10),
         )
         neOosListDataTableColumns = [{'name':'NE', 'id':'NE'}, {'name':'Reason', 'id':'Reason'}]
-        #neOosListDataTableData = [{'NE':'Test', 'Reason':'Power'}]
         # Close DB Connection
         pointer.close()
         connectr.close()
