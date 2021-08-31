@@ -1638,5 +1638,4 @@ def showTopWorstInnerTabContent(currentTab):
 
 if __name__ == '__main__':
     app.run_server(debug=True, host='0.0.0.0', port='5006', dev_tools_silence_routes_logging=False)
-    #app.run_server(debug=True, host='0.0.0.0', port='5006')
 
