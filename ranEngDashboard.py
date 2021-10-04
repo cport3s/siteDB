@@ -30,6 +30,7 @@ neOosLineChartDf = pd.DataFrame(data={'time':[], 'counter':[]})
 
 # Styles
 tabStyles = styles.headerStyles()
+networkOverviewStyles = styles.networkOverviewTab()
 engDashboardStyles = styles.engDashboardTab()
 graphSyles = styles.graphStyles()
 dataTableStyles = styles.topWorstTab()
@@ -51,8 +52,14 @@ app.layout = html.Div(children=[
             ),
             dcc.Tabs(
                 id = 'tabsContainer',
-                value = 'Engineering Dashboard',
+                value = 'Network Overview',
                 children = [
+                    dcc.Tab(
+                        label = 'Network Overview', 
+                        value = 'Network Overview', 
+                        style = tabStyles.tabStyle,
+                        selected_style = tabStyles.tabSelectedStyle
+                    ),
                     dcc.Tab(
                         label = 'Engineering Dashboard', 
                         value = 'Engineering Dashboard', 
@@ -82,6 +89,83 @@ app.layout = html.Div(children=[
                         value = 'Tx Status', 
                         style = tabStyles.tabStyle,
                         selected_style = tabStyles.tabSelectedStyle
+                    )
+                ]
+            )
+        ]
+    ),
+    # Network Overview Tab
+    html.Div(
+        id = 'networkOverviewGridContainer',
+        style = networkOverviewStyles.networkOverviewGridContainerStyle,
+        children = [
+            # BSC Dropdown
+            html.Div(
+                id = 'bscDropdownGridElement',
+                style = networkOverviewStyles.bscDropdownGridElement,
+                children = [
+                    dcc.Dropdown(
+                        id = 'bscDropdown',
+                        options = [
+                            {'label':'BSC_01_RRA', 'value':'BSC_01_RRA'},
+                            {'label':'BSC_02_STGO', 'value':'BSC_02_STGO'},
+                            {'label':'BSC_03_VM', 'value':'BSC_03_VM'},
+                            {'label':'BSC_04_VM', 'value':'BSC_04_VM'},
+                            {'label':'BSC_05_RRA', 'value':'BSC_05_RRA'},
+                            {'label':'BSC_06_STGO', 'value':'BSC_06_STGO'}
+                        ],
+                        value = ['BSC_01_RRA', 'BSC_02_STGO', 'BSC_03_VM', 'BSC_04_VM', 'BSC_05_RRA', 'BSC_06_STGO'],
+                        multi=True
+                    )
+                ]
+            ), 
+            # RNC Dropdown
+            html.Div(
+                id = 'rncDropdownGridElement',
+                style = networkOverviewStyles.rncDropdownGridElement,
+                children =[
+                    dcc.Dropdown(
+                        id = 'rncDropdown',
+                        options = [
+                            {'label':'RNC_01_RRA', 'value':'RNC_01_RRA'},
+                            {'label':'RNC_02_STGO', 'value':'RNC_02_STGO'},
+                            {'label':'RNC_03_VM', 'value':'RNC_03_VM'},
+                            {'label':'RNC_04_VM', 'value':'RNC_04_VM'},
+                            {'label':'RNC_05_RRA', 'value':'RNC_05_RRA'},
+                            {'label':'RNC_06_STGO', 'value':'RNC_06_STGO'},
+                            {'label':'RNC_07_VM', 'value':'RNC_07_VM'}
+                        ],
+                        value = ['RNC_01_RRA', 'RNC_02_STGO', 'RNC_03_VM', 'RNC_04_VM', 'RNC_05_RRA', 'RNC_06_STGO', 'RNC_07_VM'],
+                        multi = True
+                    )
+                ]
+            ),
+            # LTE RAT Dropdown
+            html.Div(
+                id = 'lteDropdownGridElement',
+                style = networkOverviewStyles.lteDropdownGridElement,
+                children =[
+                    dcc.Dropdown(
+                        id = 'lteDropdown',
+                        options = [
+                            {'label':'1900Mhz', 'value':'1900Mhz'},
+                            {'label':'AWS', 'value':'AWS'},
+                            {'label':'850Mhz', 'value':'850Mhz'},
+                            {'label':'900Mhz', 'value':'900Mhz'},
+                            {'label':'WTTx', 'value':'WTTx'}
+                        ],
+                        value = ['1900Mhz', 'AWS', '850Mhz', '900Mhz', 'WTTx'],
+                        multi = True
+                    )
+                ]
+            ),
+            html.Div(
+                id = 'mapGridElement',
+                style = networkOverviewStyles.mapGridElement,
+                children = [
+                    'Network Map',
+                    dcc.Graph(
+                        id = 'networkMap'
                     )
                 ]
             )
@@ -716,6 +800,33 @@ app.layout = html.Div(children=[
         n_intervals=0
     )
 ])
+
+# Callback to update Network Overview Tab
+@app.callback(
+    Output('networkMap', 'figure'),
+    [
+        Input('dataUpateInterval', 'n_intervals'),
+        Input('bscDropdown', 'value'),
+        Input('rncDropdown', 'value'),
+        Input('lteDropdown', 'value')
+    ]
+)
+def updateNetworkOverviewTab(interval, bscList, rncList, lteList):
+    # Connect to DB
+    mysqlConnector = mysql.connector.connect(user = dbPara.dbUsername, password = dbPara.dbPassword, host = dbPara.dbServerIp , database = dbPara.dataTable)
+    # Connection must be buffered when executing multiple querys on DB before closing connection.
+    mysqlPointer = mysqlConnector.cursor(buffered=True)
+    siteDataframe = ran_functions.networkMapFunction(mysqlPointer, bscList, rncList, lteList)
+    map = px.scatter_mapbox(siteDataframe, lat='lat', lon='lon', hover_name='site', hover_data=['bsc', 'rnc'])
+    map.update_layout(
+        mapbox_style='open-street-map',
+        margin=dict(l=2, r=2, t=2, b=2),
+        height=600
+        )
+    # Close DB connection
+    mysqlPointer.close()
+    mysqlConnector.close()
+    return map
 
 # Callback to update Engineering Dashboard Tab
 @app.callback(
@@ -1557,6 +1668,7 @@ def updateTxCheckTab(selectedTab, currentInterval):
 # Callback to hide/display selected tab
 @app.callback(
     [
+        Output('networkOverviewGridContainer', 'style'),
         Output('graphGridContainer', 'style'),
         Output('outerTopWorstReportFlexContainer', 'style'),
         Output('networkCheckGridContainer', 'style'),
@@ -1566,46 +1678,60 @@ def updateTxCheckTab(selectedTab, currentInterval):
     Input('tabsContainer', 'value')
 )
 def showTabContent(currentTab):
+    networkOverview = networkOverviewStyles.networkOverviewGridContainerStyle
     engDashboard = engDashboardStyles.graphGridContainerStyle
     topWorst = dataTableStyles.outerTopWorstReportFlexContainer
     networkCheck = networkCheckStyles.networkCheckGridContainer
     graphInsight = graphInsightStyles.graphInsightFlexContainer
     txCheck = txCheckStyles.txCheckGridContainer
-    if currentTab == 'Engineering Dashboard':
+    if currentTab == 'Network Overview':
+        networkOverview['display'] = 'grid'
+        engDashboard['display'] = 'none'
+        topWorst['display'] = 'none'
+        networkCheck['display'] = 'none'
+        graphInsight['display'] = 'none'
+        txCheck['display'] = 'none'
+        return networkOverview, engDashboard, topWorst, networkCheck, graphInsight, txCheck
+    elif currentTab == 'Engineering Dashboard':
+        networkOverview['display'] = 'none'
         engDashboard['display'] = 'grid'
         topWorst['display'] = 'none'
         networkCheck['display'] = 'none'
         graphInsight['display'] = 'none'
         txCheck['display'] = 'none'
-        return engDashboard, topWorst, networkCheck, graphInsight, txCheck
+        return networkOverview, engDashboard, topWorst, networkCheck, graphInsight, txCheck
     elif currentTab == 'Top Worst Report':
+        networkOverview['display'] = 'none'
         engDashboard['display'] = 'none'
         topWorst['display'] = 'flex'
         networkCheck['display'] = 'none'
         graphInsight['display'] = 'none'
         txCheck['display'] = 'none'
-        return engDashboard, topWorst, networkCheck, graphInsight, txCheck
+        return networkOverview, engDashboard, topWorst, networkCheck, graphInsight, txCheck
     elif currentTab == 'Network Check':
+        networkOverview['display'] = 'none'
         engDashboard['display'] = 'none'
         topWorst['display'] = 'none'
         networkCheck['display'] = 'grid'
         graphInsight['display'] = 'none'
         txCheck['display'] = 'none'
-        return engDashboard, topWorst, networkCheck, graphInsight, txCheck
+        return networkOverview, engDashboard, topWorst, networkCheck, graphInsight, txCheck
     elif currentTab == 'Graph Insight':
+        networkOverview['display'] = 'none'
         engDashboard['display'] = 'none'
         topWorst['display'] = 'none'
         networkCheck['display'] = 'none'
         graphInsight['display'] = 'flex'
         txCheck['display'] = 'none'
-        return engDashboard, topWorst, networkCheck, graphInsight, txCheck
+        return networkOverview, engDashboard, topWorst, networkCheck, graphInsight, txCheck
     else:
+        networkOverview['display'] = 'none'
         engDashboard['display'] = 'none'
         topWorst['display'] = 'none'
         networkCheck['display'] = 'none'
         graphInsight['display'] = 'none'
         txCheck['display'] = 'grid'
-        return engDashboard, topWorst, networkCheck, graphInsight, txCheck
+        return networkOverview, engDashboard, topWorst, networkCheck, graphInsight, txCheck
 
 # Callback to hide/display Top Worst inner tabs
 @app.callback(

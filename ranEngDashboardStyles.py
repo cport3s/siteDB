@@ -41,6 +41,34 @@ class headerStyles():
         'width': 'auto'
     }
 
+class networkOverviewTab():
+    networkOverviewGridContainerStyle={
+        'display': 'grid',
+        'gridTemplate': 'auto repeat(2, 1fr) / repeat(6, 1fr)',
+        'width': '100%',
+        'border': '1px solid white'
+    }
+
+    bscDropdownGridElement={
+        'grid-column': '1 / 3',
+        'grid-row': '1 / 2'
+    }
+
+    rncDropdownGridElement={
+        'grid-column': '3 / 5',
+        'grid-row': '1 / 2'
+    }
+
+    lteDropdownGridElement={
+        'grid-column': '5 / 7',
+        'grid-row': '1 / 2'
+    }
+
+    mapGridElement={
+        'grid-column': '1 / 7',
+        'grid-row': '2 / 4'
+    }
+
 class engDashboardTab():
     graphGridContainerStyle={
         'display': 'grid',

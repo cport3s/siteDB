@@ -9,7 +9,6 @@ import plotly.graph_objects as go
 import pandas as pd
 import mysql.connector
 import numpy as np
-import time
 from datetime import datetime, timedelta
 import os
 import csv

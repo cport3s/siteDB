@@ -346,3 +346,14 @@ def downloadFtpFileString(ftpLogin, filePath, fileName):
     # Open as Dataframe
     ftp.quit()
     return s
+
+# Function to query Network Map Data
+def networkMapFunction(mysqlPointer, bscList, rncList, lteList):
+    mysqlPointer.execute('SELECT site,lat,lon,bsc,rnc,provincia FROM alticedr_sitedb.raningdata;')
+    queryRaw = mysqlPointer.fetchall()
+    queryPayload = np.array(queryRaw)
+    siteDataframe = pd.DataFrame(queryPayload, columns=['site', 'lat', 'lon', 'bsc', 'rnc', 'provincia'])
+    # Cast columns to float type
+    siteDataframe['lat'] = siteDataframe['lat'].astype(float)
+    siteDataframe['lon'] = siteDataframe['lon'].astype(float)
+    return siteDataframe
