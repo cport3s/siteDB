@@ -349,7 +349,46 @@ def downloadFtpFileString(ftpLogin, filePath, fileName):
 
 # Function to query Network Map Data
 def networkMapFunction(mysqlPointer, bscList, rncList, lteList):
-    mysqlPointer.execute('SELECT site,lat,lon,bsc,rnc,provincia FROM alticedr_sitedb.raningdata;')
+    whereStatement = ''
+    tempCounter = 0
+    # If list contains all BSC, then there is no WHERE clause on query
+    if len(bscList) <= 6:
+        whereStatement += ' WHERE'
+        if len(bscList) == 0:
+            bscList = ['N/A']
+        for bsc in bscList:
+            whereStatement += ' bsc = \'' + bsc + '\' '
+            tempCounter += 1
+            # If counter is less than len(bscList), append OR to query
+            if tempCounter < len(bscList):
+                whereStatement += ' OR '
+            # Else, we're finished
+            else:
+                break
+    else:
+        pass
+    # If list contains all RNC, then there is no WHERE clause on query
+    if len(rncList) <= 7:
+        # Check if there's something already on whereStatement
+        if len(whereStatement) < 1:
+            whereStatement += ' WHERE'
+        else:
+            whereStatement += 'OR '
+        if len(rncList) == 0:
+            rncList = ['N/A']
+        for rnc in rncList:
+            whereStatement += ' rnc = \'' + rnc + '\' '
+            tempCounter += 1
+            # If counter is less than len(bscList), append OR to query
+            if tempCounter < len(rncList):
+                whereStatement += ' OR '
+            # Else, we're finished
+            else:
+                break
+    else:
+        pass
+    print(whereStatement)
+    mysqlPointer.execute('SELECT site,lat,lon,bsc,rnc,provincia FROM alticedr_sitedb.raningdata' + whereStatement + ';')
     queryRaw = mysqlPointer.fetchall()
     queryPayload = np.array(queryRaw)
     siteDataframe = pd.DataFrame(queryPayload, columns=['site', 'lat', 'lon', 'bsc', 'rnc', 'provincia'])
