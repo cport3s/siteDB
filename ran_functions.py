@@ -348,43 +348,46 @@ def downloadFtpFileString(ftpLogin, filePath, fileName):
     return s
 
 # Function to query Network Map Data
-def networkMapFunction(mysqlPointer, bscList, rncList, lteList):
+def networkMapFunction(mysqlPointer, bscList, rncList, lteList, gateOneDropdown, gateTwoDropdown):
     whereStatement = ''
     tempCounter = 0
     # If list contains all BSC, then there is no WHERE clause on query
     if len(bscList) <= 6:
-        whereStatement += ' WHERE'
+        whereStatement += ' WHERE ('
         if len(bscList) == 0:
             bscList = ['N/A']
         for bsc in bscList:
-            whereStatement += ' bsc = \'' + bsc + '\' '
+            whereStatement += ' bsc = \'' + bsc + '\''
             tempCounter += 1
             # If counter is less than len(bscList), append OR to query
             if tempCounter < len(bscList):
                 whereStatement += ' OR '
             # Else, we're finished
             else:
-                break
+                whereStatement += ')'
     else:
         pass
+    tempCounter = 0
     # If list contains all RNC, then there is no WHERE clause on query
     if len(rncList) <= 7:
         # Check if there's something already on whereStatement
         if len(whereStatement) < 1:
-            whereStatement += ' WHERE'
+            whereStatement += ' WHERE ('
+        if 'N/A' in bscList and len(rncList) == 0:
+            whereStatement += ' AND ('
         else:
-            whereStatement += 'OR '
+            whereStatement += ' OR ('
         if len(rncList) == 0:
             rncList = ['N/A']
         for rnc in rncList:
-            whereStatement += ' rnc = \'' + rnc + '\' '
+            whereStatement += ' rnc = \'' + rnc + '\''
             tempCounter += 1
             # If counter is less than len(bscList), append OR to query
             if tempCounter < len(rncList):
                 whereStatement += ' OR '
             # Else, we're finished
             else:
-                break
+                whereStatement += ')'
     else:
         pass
     print(whereStatement)

@@ -119,6 +119,21 @@ app.layout = html.Div(children=[
                     )
                 ]
             ), 
+            # Logic Gate #1
+            html.Div(
+                id = 'gateOneDropdownGridElement',
+                style = networkOverviewStyles.gateOneDropdownGridElement,
+                children = [
+                    dcc.Dropdown(
+                        id = 'gateOneDropdown',
+                        options = [
+                            {'label':'AND', 'value':'AND'},
+                            {'label':'OR', 'value':'OR'}
+                        ],
+                        value = 'AND'
+                    )
+                ]
+            ),
             # RNC Dropdown
             html.Div(
                 id = 'rncDropdownGridElement',
@@ -137,6 +152,21 @@ app.layout = html.Div(children=[
                         ],
                         value = ['RNC_01_RRA', 'RNC_02_STGO', 'RNC_03_VM', 'RNC_04_VM', 'RNC_05_RRA', 'RNC_06_STGO', 'RNC_07_VM'],
                         multi = True
+                    )
+                ]
+            ),
+            # Logic Gate #2
+            html.Div(
+                id = 'gateTwoDropdownGridElement',
+                style = networkOverviewStyles.gateTwoDropdownGridElement,
+                children = [
+                    dcc.Dropdown(
+                        id = 'gateTwoDropdown',
+                        options = [
+                            {'label':'AND', 'value':'AND'},
+                            {'label':'OR', 'value':'OR'}
+                        ],
+                        value = 'AND'
                     )
                 ]
             ),
@@ -808,20 +838,22 @@ app.layout = html.Div(children=[
         Input('dataUpateInterval', 'n_intervals'),
         Input('bscDropdown', 'value'),
         Input('rncDropdown', 'value'),
-        Input('lteDropdown', 'value')
+        Input('lteDropdown', 'value'),
+        Input('gateOneDropdown', 'value'),
+        Input('gateTwoDropdown', 'value')
     ]
 )
-def updateNetworkOverviewTab(interval, bscList, rncList, lteList):
+def updateNetworkOverviewTab(interval, bscList, rncList, lteList, gateOneDropdown, gateTwoDropdown):
     # Connect to DB
     mysqlConnector = mysql.connector.connect(user = dbPara.dbUsername, password = dbPara.dbPassword, host = dbPara.dbServerIp , database = dbPara.dataTable)
     # Connection must be buffered when executing multiple querys on DB before closing connection.
     mysqlPointer = mysqlConnector.cursor(buffered=True)
-    siteDataframe = ran_functions.networkMapFunction(mysqlPointer, bscList, rncList, lteList)
+    siteDataframe = ran_functions.networkMapFunction(mysqlPointer, bscList, rncList, lteList, gateOneDropdown, gateTwoDropdown)
     map = px.scatter_mapbox(siteDataframe, lat='lat', lon='lon', hover_name='site', hover_data=['bsc', 'rnc'])
     map.update_layout(
         mapbox_style='open-street-map',
         margin=dict(l=2, r=2, t=2, b=2),
-        height=600
+        height=650
         )
     # Close DB connection
     mysqlPointer.close()

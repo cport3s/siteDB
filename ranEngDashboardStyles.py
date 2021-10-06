@@ -50,12 +50,22 @@ class networkOverviewTab():
     }
 
     bscDropdownGridElement={
-        'grid-column': '1 / 3',
+        'grid-column': '1 / 2',
+        'grid-row': '1 / 2'
+    }
+
+    gateOneDropdownGridElement={
+        'grid-column': '2 / 3',
         'grid-row': '1 / 2'
     }
 
     rncDropdownGridElement={
-        'grid-column': '3 / 5',
+        'grid-column': '3 / 4',
+        'grid-row': '1 / 2'
+    }
+
+    gateTwoDropdownGridElement={
+        'grid-column': '4 / 5',
         'grid-row': '1 / 2'
     }
 
