@@ -351,11 +351,11 @@ def downloadFtpFileString(ftpLogin, filePath, fileName):
 def networkMapFunction(mysqlPointer, bscList, rncList, lteList, gateOneDropdown, gateTwoDropdown):
     whereStatement = ''
     tempCounter = 0
-    # If list contains all BSC, then there is no WHERE clause on query
-    if len(bscList) <= 6:
+    # If list contains all BSC & N/A, then there is no WHERE clause on query
+    if len(bscList) <= 7:
         whereStatement += ' WHERE ('
-        if len(bscList) == 0:
-            bscList = ['N/A']
+        #if len(bscList) == 0:
+        #    bscList = ['N/A']
         for bsc in bscList:
             whereStatement += ' bsc = \'' + bsc + '\''
             tempCounter += 1
@@ -369,16 +369,14 @@ def networkMapFunction(mysqlPointer, bscList, rncList, lteList, gateOneDropdown,
         pass
     tempCounter = 0
     # If list contains all RNC, then there is no WHERE clause on query
-    if len(rncList) <= 7:
+    if len(rncList) <= 8:
         # Check if there's something already on whereStatement
-        if len(whereStatement) < 1:
+        if whereStatement == '':
             whereStatement += ' WHERE ('
-        if 'N/A' in bscList and len(rncList) == 0:
-            whereStatement += ' AND ('
         else:
-            whereStatement += ' OR ('
-        if len(rncList) == 0:
-            rncList = ['N/A']
+            whereStatement += ' ' + gateOneDropdown + ' ('
+        #if len(rncList) == 0:
+        #    rncList = ['N/A']
         for rnc in rncList:
             whereStatement += ' rnc = \'' + rnc + '\''
             tempCounter += 1

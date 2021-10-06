@@ -112,7 +112,8 @@ app.layout = html.Div(children=[
                             {'label':'BSC_03_VM', 'value':'BSC_03_VM'},
                             {'label':'BSC_04_VM', 'value':'BSC_04_VM'},
                             {'label':'BSC_05_RRA', 'value':'BSC_05_RRA'},
-                            {'label':'BSC_06_STGO', 'value':'BSC_06_STGO'}
+                            {'label':'BSC_06_STGO', 'value':'BSC_06_STGO'},
+                            {'label':'N/A', 'value':'N/A'}
                         ],
                         value = ['BSC_01_RRA', 'BSC_02_STGO', 'BSC_03_VM', 'BSC_04_VM', 'BSC_05_RRA', 'BSC_06_STGO'],
                         multi=True
@@ -130,7 +131,8 @@ app.layout = html.Div(children=[
                             {'label':'AND', 'value':'AND'},
                             {'label':'OR', 'value':'OR'}
                         ],
-                        value = 'AND'
+                        value = 'OR',
+                        clearable=False
                     )
                 ]
             ),
@@ -148,7 +150,8 @@ app.layout = html.Div(children=[
                             {'label':'RNC_04_VM', 'value':'RNC_04_VM'},
                             {'label':'RNC_05_RRA', 'value':'RNC_05_RRA'},
                             {'label':'RNC_06_STGO', 'value':'RNC_06_STGO'},
-                            {'label':'RNC_07_VM', 'value':'RNC_07_VM'}
+                            {'label':'RNC_07_VM', 'value':'RNC_07_VM'},
+                            {'label':'N/A', 'value':'N/A'}
                         ],
                         value = ['RNC_01_RRA', 'RNC_02_STGO', 'RNC_03_VM', 'RNC_04_VM', 'RNC_05_RRA', 'RNC_06_STGO', 'RNC_07_VM'],
                         multi = True
@@ -166,7 +169,8 @@ app.layout = html.Div(children=[
                             {'label':'AND', 'value':'AND'},
                             {'label':'OR', 'value':'OR'}
                         ],
-                        value = 'AND'
+                        value = 'OR',
+                        clearable=False
                     )
                 ]
             ),
