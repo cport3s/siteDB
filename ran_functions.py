@@ -349,6 +349,7 @@ def downloadFtpFileString(ftpLogin, filePath, fileName):
 
 # Function to query Network Map Data
 def networkMapFunction(mysqlPointer, bscList, rncList, lteList, gateOneDropdown, gateTwoDropdown):
+
     whereStatement = ''
     tempCounter = 0
     # If list contains all BSC & N/A, then there is no WHERE clause on query
@@ -367,7 +368,7 @@ def networkMapFunction(mysqlPointer, bscList, rncList, lteList, gateOneDropdown,
         pass
     tempCounter = 0
     # If list contains all RNC, then there is no WHERE clause on query
-    if len(rncList) <= 8:
+    if rncList:
         # Check if there's something already on whereStatement and there's at least 1 RNC selected
         if whereStatement == '' and rncList:
             whereStatement += ' WHERE ('
@@ -388,7 +389,26 @@ def networkMapFunction(mysqlPointer, bscList, rncList, lteList, gateOneDropdown,
     else:
         pass
     # Let's work with Band list now
-    
+    tempCounter = 0
+    if lteList:
+        if whereStatement == '' and lteList:
+            whereStatement += ' WHERE ('
+        # Check if there's something on rncList
+        elif rncList or bscList:
+            whereStatement += ' ' + gateTwoDropdown + ' ('
+        else:
+            pass
+        for band in lteList:
+            whereStatement += ' ' + band + ' != \'N/A\''
+            tempCounter += 1
+            # If counter is less than len(bscList), append OR to query
+            if tempCounter < len(lteList):
+                whereStatement += ' OR '
+            # Else, we're finished
+            else:
+                whereStatement += ')'
+    else:
+        pass
     print(whereStatement)
     mysqlPointer.execute('SELECT site,lat,lon,bsc,rnc,provincia FROM alticedr_sitedb.raningdata' + whereStatement + ';')
     queryRaw = mysqlPointer.fetchall()

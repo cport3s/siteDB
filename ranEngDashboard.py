@@ -182,14 +182,14 @@ app.layout = html.Div(children=[
                     dcc.Dropdown(
                         id = 'lteDropdown',
                         options = [
-                            {'label':'1900Mhz', 'value':'1900Mhz'},
+                            {'label':'L1900', 'value':'L1900'},
                             {'label':'AWS', 'value':'AWS'},
-                            {'label':'850Mhz', 'value':'850Mhz'},
-                            {'label':'900Mhz', 'value':'900Mhz'},
-                            {'label':'WTTx', 'value':'WTTx'},
+                            {'label':'L850', 'value':'L850'},
+                            {'label':'L900', 'value':'L900'},
+                            {'label':'WTTX', 'value':'WTTX'},
                             {'label':'N/A', 'value':'N/A'}
                         ],
-                        value = ['1900Mhz', 'AWS', '850Mhz', '900Mhz', 'WTTx', 'N/A'],
+                        value = ['L1900', 'AWS', 'L850', 'L900', 'WTTX'],
                         multi = True
                     )
                 ]
