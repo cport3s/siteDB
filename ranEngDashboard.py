@@ -186,9 +186,10 @@ app.layout = html.Div(children=[
                             {'label':'AWS', 'value':'AWS'},
                             {'label':'850Mhz', 'value':'850Mhz'},
                             {'label':'900Mhz', 'value':'900Mhz'},
-                            {'label':'WTTx', 'value':'WTTx'}
+                            {'label':'WTTx', 'value':'WTTx'},
+                            {'label':'N/A', 'value':'N/A'}
                         ],
-                        value = ['1900Mhz', 'AWS', '850Mhz', '900Mhz', 'WTTx'],
+                        value = ['1900Mhz', 'AWS', '850Mhz', '900Mhz', 'WTTx', 'N/A'],
                         multi = True
                     )
                 ]
@@ -853,12 +854,13 @@ def updateNetworkOverviewTab(interval, bscList, rncList, lteList, gateOneDropdow
     # Connection must be buffered when executing multiple querys on DB before closing connection.
     mysqlPointer = mysqlConnector.cursor(buffered=True)
     siteDataframe = ran_functions.networkMapFunction(mysqlPointer, bscList, rncList, lteList, gateOneDropdown, gateTwoDropdown)
-    map = px.scatter_mapbox(siteDataframe, lat='lat', lon='lon', hover_name='site', hover_data=['bsc', 'rnc'])
+    map = px.scatter_mapbox(siteDataframe, lat='lat', lon='lon', hover_name='site', hover_data=['bsc', 'rnc'], zoom=7.5)
     map.update_layout(
         mapbox_style='open-street-map',
         margin=dict(l=2, r=2, t=2, b=2),
         height=650
         )
+    map.update_traces(marker=dict(size=10))
     # Close DB connection
     mysqlPointer.close()
     mysqlConnector.close()

@@ -352,10 +352,8 @@ def networkMapFunction(mysqlPointer, bscList, rncList, lteList, gateOneDropdown,
     whereStatement = ''
     tempCounter = 0
     # If list contains all BSC & N/A, then there is no WHERE clause on query
-    if len(bscList) <= 7:
+    if bscList:
         whereStatement += ' WHERE ('
-        #if len(bscList) == 0:
-        #    bscList = ['N/A']
         for bsc in bscList:
             whereStatement += ' bsc = \'' + bsc + '\''
             tempCounter += 1
@@ -370,13 +368,14 @@ def networkMapFunction(mysqlPointer, bscList, rncList, lteList, gateOneDropdown,
     tempCounter = 0
     # If list contains all RNC, then there is no WHERE clause on query
     if len(rncList) <= 8:
-        # Check if there's something already on whereStatement
-        if whereStatement == '':
+        # Check if there's something already on whereStatement and there's at least 1 RNC selected
+        if whereStatement == '' and rncList:
             whereStatement += ' WHERE ('
-        else:
+        # Check if there's something on rncList
+        elif rncList:
             whereStatement += ' ' + gateOneDropdown + ' ('
-        #if len(rncList) == 0:
-        #    rncList = ['N/A']
+        else:
+            pass
         for rnc in rncList:
             whereStatement += ' rnc = \'' + rnc + '\''
             tempCounter += 1
@@ -388,12 +387,20 @@ def networkMapFunction(mysqlPointer, bscList, rncList, lteList, gateOneDropdown,
                 whereStatement += ')'
     else:
         pass
+    # Let's work with Band list now
+    
     print(whereStatement)
     mysqlPointer.execute('SELECT site,lat,lon,bsc,rnc,provincia FROM alticedr_sitedb.raningdata' + whereStatement + ';')
     queryRaw = mysqlPointer.fetchall()
-    queryPayload = np.array(queryRaw)
-    siteDataframe = pd.DataFrame(queryPayload, columns=['site', 'lat', 'lon', 'bsc', 'rnc', 'provincia'])
-    # Cast columns to float type
-    siteDataframe['lat'] = siteDataframe['lat'].astype(float)
-    siteDataframe['lon'] = siteDataframe['lon'].astype(float)
-    return siteDataframe
+    if queryRaw:
+        queryPayload = np.array(queryRaw)
+        siteDataframe = pd.DataFrame(queryPayload, columns=['site', 'lat', 'lon', 'bsc', 'rnc', 'provincia'])
+        # Cast columns to float type
+        siteDataframe['lat'] = siteDataframe['lat'].astype(float)
+        siteDataframe['lon'] = siteDataframe['lon'].astype(float)
+        return siteDataframe
+    # In case the data fetched is empty, return an empty map
+    else:
+        queryPayload = []
+        siteDataframe = pd.DataFrame(queryPayload, columns=['site', 'lat', 'lon', 'bsc', 'rnc', 'provincia'])
+        return siteDataframe

@@ -24,8 +24,10 @@ class headerStyles():
         'borderBottomColor': 'black',
         'borderTopLeftRadius': '7px',
         'borderTopRightRadius': '7px',
-        'paddingTop': '10px',
-        'paddingBottom': '5px',
+        'paddingTop': '6px',
+        'paddingBottom': '6px',
+        'paddingLeft': '10px',
+        'paddingRight': '10px',
         'width': 'auto'
     }
 
@@ -36,8 +38,10 @@ class headerStyles():
         'borderTopColor': 'white',
         'borderTopLeftRadius': '7px',
         'borderTopRightRadius': '7px',
-        'paddingTop': '10px',
-        'paddingBottom': '5px',
+        'paddingTop': '6px',
+        'paddingBottom': '6px',
+        'paddingLeft': '10px',
+        'paddingRight': '10px',
         'width': 'auto'
     }
 
