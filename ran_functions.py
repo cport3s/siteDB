@@ -416,9 +416,25 @@ def networkMapFunction(mysqlPointer, bscList, rncList, lteList, gateOneDropdown,
         # Cast columns to float type
         siteDataframe['lat'] = siteDataframe['lat'].astype(float)
         siteDataframe['lon'] = siteDataframe['lon'].astype(float)
-        return siteDataframe
+        # Add a column with fixed value 1
+        bscPieDataframe = pd.DataFrame()
+        bscPieDataframe['bsc'] = siteDataframe['bsc']
+        bscPieDataframe['site_count'] = 1
+        bscPieDataframe = bscPieDataframe.groupby('bsc').count().reset_index()
+        rncPieDataframe = pd.DataFrame()
+        rncPieDataframe['rnc'] = siteDataframe['rnc']
+        rncPieDataframe['site_count'] = 1
+        rncPieDataframe = rncPieDataframe.groupby('rnc').count().reset_index()
+        #ltePieDataframe = siteDataframe.copy()
+        bscPieChart = px.pie(bscPieDataframe, values='site_count', names='bsc')
+        rncPieChart = px.pie(rncPieDataframe, values='site_count', names='rnc')
+        ltePieChart = px.pie()
+        return siteDataframe, bscPieChart, rncPieChart, ltePieChart
     # In case the data fetched is empty, return an empty map
     else:
         queryPayload = []
         siteDataframe = pd.DataFrame(queryPayload, columns=['site', 'lat', 'lon', 'bsc', 'rnc', 'provincia'])
-        return siteDataframe
+        bscPieChart = px.pie()
+        rncPieChart = px.pie()
+        ltePieChart = px.pie()
+        return siteDataframe, bscPieChart, rncPieChart, ltePieChart

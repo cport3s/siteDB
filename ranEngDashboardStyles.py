@@ -83,6 +83,21 @@ class networkOverviewTab():
         'grid-row': '2 / 4'
     }
 
+    gsmDistGraphElement={
+        'grid-column': '1 / 3',
+        'grid-row': '4 / 5'
+    }
+
+    umtsDistGraphElement={
+        'grid-column': '3 / 5',
+        'grid-row': '4 / 5'
+    }
+
+    lteDistGraphElement={
+        'grid-column': '5 / 7',
+        'grid-row': '4 / 5'
+    }
+
 class engDashboardTab():
     graphGridContainerStyle={
         'display': 'grid',
