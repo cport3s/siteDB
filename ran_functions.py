@@ -408,11 +408,11 @@ def networkMapFunction(mysqlPointer, bscList, rncList, lteList, gateOneDropdown,
                 whereStatement += ')'
     else:
         pass
-    mysqlPointer.execute('SELECT site,lat,lon,bsc,rnc,provincia FROM alticedr_sitedb.raningdata' + whereStatement + ';')
+    mysqlPointer.execute('SELECT site,lat,lon,bsc,rnc,provincia,AWS,WTTX,L850,L900,L1900 FROM alticedr_sitedb.raningdata' + whereStatement + ';')
     queryRaw = mysqlPointer.fetchall()
     if queryRaw:
         queryPayload = np.array(queryRaw)
-        siteDataframe = pd.DataFrame(queryPayload, columns=['site', 'lat', 'lon', 'bsc', 'rnc', 'provincia'])
+        siteDataframe = pd.DataFrame(queryPayload, columns=['site', 'lat', 'lon', 'bsc', 'rnc', 'provincia', 'AWS', 'WTTX', 'L850', 'L900', 'L1900'])
         # Cast columns to float type
         siteDataframe['lat'] = siteDataframe['lat'].astype(float)
         siteDataframe['lon'] = siteDataframe['lon'].astype(float)
@@ -425,10 +425,16 @@ def networkMapFunction(mysqlPointer, bscList, rncList, lteList, gateOneDropdown,
         rncPieDataframe['rnc'] = siteDataframe['rnc']
         rncPieDataframe['site_count'] = 1
         rncPieDataframe = rncPieDataframe.groupby('rnc').count().reset_index()
-        #ltePieDataframe = siteDataframe.copy()
+        ltePieDataframe = pd.DataFrame()
+        ltePieDataframe['band'] = lteList
+        ltePieDataframe['site_count'] = 0
+        for n in range(len(siteDataframe['site'])):
+            for z in range(len(lteList)):
+                if siteDataframe[lteList[z]][n] != 'N/A':
+                    ltePieDataframe['site_count'][z] += 1
         bscPieChart = px.pie(bscPieDataframe, values='site_count', names='bsc')
         rncPieChart = px.pie(rncPieDataframe, values='site_count', names='rnc')
-        ltePieChart = px.pie()
+        ltePieChart = px.pie(ltePieDataframe, values='site_count', names='band')
         return siteDataframe, bscPieChart, rncPieChart, ltePieChart
     # In case the data fetched is empty, return an empty map
     else:

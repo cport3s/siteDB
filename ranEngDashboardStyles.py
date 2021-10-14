@@ -55,7 +55,8 @@ class networkOverviewTab():
 
     bscDropdownGridElement={
         'grid-column': '1 / 2',
-        'grid-row': '1 / 2'
+        'grid-row': '1 / 2',
+        'justify-self': 'center'
     }
 
     gateOneDropdownGridElement={
@@ -65,7 +66,8 @@ class networkOverviewTab():
 
     rncDropdownGridElement={
         'grid-column': '3 / 4',
-        'grid-row': '1 / 2'
+        'grid-row': '1 / 2',
+        'justify-self': 'center'
     }
 
     gateTwoDropdownGridElement={
@@ -74,8 +76,9 @@ class networkOverviewTab():
     }
 
     lteDropdownGridElement={
-        'grid-column': '5 / 7',
-        'grid-row': '1 / 2'
+        'grid-column': '5 / 6',
+        'grid-row': '1 / 2',
+        'justify-self': 'center'
     }
 
     mapGridElement={

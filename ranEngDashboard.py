@@ -45,7 +45,7 @@ app.layout = html.Div(children=[
     html.Div(
         style = tabStyles.headerFlexContainer,
         children = [
-            html.H2(
+            html.H3(
                 id = 'dashboardTitle',
                 children = 'RAN-Ops Engineering Dashboard',
                 style = tabStyles.dashboardTitle
@@ -125,24 +125,21 @@ app.layout = html.Div(children=[
                 style = networkOverviewStyles.bscDropdownGridElement,
                 children = [
                     dbc.DropdownMenu(
-                        #children = [
-                        #    dcc.Checklist(
-                        #        id = 'bscDropdown',
-                        #        options = [
-                        #            {'label':'BSC_01_RRA', 'value':'BSC_01_RRA'},
-                        #            {'label':'BSC_02_STGO', 'value':'BSC_02_STGO'},
-                        #            {'label':'BSC_03_VM', 'value':'BSC_03_VM'},
-                        #            {'label':'BSC_04_VM', 'value':'BSC_04_VM'},
-                        #            {'label':'BSC_05_RRA', 'value':'BSC_05_RRA'},
-                        #            {'label':'BSC_06_STGO', 'value':'BSC_06_STGO'},
-                        #            {'label':'N/A', 'value':'N/A'}
-                        #        ],
-                        #        value = ['BSC_01_RRA', 'BSC_02_STGO', 'BSC_03_VM', 'BSC_04_VM', 'BSC_05_RRA', 'BSC_06_STGO']
-                        #    )
-                        #],
                         children = [
-                            dbc.DropdownMenuItem('BSC1'),
-                            dbc.DropdownMenuItem('BSC2')
+                            dcc.Checklist(
+                                id = 'bscDropdown',
+                                options = [
+                                    {'label':'BSC_01_RRA', 'value':'BSC_01_RRA'},
+                                    {'label':'BSC_02_STGO', 'value':'BSC_02_STGO'},
+                                    {'label':'BSC_03_VM', 'value':'BSC_03_VM'},
+                                    {'label':'BSC_04_VM', 'value':'BSC_04_VM'},
+                                    {'label':'BSC_05_RRA', 'value':'BSC_05_RRA'},
+                                    {'label':'BSC_06_STGO', 'value':'BSC_06_STGO'},
+                                    {'label':'N/A', 'value':'N/A'}
+                                ],
+                                value = ['BSC_01_RRA', 'BSC_02_STGO', 'BSC_03_VM', 'BSC_04_VM', 'BSC_05_RRA', 'BSC_06_STGO'],
+                                labelStyle = {'display': 'block'}
+                            )
                         ],
                         label = 'BSC',
                         color = 'primary'
@@ -169,21 +166,27 @@ app.layout = html.Div(children=[
             html.Div(
                 id = 'rncDropdownGridElement',
                 style = networkOverviewStyles.rncDropdownGridElement,
-                children =[
-                    dcc.Dropdown(
-                        id = 'rncDropdown',
-                        options = [
-                            {'label':'RNC_01_RRA', 'value':'RNC_01_RRA'},
-                            {'label':'RNC_02_STGO', 'value':'RNC_02_STGO'},
-                            {'label':'RNC_03_VM', 'value':'RNC_03_VM'},
-                            {'label':'RNC_04_VM', 'value':'RNC_04_VM'},
-                            {'label':'RNC_05_RRA', 'value':'RNC_05_RRA'},
-                            {'label':'RNC_06_STGO', 'value':'RNC_06_STGO'},
-                            {'label':'RNC_07_VM', 'value':'RNC_07_VM'},
-                            {'label':'N/A', 'value':'N/A'}
+                children = [
+                    dbc.DropdownMenu(
+                        children = [
+                            dcc.Checklist(
+                                id = 'rncDropdown',
+                                options = [
+                                    {'label':'RNC_01_RRA', 'value':'RNC_01_RRA'},
+                                    {'label':'RNC_02_STGO', 'value':'RNC_02_STGO'},
+                                    {'label':'RNC_03_VM', 'value':'RNC_03_VM'},
+                                    {'label':'RNC_04_VM', 'value':'RNC_04_VM'},
+                                    {'label':'RNC_05_RRA', 'value':'RNC_05_RRA'},
+                                    {'label':'RNC_06_STGO', 'value':'RNC_06_STGO'},
+                                    {'label':'RNC_07_VM', 'value':'RNC_07_VM'},
+                                    {'label':'N/A', 'value':'N/A'}
+                                ],
+                                value = ['RNC_01_RRA', 'RNC_02_STGO', 'RNC_03_VM', 'RNC_04_VM', 'RNC_05_RRA', 'RNC_06_STGO', 'RNC_07_VM'],
+                                labelStyle = {'display': 'block'}
+                            )
                         ],
-                        value = ['RNC_01_RRA', 'RNC_02_STGO', 'RNC_03_VM', 'RNC_04_VM', 'RNC_05_RRA', 'RNC_06_STGO', 'RNC_07_VM'],
-                        multi = True
+                        label = 'RNC',
+                        color = 'danger'
                     )
                 ]
             ),
@@ -207,19 +210,26 @@ app.layout = html.Div(children=[
             html.Div(
                 id = 'lteDropdownGridElement',
                 style = networkOverviewStyles.lteDropdownGridElement,
-                children =[
-                    dcc.Dropdown(
-                        id = 'lteDropdown',
-                        options = [
-                            {'label':'L1900', 'value':'L1900'},
-                            {'label':'AWS', 'value':'AWS'},
-                            {'label':'L850', 'value':'L850'},
-                            {'label':'L900', 'value':'L900'},
-                            {'label':'WTTX', 'value':'WTTX'},
-                            {'label':'N/A', 'value':'N/A'}
+                children = [
+                    dbc.DropdownMenu(
+                        children = [
+                            dcc.Checklist(
+                                id = 'lteDropdown',
+                                options = [
+                                    {'label':'L1900', 'value':'L1900'},
+                                    {'label':'AWS', 'value':'AWS'},
+                                    {'label':'L850', 'value':'L850'},
+                                    {'label':'L900', 'value':'L900'},
+                                    {'label':'WTTX', 'value':'WTTX'},
+                                    {'label':'N/A', 'value':'N/A'}
+                                ],
+                                value = ['L1900', 'AWS', 'L850', 'L900', 'WTTX'],
+                                labelStyle = {'display': 'block'}
+                            )
                         ],
-                        value = ['L1900', 'AWS', 'L850', 'L900', 'WTTX'],
-                        multi = True
+                        label = 'LTE Bands',
+                        color = 'success',
+                        style = {'width':'100%'}
                     )
                 ]
             ),
@@ -237,7 +247,6 @@ app.layout = html.Div(children=[
                 id = 'gsmDistributionGraph',
                 style = networkOverviewStyles.gsmDistGraphElement,
                 children = [
-                    'GSM Distribution Chart',
                     dcc.Graph(
                         id = 'gsmPieChart'
                     )
@@ -247,7 +256,6 @@ app.layout = html.Div(children=[
                 id = 'umtsDistributionGraph',
                 style = networkOverviewStyles.umtsDistGraphElement,
                 children = [
-                    'UMTS Distribution Chart',
                     dcc.Graph(
                         id = 'umtsPieChart'
                     )
@@ -257,7 +265,6 @@ app.layout = html.Div(children=[
                 id = 'lteDistributionGraph',
                 style = networkOverviewStyles.lteDistGraphElement,
                 children = [
-                    'LTE Distribution Chart',
                     dcc.Graph(
                         id = 'ltePieChart'
                     )
