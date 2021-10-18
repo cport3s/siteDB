@@ -45,7 +45,7 @@ app.layout = html.Div(children=[
     html.Div(
         style = tabStyles.headerFlexContainer,
         children = [
-            html.H3(
+            html.H4(
                 id = 'dashboardTitle',
                 children = 'RAN-Ops Engineering Dashboard',
                 style = tabStyles.dashboardTitle
@@ -100,26 +100,6 @@ app.layout = html.Div(children=[
         style = networkOverviewStyles.networkOverviewGridContainerStyle,
         children = [
             # BSC Dropdown
-            #html.Div(
-            #    id = 'bscDropdownGridElement',
-            #    style = networkOverviewStyles.bscDropdownGridElement,
-            #    children = [
-            #        dcc.Dropdown(
-            #            id = 'bscDropdown',
-            #            options = [
-            #                {'label':'BSC_01_RRA', 'value':'BSC_01_RRA'},
-            #                {'label':'BSC_02_STGO', 'value':'BSC_02_STGO'},
-            #                {'label':'BSC_03_VM', 'value':'BSC_03_VM'},
-            #                {'label':'BSC_04_VM', 'value':'BSC_04_VM'},
-            #                {'label':'BSC_05_RRA', 'value':'BSC_05_RRA'},
-            #                {'label':'BSC_06_STGO', 'value':'BSC_06_STGO'},
-            #                {'label':'N/A', 'value':'N/A'}
-            #            ],
-            #            value = ['BSC_01_RRA', 'BSC_02_STGO', 'BSC_03_VM', 'BSC_04_VM', 'BSC_05_RRA', 'BSC_06_STGO'],
-            #            multi=True
-            #        )
-            #    ]
-            #), 
             html.Div(
                 id = 'bscDropdownGridElement',
                 style = networkOverviewStyles.bscDropdownGridElement,
@@ -237,7 +217,6 @@ app.layout = html.Div(children=[
                 id = 'mapGridElement',
                 style = networkOverviewStyles.mapGridElement,
                 children = [
-                    'Network Map',
                     dcc.Graph(
                         id = 'networkMap'
                     )
@@ -907,7 +886,8 @@ app.layout = html.Div(children=[
     [
         Output('networkMap', 'figure'),
         Output('gsmPieChart', 'figure'),
-        Output('umtsPieChart', 'figure')
+        Output('umtsPieChart', 'figure'),
+        Output('ltePieChart', 'figure')
     ],
     [
         Input('dataUpateInterval', 'n_intervals'),
@@ -916,15 +896,36 @@ app.layout = html.Div(children=[
         Input('lteDropdown', 'value'),
         Input('gateOneDropdown', 'value'),
         Input('gateTwoDropdown', 'value')
-    ]
+    ],
+    State('neOosListDataTable', 'data')
 )
-def updateNetworkOverviewTab(interval, bscList, rncList, lteList, gateOneDropdown, gateTwoDropdown):
+def updateNetworkOverviewTab(interval, bscList, rncList, lteList, gateOneDropdown, gateTwoDropdown, neOosListDataTableData):
     # Connect to DB
     mysqlConnector = mysql.connector.connect(user = dbPara.dbUsername, password = dbPara.dbPassword, host = dbPara.dbServerIp , database = dbPara.dataTable)
     # Connection must be buffered when executing multiple querys on DB before closing connection.
     mysqlPointer = mysqlConnector.cursor(buffered=True)
     siteDataframe, bscPieChart, rncPieChart, ltePieChart = ran_functions.networkMapFunction(mysqlPointer, bscList, rncList, lteList, gateOneDropdown, gateTwoDropdown)
-    map = px.scatter_mapbox(siteDataframe, lat='lat', lon='lon', hover_name='site', hover_data=['bsc', 'rnc'], zoom=7.5)
+    neOosList = []
+    # Check if dataframe is not empty first
+    if str(type(neOosListDataTableData)) != '<class \'NoneType\'>':
+        # Loop through current NE OOS list
+        for dic in neOosListDataTableData:
+            tmpNE = dic['NE']
+            # If the 2nd position is R or T, then we must remove the first 2 digits from the NE name (NR or LT scenarios)
+            if tmpNE[1] == 'R' or tmpNE[1] == 'T':
+                tmpNE = tmpNE[2:-1]
+            else:
+                tmpNE = tmpNE[1:-1]
+            neOosList.append(tmpNE)
+    # Add NE Status column
+    siteDataframe['oos_status'] = 'Online'
+    # Check in case there are no NE OOS
+    if len(neOosList) > 0:
+        for ne in neOosList:
+            for i in range(len(siteDataframe['site'])):
+                if siteDataframe['site'][i] == ne:
+                    siteDataframe['oos_status'][i] = 'Offline'
+    map = px.scatter_mapbox(siteDataframe, lat='lat', lon='lon', hover_name='site', hover_data=['bsc', 'rnc'], zoom=7.5, color='oos_status')
     map.update_layout(
         mapbox_style='open-street-map',
         margin=dict(l=2, r=2, t=2, b=2),
@@ -938,8 +939,11 @@ def updateNetworkOverviewTab(interval, bscList, rncList, lteList, gateOneDropdow
         title_font_size=graphTitleFontSize, 
         font_size=12, 
         title='GSM Distribution Chart', 
-        margin=dict(l=10, r=10, t=40, b=10), 
-        #legend=dict(orientation='h')
+        margin=dict(l=10, r=10, t=40, b=10)
+    )
+    bscPieChart.update_traces(
+        textinfo = 'value+percent',
+        hoverinfo = 'all'
     )
     rncPieChart.update_layout(
         plot_bgcolor='#000000', 
@@ -948,13 +952,29 @@ def updateNetworkOverviewTab(interval, bscList, rncList, lteList, gateOneDropdow
         title_font_size=graphTitleFontSize, 
         font_size=12, 
         title='UMTS Distribution Chart', 
-        margin=dict(l=10, r=10, t=40, b=10), 
-        #legend=dict(orientation='h')
+        margin=dict(l=10, r=10, t=40, b=10)
+    )
+    rncPieChart.update_traces(
+        textinfo = 'value+percent',
+        hoverinfo = 'all'
+    )
+    ltePieChart.update_layout(
+        plot_bgcolor='#000000', 
+        paper_bgcolor='#000000', 
+        font_color='#FFFFFF', 
+        title_font_size=graphTitleFontSize, 
+        font_size=12, 
+        title='LTE Band Distribution Chart', 
+        margin=dict(l=10, r=10, t=40, b=10)
+    )
+    ltePieChart.update_traces(
+        textinfo = 'value+percent',
+        hoverinfo = 'all'
     )
     # Close DB connection
     mysqlPointer.close()
     mysqlConnector.close()
-    return map, bscPieChart, rncPieChart
+    return map, bscPieChart, rncPieChart, ltePieChart
 
 # Callback to update Engineering Dashboard Tab
 @app.callback(
