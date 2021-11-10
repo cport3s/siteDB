@@ -14,7 +14,7 @@ import classes
 import ranEngDashboardStyles as styles
 import ran_functions
 
-app = dash.Dash(__name__, title='RAN-Ops Engineering Dashboard', external_stylesheets=[dbc.themes.BOOTSTRAP])
+app = dash.Dash(__name__, title='RAN Dashboard', external_stylesheets=[dbc.themes.BOOTSTRAP])
 server = app.server
 
 # DB Connection Parameters
@@ -47,7 +47,7 @@ app.layout = html.Div(children=[
         children = [
             html.H4(
                 id = 'dashboardTitle',
-                children = 'RAN-Ops Engineering Dashboard',
+                children = 'RAN Dashboard',
                 style = tabStyles.dashboardTitle
             ),
             dcc.Tabs(
@@ -246,6 +246,15 @@ app.layout = html.Div(children=[
                 children = [
                     dcc.Graph(
                         id = 'ltePieChart'
+                    )
+                ]
+            ),
+            html.Div(
+                id = 'neOosOverviewGraph',
+                style = networkOverviewStyles.neOosOverviewGraphElement,
+                children = [
+                    dcc.Graph(
+                        id = 'neOosOverviewChart'
                     )
                 ]
             )
@@ -887,94 +896,122 @@ app.layout = html.Div(children=[
         Output('networkMap', 'figure'),
         Output('gsmPieChart', 'figure'),
         Output('umtsPieChart', 'figure'),
-        Output('ltePieChart', 'figure')
+        Output('ltePieChart', 'figure'),
+        Output('neOosOverviewChart', 'figure')
     ],
     [
         Input('dataUpateInterval', 'n_intervals'),
+        Input('tabsContainer', 'value'),
         Input('bscDropdown', 'value'),
         Input('rncDropdown', 'value'),
         Input('lteDropdown', 'value'),
         Input('gateOneDropdown', 'value'),
         Input('gateTwoDropdown', 'value')
     ],
-    State('neOosListDataTable', 'data')
+    State('neOosListDataTable', 'data'),
+    State('hiddenNeOosLineChartDatatable', 'data')
 )
-def updateNetworkOverviewTab(interval, bscList, rncList, lteList, gateOneDropdown, gateTwoDropdown, neOosListDataTableData):
+def updateNetworkOverviewTab(interval, selectedTab, bscList, rncList, lteList, gateOneDropdown, gateTwoDropdown, neOosListDataTableData, hiddenNeOosLineChartDatatableValue):
     # Connect to DB
     mysqlConnector = mysql.connector.connect(user = dbPara.dbUsername, password = dbPara.dbPassword, host = dbPara.dbServerIp , database = dbPara.dataTable)
     # Connection must be buffered when executing multiple querys on DB before closing connection.
     mysqlPointer = mysqlConnector.cursor(buffered=True)
-    siteDataframe, bscPieChart, rncPieChart, ltePieChart = ran_functions.networkMapFunction(mysqlPointer, bscList, rncList, lteList, gateOneDropdown, gateTwoDropdown)
-    neOosList = []
-    # Check if dataframe is not empty first
-    if str(type(neOosListDataTableData)) != '<class \'NoneType\'>':
-        # Loop through current NE OOS list
-        for dic in neOosListDataTableData:
-            tmpNE = dic['NE']
-            # If the 2nd position is R or T, then we must remove the first 2 digits from the NE name (NR or LT scenarios)
-            if tmpNE[1] == 'R' or tmpNE[1] == 'T':
-                tmpNE = tmpNE[2:-1]
-            else:
-                tmpNE = tmpNE[1:-1]
-            neOosList.append(tmpNE)
-    # Add NE Status column
-    siteDataframe['oos_status'] = 'Online'
-    # Check in case there are no NE OOS
-    if len(neOosList) > 0:
-        for ne in neOosList:
-            for i in range(len(siteDataframe['site'])):
-                if siteDataframe['site'][i] == ne:
-                    siteDataframe['oos_status'][i] = 'Offline'
-    map = px.scatter_mapbox(siteDataframe, lat='lat', lon='lon', hover_name='site', hover_data=['bsc', 'rnc'], zoom=7.5, color='oos_status')
-    map.update_layout(
-        mapbox_style='open-street-map',
-        margin=dict(l=2, r=2, t=2, b=2),
-        height=650
+    if selectedTab == 'Network Overview':
+        # NE OOS Graph
+        startTime = (datetime.now() - timedelta(minutes=5)).strftime("%Y/%m/%d %H:%M:%S")
+        neOosLineChart = make_subplots(rows = 1, cols = 1, shared_xaxes = True, shared_yaxes = True)
+        neOosPieChart, neOosLineChart, hiddenNeOosLineChartDatatableValue, neOosListDataTableData = ran_functions.neOosGraph(mysqlPointer, startTime, neOosLineChart, hiddenNeOosLineChartDatatableValue)
+        neOosPieChart.update_layout(
+            plot_bgcolor='#000000', 
+            paper_bgcolor='#000000', 
+            font_color='#FFFFFF', 
+            title_font_size=graphTitleFontSize, 
+            font_size=12, 
+            title='NE OOS Chart', 
+            margin=dict(l=10, r=10, t=40, b=10), 
+            legend=dict(orientation='h')
         )
-    map.update_traces(marker=dict(size=10))
-    bscPieChart.update_layout(
-        plot_bgcolor='#000000', 
-        paper_bgcolor='#000000', 
-        font_color='#FFFFFF', 
-        title_font_size=graphTitleFontSize, 
-        font_size=12, 
-        title='GSM Distribution Chart', 
-        margin=dict(l=10, r=10, t=40, b=10)
-    )
-    bscPieChart.update_traces(
-        textinfo = 'value+percent',
-        hoverinfo = 'all'
-    )
-    rncPieChart.update_layout(
-        plot_bgcolor='#000000', 
-        paper_bgcolor='#000000', 
-        font_color='#FFFFFF', 
-        title_font_size=graphTitleFontSize, 
-        font_size=12, 
-        title='UMTS Distribution Chart', 
-        margin=dict(l=10, r=10, t=40, b=10)
-    )
-    rncPieChart.update_traces(
-        textinfo = 'value+percent',
-        hoverinfo = 'all'
-    )
-    ltePieChart.update_layout(
-        plot_bgcolor='#000000', 
-        paper_bgcolor='#000000', 
-        font_color='#FFFFFF', 
-        title_font_size=graphTitleFontSize, 
-        font_size=12, 
-        title='LTE Band Distribution Chart', 
-        margin=dict(l=10, r=10, t=40, b=10)
-    )
-    ltePieChart.update_traces(
-        textinfo = 'value+percent',
-        hoverinfo = 'all'
-    )
-    # Close DB connection
-    mysqlPointer.close()
-    mysqlConnector.close()
-    return map, bscPieChart, rncPieChart, ltePieChart
+        neOosPieChart.update_traces(
+            textinfo = 'value',
+            hoverinfo = 'all'
+        )
+        siteDataframe, bscPieChart, rncPieChart, ltePieChart = ran_functions.networkMapFunction(mysqlPointer, bscList, rncList, lteList, gateOneDropdown, gateTwoDropdown)
+        neOosList = []
+        # Check if dataframe is not empty first
+        if str(type(neOosListDataTableData)) != '<class \'NoneType\'>':
+            # Loop through current NE OOS list
+            for dic in neOosListDataTableData:
+                tmpNE = dic['NE']
+                # If the 2nd position is R or T, then we must remove the first 2 digits from the NE name (NR or LT scenarios)
+                if tmpNE[1] == 'R' or tmpNE[1] == 'T':
+                    tmpNE = tmpNE[2:-1]
+                else:
+                    tmpNE = tmpNE[1:-1]
+                neOosList.append(tmpNE)
+        # Add NE Status column
+        siteDataframe['oos_status'] = 'Online'
+        # Check in case there are no NE OOS
+        if len(neOosList) > 0:
+            for ne in neOosList:
+                for i in range(len(siteDataframe['site'])):
+                    if siteDataframe['site'][i] == ne:
+                        siteDataframe['oos_status'][i] = 'Offline'
+        map = px.scatter_mapbox(siteDataframe, lat='lat', lon='lon', hover_name='site', hover_data=['bsc', 'rnc'], zoom=7, color='oos_status')
+        map.update_layout(
+            mapbox_style='open-street-map',
+            margin=dict(l=2, r=2, t=2, b=2)
+            #height=450
+            )
+        map.update_traces(marker=dict(size=10))
+        bscPieChart.update_layout(
+            plot_bgcolor='#000000', 
+            paper_bgcolor='#000000', 
+            font_color='#FFFFFF', 
+            title_font_size=graphTitleFontSize, 
+            font_size=12, 
+            title='GSM Distribution Chart', 
+            margin=dict(l=10, r=10, t=40, b=10)
+        )
+        bscPieChart.update_traces(
+            textinfo = 'value+percent',
+            hoverinfo = 'all'
+        )
+        rncPieChart.update_layout(
+            plot_bgcolor='#000000', 
+            paper_bgcolor='#000000', 
+            font_color='#FFFFFF', 
+            title_font_size=graphTitleFontSize, 
+            font_size=12, 
+            title='UMTS Distribution Chart', 
+            margin=dict(l=10, r=10, t=40, b=10)
+        )
+        rncPieChart.update_traces(
+            textinfo = 'value+percent',
+            hoverinfo = 'all'
+        )
+        ltePieChart.update_layout(
+            plot_bgcolor='#000000', 
+            paper_bgcolor='#000000', 
+            font_color='#FFFFFF', 
+            title_font_size=graphTitleFontSize, 
+            font_size=12, 
+            title='LTE Band Distribution Chart', 
+            margin=dict(l=10, r=10, t=40, b=10)
+        )
+        ltePieChart.update_traces(
+            textinfo = 'value+percent',
+            hoverinfo = 'all'
+        )
+        # Close DB connection
+        mysqlPointer.close()
+        mysqlConnector.close()
+        return map, bscPieChart, rncPieChart, ltePieChart, neOosPieChart
+    else:
+        # Close DB Connection
+        mysqlPointer.close()
+        mysqlConnector.close()
+        # Used in case there is no update needed on callback
+        raise PreventUpdate
 
 # Callback to update Engineering Dashboard Tab
 @app.callback(

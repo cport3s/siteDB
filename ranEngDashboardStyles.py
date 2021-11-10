@@ -48,7 +48,7 @@ class headerStyles():
 class networkOverviewTab():
     networkOverviewGridContainerStyle={
         'display': 'grid',
-        'gridTemplate': 'auto repeat(2, 1fr) / repeat(6, 1fr)',
+        'gridTemplate': 'auto / repeat(6, 1fr)',
         'width': '100%',
         'border': '1px solid white'
     }
@@ -82,23 +82,28 @@ class networkOverviewTab():
     }
 
     mapGridElement={
-        'grid-column': '1 / 7',
-        'grid-row': '2 / 4'
+        'grid-column': '1 / 5',
+        'grid-row': '2 / 3'
     }
 
     gsmDistGraphElement={
-        'grid-column': '1 / 3',
-        'grid-row': '4 / 5'
+        'grid-column': '5 / 7',
+        'grid-row': '2 / 3'
     }
 
     umtsDistGraphElement={
-        'grid-column': '3 / 5',
-        'grid-row': '4 / 5'
+        'grid-column': '5 / 7',
+        'grid-row': '3 / 4'
     }
 
     lteDistGraphElement={
-        'grid-column': '5 / 7',
-        'grid-row': '4 / 5'
+        'grid-column': '3 / 5',
+        'grid-row': '3 / 4'
+    }
+
+    neOosOverviewGraphElement={
+        'grid-column': '1 / 3',
+        'grid-row': '3 / 4'
     }
 
 class engDashboardTab():
