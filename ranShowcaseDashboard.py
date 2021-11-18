@@ -54,244 +54,244 @@ app.layout = html.Div(
         ),
         # Current KPI View
         html.Div(
-        id='currentKPIGridContainer',
-        style = gridContainerStyles.currentKPIGridContainer,
-        children = [
-            html.Div(
-                id = 'lteGeneralKPITable',
-                style=gridelementStyles.lteGeneralKPITableStyle,
-                children = [
-                    #html.H3('LTE General Network KPI'),
-                    dash_table.DataTable(
-                        id = 'ranReportLteTable',
-                        columns = ranReportLteColumns,
-                        data = ranReportLteTable.to_dict('records'),
-                        style_header = dataTableStyles.style_header,
-                        style_cell = dataTableStyles.style_cell,
-                        style_cell_conditional = [
-                            {
-                                'if':{'column_id':'KPI\\Object'},
-                                'textAlign':'left',
-                                'minWidth': dataTableObjectColumnWidth,
-                                'width': dataTableObjectColumnWidth,
-                                'maxWidth': dataTableObjectColumnWidth
-                            },
-                            {
-                                'if':{'column_id':'RAT'},
-                                'textAlign':'center',
-                                'minWidth': dataTableRatColumnWidth,
-                                'width': dataTableRatColumnWidth,
-                                'maxWidth': dataTableRatColumnWidth
-                            }
-                            ],
-                        style_data_conditional = [
-                            {
-                                # LTE DCR style rule
-                                'if':{'column_id':'Latest Hour', 'row_index':2, 'filter_query':'{Latest Hour} >= 0.13'},
-                                'backgroundColor':'red'
-                            },
-                            {
-                                # LTE RRC SSR style rule
-                                'if':{'column_id':'Latest Hour', 'row_index':3, 'filter_query':'{Latest Hour} < 99'},
-                                'backgroundColor':'red'
-                            },
-                            {
-                                # LTE eRAB SSR style rule
-                                'if':{'column_id':'Latest Hour', 'row_index':4, 'filter_query':'{Latest Hour} < 99'},
-                                'backgroundColor':'red'
-                            },
-                            {
-                                # VoLTE DCR style rule
-                                'if':{'column_id':'Latest Hour', 'row_index':10, 'filter_query':'{Latest Hour} >= 0.13'},
-                                'backgroundColor':'red'
-                            },
-                            {
-                                # VoLTE eRAB SSR style rule
-                                'if':{'column_id':'Latest Hour', 'row_index':12, 'filter_query':'{Latest Hour} < 99'},
-                                'backgroundColor':'red'
-                            }
-                        ]
-                    )
-                ]
-            ),
-            html.Div(
-                id = 'umtsGeneralKPITable',
-                style=gridelementStyles.umtsGeneralKPITableStyle,
-                children = [
-                    #html.H3('UMTS General Network KPI'), 
-                    dash_table.DataTable(
-                        id = 'ranReportUmtsTable',
-                        columns = ranReportUmtsColumns,
-                        data = ranReportUmtsTable.to_dict('records'),
-                        style_header = dataTableStyles.style_header,
-                        style_cell = dataTableStyles.style_cell,
-                        style_cell_conditional = [
-                            {
-                                'if':{'column_id':'KPI\\Object'},
-                                'textAlign':'left',
-                                'minWidth': dataTableObjectColumnWidth,
-                                'width': dataTableObjectColumnWidth,
-                                'maxWidth': dataTableObjectColumnWidth
-                            },
-                            {
-                                'if':{'column_id':'RAT'},
-                                'textAlign':'center',
-                                'minWidth': dataTableRatColumnWidth,
-                                'width': dataTableRatColumnWidth,
-                                'maxWidth': dataTableRatColumnWidth
-                            }
-                            ],
-                        style_data_conditional = [
-                            {
-                                # HSDPA DCR style rule
-                                'if':{'column_id':'Latest Hour', 'row_index':2, 'filter_query':'{Latest Hour} >= 0.17'},
-                                'backgroundColor':'red'
-                            },
-                            {
-                                # HSUPA DCR style rule
-                                'if':{'column_id':'Latest Hour', 'row_index':3, 'filter_query':'{Latest Hour} >= 0.17'},
-                                'backgroundColor':'red'
-                            },
-                            {
-                                # UMTS DCR style rule
-                                'if':{'column_id':'Latest Hour', 'row_index':4, 'filter_query':'{Latest Hour} >= 0.17'},
-                                'backgroundColor':'red'
-                            },
-                            {
-                                # HSDPA CSSR style rule
-                                'if':{'column_id':'Latest Hour', 'row_index':5, 'filter_query':'{Latest Hour} < 99.87'},
-                                'backgroundColor':'red'
-                            },
-                            {
-                                # HSUPA CSSR style rule
-                                'if':{'column_id':'Latest Hour', 'row_index':6, 'filter_query':'{Latest Hour} < 99.87'},
-                                'backgroundColor':'red'
-                            },
-                            {
-                                # UMTS CSSR style rule
-                                'if':{'column_id':'Latest Hour', 'row_index':7, 'filter_query':'{Latest Hour} < 99.87'},
-                                'backgroundColor':'red'
-                            }
-                        ]
-                    )
-                ]
-            ), 
-            html.Div(
-                id = 'gsmGeneralKPITable',
-                style=gridelementStyles.gsmGeneralKPITableStyle,
-                children = [
-                    #html.H3('GSM General Network KPI'),
-                    dash_table.DataTable(
-                        id = 'ranReportGsmTable',
-                        columns = ranReportGsmColumns,
-                        data = ranReportGsmTable.to_dict('records'),
-                        style_header = dataTableStyles.style_header,
-                        style_cell = dataTableStyles.style_cell,
-                        style_cell_conditional = [
-                            {
-                                'if':{'column_id':'KPI\\Object'},
-                                'textAlign':'left',
-                                'minWidth': dataTableObjectColumnWidth,
-                                'width': dataTableObjectColumnWidth,
-                                'maxWidth': dataTableObjectColumnWidth
-                            },
-                            {
-                                'if':{'column_id':'RAT'},
-                                'textAlign':'center',
-                                'minWidth': dataTableRatColumnWidth,
-                                'width': dataTableRatColumnWidth,
-                                'maxWidth': dataTableRatColumnWidth
-                            }
-                            ],
-                        style_data_conditional = [
-                            {
-                                # GSM CS DCR style rule
-                                'if':{'column_id':'Latest Hour', 'row_index':1, 'filter_query':'{Latest Hour} < 99.87'},
-                                'backgroundColor':'red'
-                            },
-                            {
-                                # GSM CS CSSR style rule
-                                'if':{'column_id':'Latest Hour', 'row_index':2, 'filter_query':'{Latest Hour} >= 0.3'},
-                                'backgroundColor':'red'
-                            }
-                        ]
-                    )
-                ]
-            )
-        ]
+            id='currentKPIGridContainer',
+            style = gridContainerStyles.currentKPIGridContainer,
+            children = [
+                html.Div(
+                    id = 'lteGeneralKPITable',
+                    style=gridelementStyles.lteGeneralKPITableStyle,
+                    children = [
+                        #html.H3('LTE General Network KPI'),
+                        dash_table.DataTable(
+                            id = 'ranReportLteTable',
+                            columns = ranReportLteColumns,
+                            data = ranReportLteTable.to_dict('records'),
+                            style_header = dataTableStyles.style_header,
+                            style_cell = dataTableStyles.style_cell,
+                            style_cell_conditional = [
+                                {
+                                    'if':{'column_id':'KPI\\Object'},
+                                    'textAlign':'left',
+                                    'minWidth': dataTableObjectColumnWidth,
+                                    'width': dataTableObjectColumnWidth,
+                                    'maxWidth': dataTableObjectColumnWidth
+                                },
+                                {
+                                    'if':{'column_id':'RAT'},
+                                    'textAlign':'center',
+                                    'minWidth': dataTableRatColumnWidth,
+                                    'width': dataTableRatColumnWidth,
+                                    'maxWidth': dataTableRatColumnWidth
+                                }
+                                ],
+                            style_data_conditional = [
+                                {
+                                    # LTE DCR style rule
+                                    'if':{'column_id':'Latest Hour', 'row_index':2, 'filter_query':'{Latest Hour} >= 0.13'},
+                                    'backgroundColor':'red'
+                                },
+                                {
+                                    # LTE RRC SSR style rule
+                                    'if':{'column_id':'Latest Hour', 'row_index':3, 'filter_query':'{Latest Hour} < 99'},
+                                    'backgroundColor':'red'
+                                },
+                                {
+                                    # LTE eRAB SSR style rule
+                                    'if':{'column_id':'Latest Hour', 'row_index':4, 'filter_query':'{Latest Hour} < 99'},
+                                    'backgroundColor':'red'
+                                },
+                                {
+                                    # VoLTE DCR style rule
+                                    'if':{'column_id':'Latest Hour', 'row_index':10, 'filter_query':'{Latest Hour} >= 0.13'},
+                                    'backgroundColor':'red'
+                                },
+                                {
+                                    # VoLTE eRAB SSR style rule
+                                    'if':{'column_id':'Latest Hour', 'row_index':12, 'filter_query':'{Latest Hour} < 99'},
+                                    'backgroundColor':'red'
+                                }
+                            ]
+                        )
+                    ]
+                ),
+                html.Div(
+                    id = 'umtsGeneralKPITable',
+                    style=gridelementStyles.umtsGeneralKPITableStyle,
+                    children = [
+                        #html.H3('UMTS General Network KPI'), 
+                        dash_table.DataTable(
+                            id = 'ranReportUmtsTable',
+                            columns = ranReportUmtsColumns,
+                            data = ranReportUmtsTable.to_dict('records'),
+                            style_header = dataTableStyles.style_header,
+                            style_cell = dataTableStyles.style_cell,
+                            style_cell_conditional = [
+                                {
+                                    'if':{'column_id':'KPI\\Object'},
+                                    'textAlign':'left',
+                                    'minWidth': dataTableObjectColumnWidth,
+                                    'width': dataTableObjectColumnWidth,
+                                    'maxWidth': dataTableObjectColumnWidth
+                                },
+                                {
+                                    'if':{'column_id':'RAT'},
+                                    'textAlign':'center',
+                                    'minWidth': dataTableRatColumnWidth,
+                                    'width': dataTableRatColumnWidth,
+                                    'maxWidth': dataTableRatColumnWidth
+                                }
+                                ],
+                            style_data_conditional = [
+                                {
+                                    # HSDPA DCR style rule
+                                    'if':{'column_id':'Latest Hour', 'row_index':2, 'filter_query':'{Latest Hour} >= 0.17'},
+                                    'backgroundColor':'red'
+                                },
+                                {
+                                    # HSUPA DCR style rule
+                                    'if':{'column_id':'Latest Hour', 'row_index':3, 'filter_query':'{Latest Hour} >= 0.17'},
+                                    'backgroundColor':'red'
+                                },
+                                {
+                                    # UMTS DCR style rule
+                                    'if':{'column_id':'Latest Hour', 'row_index':4, 'filter_query':'{Latest Hour} >= 0.17'},
+                                    'backgroundColor':'red'
+                                },
+                                {
+                                    # HSDPA CSSR style rule
+                                    'if':{'column_id':'Latest Hour', 'row_index':5, 'filter_query':'{Latest Hour} < 99.87'},
+                                    'backgroundColor':'red'
+                                },
+                                {
+                                    # HSUPA CSSR style rule
+                                    'if':{'column_id':'Latest Hour', 'row_index':6, 'filter_query':'{Latest Hour} < 99.87'},
+                                    'backgroundColor':'red'
+                                },
+                                {
+                                    # UMTS CSSR style rule
+                                    'if':{'column_id':'Latest Hour', 'row_index':7, 'filter_query':'{Latest Hour} < 99.87'},
+                                    'backgroundColor':'red'
+                                }
+                            ]
+                        )
+                    ]
+                ), 
+                html.Div(
+                    id = 'gsmGeneralKPITable',
+                    style=gridelementStyles.gsmGeneralKPITableStyle,
+                    children = [
+                        #html.H3('GSM General Network KPI'),
+                        dash_table.DataTable(
+                            id = 'ranReportGsmTable',
+                            columns = ranReportGsmColumns,
+                            data = ranReportGsmTable.to_dict('records'),
+                            style_header = dataTableStyles.style_header,
+                            style_cell = dataTableStyles.style_cell,
+                            style_cell_conditional = [
+                                {
+                                    'if':{'column_id':'KPI\\Object'},
+                                    'textAlign':'left',
+                                    'minWidth': dataTableObjectColumnWidth,
+                                    'width': dataTableObjectColumnWidth,
+                                    'maxWidth': dataTableObjectColumnWidth
+                                },
+                                {
+                                    'if':{'column_id':'RAT'},
+                                    'textAlign':'center',
+                                    'minWidth': dataTableRatColumnWidth,
+                                    'width': dataTableRatColumnWidth,
+                                    'maxWidth': dataTableRatColumnWidth
+                                }
+                                ],
+                            style_data_conditional = [
+                                {
+                                    # GSM CS DCR style rule
+                                    'if':{'column_id':'Latest Hour', 'row_index':1, 'filter_query':'{Latest Hour} < 99.87'},
+                                    'backgroundColor':'red'
+                                },
+                                {
+                                    # GSM CS CSSR style rule
+                                    'if':{'column_id':'Latest Hour', 'row_index':2, 'filter_query':'{Latest Hour} >= 0.3'},
+                                    'backgroundColor':'red'
+                                }
+                            ]
+                        )
+                    ]
+                )
+            ]
         ),
         # GSM Graph View
         html.Div(
-        id='gsmGraphGridContainer',
-        style=gridContainerStyles.gsmGraphGridContainerStyle,
-        children=[
-            dcc.Graph(
-                id='gsmCsCssr',
-                style=gridelementStyles.gsmCsCssrStyle
-            ),
-            dcc.Graph(
-                id='gsmPsCssr',
-                style=gridelementStyles.gsmPsCssrStyle
-            ),
-            dcc.Graph(
-                id='gsmCsDcr',
-                style=gridelementStyles.gsmCsDcrStyle
-            )
-        ]
+            id='gsmGraphGridContainer',
+            style=gridContainerStyles.gsmGraphGridContainerStyle,
+            children=[
+                dcc.Graph(
+                    id='gsmCsCssr',
+                    style=gridelementStyles.gsmCsCssrStyle
+                ),
+                dcc.Graph(
+                    id='gsmPsCssr',
+                    style=gridelementStyles.gsmPsCssrStyle
+                ),
+                dcc.Graph(
+                    id='gsmCsDcr',
+                    style=gridelementStyles.gsmCsDcrStyle
+                )
+            ]
         ),
         # UMTS Graph View
         html.Div(
-        id='umtsGraphGridContainer',
-        style=gridContainerStyles.umtsGraphGridContainerStyle,
-        children=[
-            dcc.Graph(
-                id='umtsDcr',
-                style=gridelementStyles.umtsDcrStyle
-            ),
-            dcc.Graph(
-                id='hsdpaDcr',
-                style=gridelementStyles.hsdpaDcrStyle
-            ),
-            dcc.Graph(
-                id='hsupaDcr',
-                style=gridelementStyles.hsupaDcrStyle
-            ),
-            dcc.Graph(
-                id='umtsCssr',
-                style=gridelementStyles.umtsCssrStyle
-            ),
-            dcc.Graph(
-                id='hsdpaCssr',
-                style=gridelementStyles.hsdpaCssrStyle
-            ),
-            dcc.Graph(
-                id='hsupaCssr',
-                style=gridelementStyles.hsupaCssrStyle
-            )
-        ]
+            id='umtsGraphGridContainer',
+            style=gridContainerStyles.umtsGraphGridContainerStyle,
+            children=[
+                dcc.Graph(
+                    id='umtsDcr',
+                    style=gridelementStyles.umtsDcrStyle
+                ),
+                dcc.Graph(
+                    id='hsdpaDcr',
+                    style=gridelementStyles.hsdpaDcrStyle
+                ),
+                dcc.Graph(
+                    id='hsupaDcr',
+                    style=gridelementStyles.hsupaDcrStyle
+                ),
+                dcc.Graph(
+                    id='umtsCssr',
+                    style=gridelementStyles.umtsCssrStyle
+                ),
+                dcc.Graph(
+                    id='hsdpaCssr',
+                    style=gridelementStyles.hsdpaCssrStyle
+                ),
+                dcc.Graph(
+                    id='hsupaCssr',
+                    style=gridelementStyles.hsupaCssrStyle
+                )
+            ]
         ),
         # LTE Graph View
         html.Div(
-        id='lteGraphGridContainer',
-        style=gridContainerStyles.lteGraphGridContainerStyle,
-        children=[
-            dcc.Graph(
-                id='lteVolteCssr',
-                style=gridelementStyles.lteVolteCssrStyle
-            ),
-            dcc.Graph(
-                id='lteDataCssr',
-                style=gridelementStyles.lteDataCssrStyle
-            ),
-            dcc.Graph(
-                id='lteVolteDcr',
-                style=gridelementStyles.lteVolteDcrStyle
-            ),
-            dcc.Graph(
-                id='lteDataDcr',
-                style=gridelementStyles.lteDataDcrStyle
-            )
-        ]
+            id='lteGraphGridContainer',
+            style=gridContainerStyles.lteGraphGridContainerStyle,
+            children=[
+                dcc.Graph(
+                    id='lteVolteCssr',
+                    style=gridelementStyles.lteVolteCssrStyle
+                ),
+                dcc.Graph(
+                    id='lteDataCssr',
+                    style=gridelementStyles.lteDataCssrStyle
+                ),
+                dcc.Graph(
+                    id='lteVolteDcr',
+                    style=gridelementStyles.lteVolteDcrStyle
+                ),
+                dcc.Graph(
+                    id='lteDataDcr',
+                    style=gridelementStyles.lteDataDcrStyle
+                )
+            ]
         ),
         dcc.Interval(
             id='graphUpateInterval',
@@ -588,7 +588,6 @@ def updateDatatable(currentInterval, weeklyInterval):
             # If the file date is within the last 7 days, then get the complete filepath
             if currentFileDate > (datetime.now() - timedelta(days=7)):
                 latestWeeklyRanReport = weeklyKPIGridFilePath + file
-                #print(latestWeeklyRanReport)
         currentWeekNum = 'Week-' + str(currentFileDate.isocalendar()[1])
         #ranReportLteTable[currentWeekNum] = ''
         ranReportLteTableTmp = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, weeklyKPIGridFilePath, latestWeeklyRanReport), sheet_name='4G Whole Network')
@@ -645,6 +644,7 @@ def updateView(currentInterval):
     gsmGraphGridContainer = gridContainerStyles.gsmGraphGridContainerStyle
     umtsGraphGridContainer = gridContainerStyles.umtsGraphGridContainerStyle
     lteGraphGridContainer = gridContainerStyles.lteGraphGridContainerStyle
+    # We use % to count the cycle
     if currentInterval % 4 == 0:
         currentKPIGridContainer['display'] = 'grid'
         gsmGraphGridContainer['display'] = 'none'
@@ -669,4 +669,3 @@ def updateView(currentInterval):
 
 if __name__ == '__main__':
     app.run_server(debug=True, host='0.0.0.0', port='5005', dev_tools_silence_routes_logging=False)
-    #app.run_server(debug=True, host='0.0.0.0', port='5005')
