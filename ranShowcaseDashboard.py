@@ -599,31 +599,31 @@ def updateDatatable(currentInterval, weeklyInterval):
         # Read UMTS Data
         ranReportUmtsTableTmp = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, weeklyKPIGridFilePath, latestWeeklyRanReport), sheet_name='3G Whole Network')
         # Adjust data
-        ranReportUmtsTable[currentWeekNum][0] = ranReportUmtsTableTmp['PS Traffic'].sum()
-        ranReportUmtsTable[currentWeekNum][1] = ranReportUmtsTableTmp['CS Traffic(Erl)'].sum()
-        ranReportUmtsTable[currentWeekNum][2] = ranReportUmtsTableTmp['HSDPA DCR(%)'].mean()
-        ranReportUmtsTable[currentWeekNum][3] = ranReportUmtsTableTmp['HSUPA DCR(%)'].mean()
-        ranReportUmtsTable[currentWeekNum][4] = ranReportUmtsTableTmp['CS DCR(%)'].mean()
-        ranReportUmtsTable[currentWeekNum][5] = ranReportUmtsTableTmp['HSDPA CSSR(%)'].mean()
-        ranReportUmtsTable[currentWeekNum][6] = ranReportUmtsTableTmp['HSUPA CSSR(%)'].mean()
-        ranReportUmtsTable[currentWeekNum][7] = ranReportUmtsTableTmp['CS CSSR'].mean()
-        ranReportUmtsTable[currentWeekNum][8] = ranReportUmtsTableTmp['HSDPA Users'].sum()
-        ranReportUmtsTable[currentWeekNum][9] = ranReportUmtsTableTmp['DL Throughput(kbit/s)'].mean()
-        ranReportUmtsTable[currentWeekNum][10] = ranReportUmtsTableTmp['CSSR CSFB(%)'].mean()
-        ranReportUmtsTable[currentWeekNum][11] = ranReportUmtsTableTmp['MOC CSFB SR(%)'].mean()
-        ranReportUmtsTable[currentWeekNum][12] = ranReportUmtsTableTmp['MTC CSFB SR(%)'].mean()
+        ranReportUmtsTable[currentWeekNum][0].append(ranReportUmtsTableTmp['PS Traffic'].sum())
+        ranReportUmtsTable[currentWeekNum][1].append(ranReportUmtsTableTmp['CS Traffic(Erl)'].sum())
+        ranReportUmtsTable[currentWeekNum][2].append(ranReportUmtsTableTmp['HSDPA DCR(%)'].mean())
+        ranReportUmtsTable[currentWeekNum][3].append(ranReportUmtsTableTmp['HSUPA DCR(%)'].mean())
+        ranReportUmtsTable[currentWeekNum][4].append(ranReportUmtsTableTmp['CS DCR(%)'].mean())
+        ranReportUmtsTable[currentWeekNum][5].append(ranReportUmtsTableTmp['HSDPA CSSR(%)'].mean())
+        ranReportUmtsTable[currentWeekNum][6].append(ranReportUmtsTableTmp['HSUPA CSSR(%)'].mean())
+        ranReportUmtsTable[currentWeekNum][7].append(ranReportUmtsTableTmp['CS CSSR'].mean())
+        ranReportUmtsTable[currentWeekNum][8].append(ranReportUmtsTableTmp['HSDPA Users'].sum())
+        ranReportUmtsTable[currentWeekNum][9].append(ranReportUmtsTableTmp['DL Throughput(kbit/s)'].mean())
+        ranReportUmtsTable[currentWeekNum][10].append(ranReportUmtsTableTmp['CSSR CSFB(%)'].mean())
+        ranReportUmtsTable[currentWeekNum][11].append(ranReportUmtsTableTmp['MOC CSFB SR(%)'].mean())
+        ranReportUmtsTable[currentWeekNum][12].append(ranReportUmtsTableTmp['MTC CSFB SR(%)'].mean())
         # Add new column to DF
-        ranReportGsmTable[currentWeekNum] = ''
+        ranReportGsmTable[currentWeekNum] = []
         # Read GSM Data
         ranReportGsmTableTmp = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, weeklyKPIGridFilePath, latestWeeklyRanReport), sheet_name='2G Whole Network')
         # Adjust data
-        ranReportGsmTable[currentWeekNum][0] = ranReportGsmTableTmp['CS Traffic(Erl)'].sum()
-        ranReportGsmTable[currentWeekNum][1] = ranReportGsmTableTmp['CS CSSR'].mean()
-        ranReportGsmTable[currentWeekNum][2] = ranReportGsmTableTmp['CS DCR'].mean()
-        ranReportGsmTable[currentWeekNum][3] = ranReportGsmTableTmp['TCH Client Perceived Congestion'].mean()
-        ranReportGsmTable[currentWeekNum][4] = ranReportGsmTableTmp['RA333A:BSS Call Establishment Success Rate(%)'].mean()
-        ranReportGsmTable[currentWeekNum][5] = ranReportGsmTableTmp['PS Traffic'].sum()
-        ranReportGsmTable[currentWeekNum][6] = ranReportGsmTableTmp['PS CSSR'].mean()
+        ranReportGsmTable[currentWeekNum][0].append(ranReportGsmTableTmp['CS Traffic(Erl)'].sum())
+        ranReportGsmTable[currentWeekNum][1].append(ranReportGsmTableTmp['CS CSSR'].mean())
+        ranReportGsmTable[currentWeekNum][2].append(ranReportGsmTableTmp['CS DCR'].mean())
+        ranReportGsmTable[currentWeekNum][3].append(ranReportGsmTableTmp['TCH Client Perceived Congestion'].mean())
+        ranReportGsmTable[currentWeekNum][4].append(ranReportGsmTableTmp['RA333A:BSS Call Establishment Success Rate(%)'].mean())
+        ranReportGsmTable[currentWeekNum][5].append(ranReportGsmTableTmp['PS Traffic'].sum())
+        ranReportGsmTable[currentWeekNum][6].append(ranReportGsmTableTmp['PS CSSR'].mean())
     # Format columns data
     ranReportLteColumns = [{'name': i, 'id': i} for i in ranReportLteTable.columns]
     ranReportUmtsColumns = [{'name': i, 'id': i} for i in ranReportUmtsTable.columns]
