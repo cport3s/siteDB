@@ -595,7 +595,7 @@ def updateDatatable(currentInterval, weeklyInterval):
         ranReportLteTableTmp = ranReportLteTableTmp.drop('Integrity', axis=1)
         ranReportLteTable[currentWeekNum] = list(ranReportLteTableTmp.iloc[0])
         # Add new column to DF
-        ranReportUmtsTable[currentWeekNum] = ''
+        ranReportUmtsTable[currentWeekNum] = []
         # Read UMTS Data
         ranReportUmtsTableTmp = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, weeklyKPIGridFilePath, latestWeeklyRanReport), sheet_name='3G Whole Network')
         # Adjust data
