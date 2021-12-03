@@ -1,7 +1,7 @@
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 import dash_table
 from plotly.subplots import make_subplots
 import pandas as pd
@@ -61,11 +61,10 @@ app.layout = html.Div(
                     id = 'lteGeneralKPITable',
                     style=gridelementStyles.lteGeneralKPITableStyle,
                     children = [
-                        #html.H3('LTE General Network KPI'),
                         dash_table.DataTable(
                             id = 'ranReportLteTable',
-                            columns = ranReportLteColumns,
-                            data = ranReportLteTable.to_dict('records'),
+                            #columns = ranReportLteColumns,
+                            #data = ranReportLteTable.to_dict('records'),
                             style_header = dataTableStyles.style_header,
                             style_cell = dataTableStyles.style_cell,
                             style_cell_conditional = [
@@ -118,11 +117,10 @@ app.layout = html.Div(
                     id = 'umtsGeneralKPITable',
                     style=gridelementStyles.umtsGeneralKPITableStyle,
                     children = [
-                        #html.H3('UMTS General Network KPI'), 
                         dash_table.DataTable(
                             id = 'ranReportUmtsTable',
-                            columns = ranReportUmtsColumns,
-                            data = ranReportUmtsTable.to_dict('records'),
+                            #columns = ranReportUmtsColumns,
+                            #data = ranReportUmtsTable.to_dict('records'),
                             style_header = dataTableStyles.style_header,
                             style_cell = dataTableStyles.style_cell,
                             style_cell_conditional = [
@@ -180,11 +178,10 @@ app.layout = html.Div(
                     id = 'gsmGeneralKPITable',
                     style=gridelementStyles.gsmGeneralKPITableStyle,
                     children = [
-                        #html.H3('GSM General Network KPI'),
                         dash_table.DataTable(
                             id = 'ranReportGsmTable',
-                            columns = ranReportGsmColumns,
-                            data = ranReportGsmTable.to_dict('records'),
+                            #columns = ranReportGsmColumns,
+                            #data = ranReportGsmTable.to_dict('records'),
                             style_header = dataTableStyles.style_header,
                             style_cell = dataTableStyles.style_cell,
                             style_cell_conditional = [
@@ -302,13 +299,15 @@ app.layout = html.Div(
         dcc.Interval(
             id='viewUpateInterval',
             # interval is expressed in milliseconds (evey 1min)
-            interval=20*1000, 
+            #interval=20*1000,
+            interval=2000*1000,
             n_intervals=0
         ),
         dcc.Interval(
             id='currentKPIWeeklyInterval',
             # interval is expressed in milliseconds (evey 1min)
-            interval=10800*1000, 
+            #interval=10800*1000,
+            interval=10*1000,
             n_intervals=0
         )
     ]
@@ -520,9 +519,14 @@ def updateGraph(currentInterval):
         Input('viewUpateInterval', 'n_intervals'),
         # Triggered by the weekly update interval
         Input('currentKPIWeeklyInterval', 'n_intervals')
+    ],
+    [
+        State('ranReportLteTable', 'data'),
+        State('ranReportUmtsTable', 'data'),
+        State('ranReportGsmTable', 'data')
     ]
 )
-def updateDatatable(currentInterval, weeklyInterval):
+def updateDatatable(currentInterval, weeklyInterval, ranReportLteTableStateData, ranReportUmtsTableStateData, ranReportGsmTableStateData):
     currentDateTime = str(datetime.now().strftime('%Y%m%d%H%M'))
     # Instantiate the callback context, to find the button ID that triggered the callback
     callbackContext = dash.callback_context
@@ -589,41 +593,45 @@ def updateDatatable(currentInterval, weeklyInterval):
             if currentFileDate > (datetime.now() - timedelta(days=7)):
                 latestWeeklyRanReport = weeklyKPIGridFilePath + file
         currentWeekNum = 'Week-' + str(currentFileDate.isocalendar()[1])
-        #ranReportLteTable[currentWeekNum] = ''
+        # Add new column to DF
+        #ranReportLteTable[currentWeekNum] = []
+        #ranReportUmtsTable[currentWeekNum] = []
+        #ranReportGsmTable[currentWeekNum] = []
         ranReportLteTableTmp = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, weeklyKPIGridFilePath, latestWeeklyRanReport), sheet_name='4G Whole Network')
         # Drop columns
         ranReportLteTableTmp = ranReportLteTableTmp.drop('Integrity', axis=1)
+        # Assign new list to currentWeekNum column on df
         ranReportLteTable[currentWeekNum] = list(ranReportLteTableTmp.iloc[0])
-        # Add new column to DF
-        ranReportUmtsTable[currentWeekNum] = []
         # Read UMTS Data
         ranReportUmtsTableTmp = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, weeklyKPIGridFilePath, latestWeeklyRanReport), sheet_name='3G Whole Network')
         # Adjust data
-        ranReportUmtsTable[currentWeekNum][0].append(ranReportUmtsTableTmp['PS Traffic'].sum())
-        ranReportUmtsTable[currentWeekNum][1].append(ranReportUmtsTableTmp['CS Traffic(Erl)'].sum())
-        ranReportUmtsTable[currentWeekNum][2].append(ranReportUmtsTableTmp['HSDPA DCR(%)'].mean())
-        ranReportUmtsTable[currentWeekNum][3].append(ranReportUmtsTableTmp['HSUPA DCR(%)'].mean())
-        ranReportUmtsTable[currentWeekNum][4].append(ranReportUmtsTableTmp['CS DCR(%)'].mean())
-        ranReportUmtsTable[currentWeekNum][5].append(ranReportUmtsTableTmp['HSDPA CSSR(%)'].mean())
-        ranReportUmtsTable[currentWeekNum][6].append(ranReportUmtsTableTmp['HSUPA CSSR(%)'].mean())
-        ranReportUmtsTable[currentWeekNum][7].append(ranReportUmtsTableTmp['CS CSSR'].mean())
-        ranReportUmtsTable[currentWeekNum][8].append(ranReportUmtsTableTmp['HSDPA Users'].sum())
-        ranReportUmtsTable[currentWeekNum][9].append(ranReportUmtsTableTmp['DL Throughput(kbit/s)'].mean())
-        ranReportUmtsTable[currentWeekNum][10].append(ranReportUmtsTableTmp['CSSR CSFB(%)'].mean())
-        ranReportUmtsTable[currentWeekNum][11].append(ranReportUmtsTableTmp['MOC CSFB SR(%)'].mean())
-        ranReportUmtsTable[currentWeekNum][12].append(ranReportUmtsTableTmp['MTC CSFB SR(%)'].mean())
-        # Add new column to DF
-        ranReportGsmTable[currentWeekNum] = []
+        tmpList = []
+        tmpList.append(ranReportUmtsTableTmp['PS Traffic'].sum())
+        tmpList.append(ranReportUmtsTableTmp['CS Traffic(Erl)'].sum())
+        tmpList.append(ranReportUmtsTableTmp['HSDPA DCR(%)'].mean())
+        tmpList.append(ranReportUmtsTableTmp['HSUPA DCR(%)'].mean())
+        tmpList.append(ranReportUmtsTableTmp['CS DCR(%)'].mean())
+        tmpList.append(ranReportUmtsTableTmp['HSDPA CSSR(%)'].mean())
+        tmpList.append(ranReportUmtsTableTmp['HSUPA CSSR(%)'].mean())
+        tmpList.append(ranReportUmtsTableTmp['CS CSSR'].mean())
+        tmpList.append(ranReportUmtsTableTmp['HSDPA Users'].sum())
+        tmpList.append(ranReportUmtsTableTmp['DL Throughput(kbit/s)'].mean())
+        tmpList.append(ranReportUmtsTableTmp['CSSR CSFB(%)'].mean())
+        tmpList.append(ranReportUmtsTableTmp['MOC CSFB SR(%)'].mean())
+        tmpList.append(ranReportUmtsTableTmp['MTC CSFB SR(%)'].mean())
+        ranReportUmtsTable[currentWeekNum] = tmpList
         # Read GSM Data
         ranReportGsmTableTmp = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, weeklyKPIGridFilePath, latestWeeklyRanReport), sheet_name='2G Whole Network')
         # Adjust data
-        ranReportGsmTable[currentWeekNum][0].append(ranReportGsmTableTmp['CS Traffic(Erl)'].sum())
-        ranReportGsmTable[currentWeekNum][1].append(ranReportGsmTableTmp['CS CSSR'].mean())
-        ranReportGsmTable[currentWeekNum][2].append(ranReportGsmTableTmp['CS DCR'].mean())
-        ranReportGsmTable[currentWeekNum][3].append(ranReportGsmTableTmp['TCH Client Perceived Congestion'].mean())
-        ranReportGsmTable[currentWeekNum][4].append(ranReportGsmTableTmp['RA333A:BSS Call Establishment Success Rate(%)'].mean())
-        ranReportGsmTable[currentWeekNum][5].append(ranReportGsmTableTmp['PS Traffic'].sum())
-        ranReportGsmTable[currentWeekNum][6].append(ranReportGsmTableTmp['PS CSSR'].mean())
+        tmpList = []
+        tmpList.append(ranReportGsmTableTmp['CS Traffic(Erl)'].sum())
+        tmpList.append(ranReportGsmTableTmp['CS CSSR'].mean())
+        tmpList.append(ranReportGsmTableTmp['CS DCR'].mean())
+        tmpList.append(ranReportGsmTableTmp['TCH Client Perceived Congestion'].mean())
+        tmpList.append(ranReportGsmTableTmp['RA333A:BSS Call Establishment Success Rate(%)'].mean())
+        tmpList.append(ranReportGsmTableTmp['PS Traffic'].sum())
+        tmpList.append(ranReportGsmTableTmp['PS CSSR'].mean())
+        ranReportGsmTable[currentWeekNum] = tmpList
     # Format columns data
     ranReportLteColumns = [{'name': i, 'id': i} for i in ranReportLteTable.columns]
     ranReportUmtsColumns = [{'name': i, 'id': i} for i in ranReportUmtsTable.columns]
