@@ -6,9 +6,7 @@ import dash_table
 from plotly.subplots import make_subplots
 import pandas as pd
 import mysql.connector
-import numpy as np
 from datetime import datetime, timedelta
-import os
 from dash.exceptions import PreventUpdate
 # Custom libraries
 import classes
@@ -18,8 +16,9 @@ import ran_functions
 app = dash.Dash(__name__, title='RAN-Ops Dashboard')
 server = app.server
 
-dataTableObjectColumnWidth = '430px'
+dataTableObjectColumnWidth = '400px'
 dataTableRatColumnWidth = '50px'
+dataTableThresholdColumnWidth = '130px'
 
 # DB Connection Parameters
 dbPara = classes.dbCredentials()
@@ -63,8 +62,6 @@ app.layout = html.Div(
                     children = [
                         dash_table.DataTable(
                             id = 'ranReportLteTable',
-                            #columns = ranReportLteColumns,
-                            #data = ranReportLteTable.to_dict('records'),
                             style_header = dataTableStyles.style_header,
                             style_cell = dataTableStyles.style_cell,
                             style_cell_conditional = [
@@ -81,6 +78,13 @@ app.layout = html.Div(
                                     'minWidth': dataTableRatColumnWidth,
                                     'width': dataTableRatColumnWidth,
                                     'maxWidth': dataTableRatColumnWidth
+                                },
+                                {
+                                    'if':{'column_id':'Threshold'},
+                                    'textAlign':'center',
+                                    'minWidth': dataTableThresholdColumnWidth,
+                                    'width': dataTableThresholdColumnWidth,
+                                    'maxWidth': dataTableThresholdColumnWidth
                                 }
                                 ],
                             style_data_conditional = [
@@ -119,8 +123,6 @@ app.layout = html.Div(
                     children = [
                         dash_table.DataTable(
                             id = 'ranReportUmtsTable',
-                            #columns = ranReportUmtsColumns,
-                            #data = ranReportUmtsTable.to_dict('records'),
                             style_header = dataTableStyles.style_header,
                             style_cell = dataTableStyles.style_cell,
                             style_cell_conditional = [
@@ -137,6 +139,13 @@ app.layout = html.Div(
                                     'minWidth': dataTableRatColumnWidth,
                                     'width': dataTableRatColumnWidth,
                                     'maxWidth': dataTableRatColumnWidth
+                                },
+                                {
+                                    'if':{'column_id':'Threshold'},
+                                    'textAlign':'center',
+                                    'minWidth': dataTableThresholdColumnWidth,
+                                    'width': dataTableThresholdColumnWidth,
+                                    'maxWidth': dataTableThresholdColumnWidth
                                 }
                                 ],
                             style_data_conditional = [
@@ -180,8 +189,6 @@ app.layout = html.Div(
                     children = [
                         dash_table.DataTable(
                             id = 'ranReportGsmTable',
-                            #columns = ranReportGsmColumns,
-                            #data = ranReportGsmTable.to_dict('records'),
                             style_header = dataTableStyles.style_header,
                             style_cell = dataTableStyles.style_cell,
                             style_cell_conditional = [
@@ -198,6 +205,13 @@ app.layout = html.Div(
                                     'minWidth': dataTableRatColumnWidth,
                                     'width': dataTableRatColumnWidth,
                                     'maxWidth': dataTableRatColumnWidth
+                                },
+                                {
+                                    'if':{'column_id':'Threshold'},
+                                    'textAlign':'center',
+                                    'minWidth': dataTableThresholdColumnWidth,
+                                    'width': dataTableThresholdColumnWidth,
+                                    'maxWidth': dataTableThresholdColumnWidth
                                 }
                                 ],
                             style_data_conditional = [
@@ -306,15 +320,16 @@ app.layout = html.Div(
         dcc.Interval(
             id='currentKPIWeeklyInterval',
             # interval is expressed in milliseconds (evey 1min)
-            #interval=10800*1000,
-            interval=10*1000,
+            interval=3600*1000,
+            #interval=10*1000,
             n_intervals=0
         )
     ]
 )
 
 # Callback to update the graph data
-@app.callback([
+@app.callback(
+    [
         Output('gsmCsCssr', 'figure'),  
         Output('gsmPsCssr', 'figure'), 
         Output('gsmCsDcr', 'figure'),
@@ -329,7 +344,8 @@ app.layout = html.Div(
         Output('lteVolteCssr', 'figure'),
         Output('lteDataCssr', 'figure')
     ],  
-    Input('graphUpateInterval', 'n_intervals'))
+    Input('graphUpateInterval', 'n_intervals')
+)
 def updateGraph(currentInterval):
     # starttime is the current date/time - daysdelta
     startTime = 7
@@ -641,12 +657,13 @@ def updateDatatable(currentInterval, weeklyInterval, ranReportLteTableStateData,
 # Callback to update the view
 @app.callback(
     [
-        Output('currentKPIGridContainer', 'style'),
-        Output('gsmGraphGridContainer', 'style'),  
+        Output('currentKPIGridContainer', 'style'), 
+        Output('gsmGraphGridContainer', 'style'), 
         Output('umtsGraphGridContainer', 'style'), 
-        Output('lteGraphGridContainer', 'style'),
+        Output('lteGraphGridContainer', 'style')
     ],  
-    Input('viewUpateInterval', 'n_intervals'))
+    Input('viewUpateInterval', 'n_intervals')
+)
 def updateView(currentInterval):
     currentKPIGridContainer = gridContainerStyles.currentKPIGridContainer
     gsmGraphGridContainer = gridContainerStyles.gsmGraphGridContainerStyle
