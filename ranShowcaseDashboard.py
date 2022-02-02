@@ -7,6 +7,7 @@ from plotly.subplots import make_subplots
 import pandas as pd
 # Round to 2 decimal places in dataframe
 pd.set_option('display.float_format', '{:,.2f}'.format)
+pd.set_option('display.precision', 2)
 import mysql.connector
 from datetime import datetime, timedelta
 from dash.exceptions import PreventUpdate
@@ -21,6 +22,7 @@ server = app.server
 dataTableObjectColumnWidth = '400px'
 dataTableRatColumnWidth = '50px'
 dataTableThresholdColumnWidth = '130px'
+dataTableLatestHourColumnWidth = '180px'
 
 # DB Connection Parameters
 dbPara = classes.dbCredentials()
@@ -66,29 +68,29 @@ app.layout = html.Div(
                             id = 'ranReportLteTable',
                             style_header = dataTableStyles.style_header,
                             style_cell = dataTableStyles.style_cell,
-                            style_cell_conditional = [
-                                {
-                                    'if':{'column_id':'KPI\\Object'},
-                                    'textAlign':'left',
-                                    'minWidth': dataTableObjectColumnWidth,
-                                    'width': dataTableObjectColumnWidth,
-                                    'maxWidth': dataTableObjectColumnWidth
-                                },
-                                {
-                                    'if':{'column_id':'RAT'},
-                                    'textAlign':'center',
-                                    'minWidth': dataTableRatColumnWidth,
-                                    'width': dataTableRatColumnWidth,
-                                    'maxWidth': dataTableRatColumnWidth
-                                },
-                                {
-                                    'if':{'column_id':'Threshold'},
-                                    'textAlign':'center',
-                                    'minWidth': dataTableThresholdColumnWidth,
-                                    'width': dataTableThresholdColumnWidth,
-                                    'maxWidth': dataTableThresholdColumnWidth
-                                }
-                                ],
+                            #style_cell_conditional = [
+                            #    {
+                            #        'if':{'column_id':'KPI\\Object'},
+                            #        'textAlign':'left',
+                            #        'minWidth': dataTableObjectColumnWidth,
+                            #        'width': dataTableObjectColumnWidth,
+                            #        'maxWidth': dataTableObjectColumnWidth
+                            #    },
+                            #    {
+                            #        'if':{'column_id':'RAT'},
+                            #        'textAlign':'center',
+                            #        'minWidth': dataTableRatColumnWidth,
+                            #        'width': dataTableRatColumnWidth,
+                            #        'maxWidth': dataTableRatColumnWidth
+                            #    },
+                            #    {
+                            #        'if':{'column_id':'Threshold'},
+                            #        'textAlign':'center',
+                            #        'minWidth': dataTableThresholdColumnWidth,
+                            #        'width': dataTableThresholdColumnWidth,
+                            #        'maxWidth': dataTableThresholdColumnWidth
+                            #    }
+                            #    ],
                             style_data_conditional = [
                                 {
                                     # LTE DCR style rule
@@ -527,6 +529,7 @@ def updateGraph(currentInterval):
     [
         Output('ranReportLteTable', 'columns'),
         Output('ranReportLteTable', 'data'),
+        Output('ranReportLteTable', 'style_cell_conditional'),
         Output('ranReportUmtsTable', 'columns'),
         Output('ranReportUmtsTable', 'data'),
         Output('ranReportGsmTable', 'columns'),
@@ -567,40 +570,81 @@ def updateDatatable(currentInterval, weeklyInterval, ranReportLteTableStateData,
     ranReportLteTable['RAT'] = '4G'
     # Copy data on first row
     ranReportLteTable['Latest Hour'] = list(ranReportLteTableTmp.iloc[0])
+    ranReportLteTable['Latest Hour'][2] = '{:.2f}'.format(float(ranReportLteTable['Latest Hour'][2]))
+    ranReportLteTable['Latest Hour'][3] = '{:.2f}'.format(float(ranReportLteTable['Latest Hour'][3]))
+    ranReportLteTable['Latest Hour'][4] = '{:.2f}'.format(float(ranReportLteTable['Latest Hour'][4]))
+    ranReportLteTable['Latest Hour'][5] = '{:.2f}'.format(float(ranReportLteTable['Latest Hour'][5]))
+    ranReportLteTable['Latest Hour'][6] = '{:.2f}'.format(float(ranReportLteTable['Latest Hour'][6]))
+    ranReportLteTable['Latest Hour'][7] = '{:.2f}'.format(float(ranReportLteTable['Latest Hour'][7]))
+    ranReportLteTable['Latest Hour'][8] = '{:.2f}'.format(float(ranReportLteTable['Latest Hour'][8]))
+    ranReportLteTable['Latest Hour'][9] = '{:.2f}'.format(float(ranReportLteTable['Latest Hour'][9]))
+    ranReportLteTable['Latest Hour'][10] = '{:.2f}'.format(float(ranReportLteTable['Latest Hour'][10]))
+    ranReportLteTable['Latest Hour'][11] = '{:.2f}'.format(float(ranReportLteTable['Latest Hour'][11]))
+    ranReportLteTable['Latest Hour'][12] = '{:.2f}'.format(float(ranReportLteTable['Latest Hour'][12]))
     ranReportLteTable['Threshold'] = ['', '', '< 0.13%', '>= 99%', '>= 99%', '', '', '', '', '', '< 0.13%', '', '>= 99%']
     ranReportUmtsTableTmp = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, currentKPIGridFilePath, latestRanReport), sheet_name='3G Whole Network')
     # Copy dataframe columns as rows on the KPI\Object column
     ranReportUmtsTable['KPI\\Object'] = ranReportUmtsTableTmp.columns[3:]
     ranReportUmtsTable['RAT'] = '3G'
     # Adjust data
-    ranReportUmtsTable['Latest Hour'][0] = ranReportUmtsTableTmp['PS Traffic'].sum()
-    ranReportUmtsTable['Latest Hour'][1] = ranReportUmtsTableTmp['CS Traffic(Erl)'].sum()
-    ranReportUmtsTable['Latest Hour'][2] = ranReportUmtsTableTmp['HSDPA DCR(%)'].mean()
-    ranReportUmtsTable['Latest Hour'][3] = ranReportUmtsTableTmp['HSUPA DCR(%)'].mean()
-    ranReportUmtsTable['Latest Hour'][4] = ranReportUmtsTableTmp['CS DCR(%)'].mean()
-    ranReportUmtsTable['Latest Hour'][5] = ranReportUmtsTableTmp['HSDPA CSSR(%)'].mean()
-    ranReportUmtsTable['Latest Hour'][6] = ranReportUmtsTableTmp['HSUPA CSSR(%)'].mean()
-    ranReportUmtsTable['Latest Hour'][7] = ranReportUmtsTableTmp['CS CSSR'].mean()
-    ranReportUmtsTable['Latest Hour'][8] = ranReportUmtsTableTmp['HSDPA Users'].sum()
-    ranReportUmtsTable['Latest Hour'][9] = ranReportUmtsTableTmp['DL Throughput(kbit/s)'].mean()
-    ranReportUmtsTable['Latest Hour'][10] = ranReportUmtsTableTmp['CSSR CSFB(%)'].mean()
-    ranReportUmtsTable['Latest Hour'][11] = ranReportUmtsTableTmp['MOC CSFB SR(%)'].mean()
-    ranReportUmtsTable['Latest Hour'][12] = ranReportUmtsTableTmp['MTC CSFB SR(%)'].mean()
+    ranReportUmtsTable['Latest Hour'][0] = '{:.2f}'.format(float(ranReportUmtsTableTmp['PS Traffic'].sum()))
+    ranReportUmtsTable['Latest Hour'][1] = '{:.2f}'.format(float(ranReportUmtsTableTmp['CS Traffic(Erl)'].sum()))
+    ranReportUmtsTable['Latest Hour'][2] = '{:.2f}'.format(float(ranReportUmtsTableTmp['HSDPA DCR(%)'].mean()))
+    ranReportUmtsTable['Latest Hour'][3] = '{:.2f}'.format(float(ranReportUmtsTableTmp['HSUPA DCR(%)'].mean()))
+    ranReportUmtsTable['Latest Hour'][4] = '{:.2f}'.format(float(ranReportUmtsTableTmp['CS DCR(%)'].mean()))
+    ranReportUmtsTable['Latest Hour'][5] = '{:.2f}'.format(float(ranReportUmtsTableTmp['HSDPA CSSR(%)'].mean()))
+    ranReportUmtsTable['Latest Hour'][6] = '{:.2f}'.format(float(ranReportUmtsTableTmp['HSUPA CSSR(%)'].mean()))
+    ranReportUmtsTable['Latest Hour'][7] = '{:.2f}'.format(float(ranReportUmtsTableTmp['CS CSSR'].mean()))
+    ranReportUmtsTable['Latest Hour'][8] = '{:.2f}'.format(float(ranReportUmtsTableTmp['HSDPA Users'].sum()))
+    ranReportUmtsTable['Latest Hour'][9] = '{:.2f}'.format(float(ranReportUmtsTableTmp['DL Throughput(kbit/s)'].mean()))
+    ranReportUmtsTable['Latest Hour'][10] = '{:.2f}'.format(float(ranReportUmtsTableTmp['CSSR CSFB(%)'].mean()))
+    ranReportUmtsTable['Latest Hour'][11] = '{:.2f}'.format(float(ranReportUmtsTableTmp['MOC CSFB SR(%)'].mean()))
+    ranReportUmtsTable['Latest Hour'][12] = '{:.2f}'.format(float(ranReportUmtsTableTmp['MTC CSFB SR(%)'].mean()))
     ranReportUmtsTable['Threshold'] = ['', '', '< 0.17%', '< 0.17%', '< 0.17%', '>= 99.87%', '>= 99.87%', '>= 99.87%', '', '', '>= 99%', '>= 99%', '>= 99%']
     ranReportGsmTableTmp = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, currentKPIGridFilePath, latestRanReport), sheet_name='2G Whole Network')
     # Copy dataframe columns as rows on the KPI\Object column
     ranReportGsmTable['KPI\\Object'] = ranReportGsmTableTmp.columns[3:]
     ranReportGsmTable['RAT'] = '2G'
     # Adjust data
-    ranReportGsmTable['Latest Hour'][0] = ranReportGsmTableTmp['CS Traffic(Erl)'].sum()
-    ranReportGsmTable['Latest Hour'][1] = ranReportGsmTableTmp['CS CSSR'].mean()
-    ranReportGsmTable['Latest Hour'][2] = ranReportGsmTableTmp['CS DCR'].mean()
-    ranReportGsmTable['Latest Hour'][3] = ranReportGsmTableTmp['TCH Client Perceived Congestion'].mean()
-    ranReportGsmTable['Latest Hour'][4] = ranReportGsmTableTmp['RA333A:BSS Call Establishment Success Rate(%)'].mean()
-    ranReportGsmTable['Latest Hour'][5] = ranReportGsmTableTmp['PS Traffic'].sum()
-    ranReportGsmTable['Latest Hour'][6] = ranReportGsmTableTmp['PS CSSR'].mean()
+    ranReportGsmTable['Latest Hour'][0] = '{:.2f}'.format(float(ranReportGsmTableTmp['CS Traffic(Erl)'].sum()))
+    ranReportGsmTable['Latest Hour'][1] = '{:.2f}'.format(float(ranReportGsmTableTmp['CS CSSR'].mean()))
+    ranReportGsmTable['Latest Hour'][2] = '{:.2f}'.format(float(ranReportGsmTableTmp['CS DCR'].mean()))
+    ranReportGsmTable['Latest Hour'][3] = '{:.2f}'.format(float(ranReportGsmTableTmp['TCH Client Perceived Congestion'].mean()))
+    ranReportGsmTable['Latest Hour'][4] = '{:.2f}'.format(float(ranReportGsmTableTmp['RA333A:BSS Call Establishment Success Rate(%)'].mean()))
+    ranReportGsmTable['Latest Hour'][5] = '{:.2f}'.format(float(ranReportGsmTableTmp['PS Traffic'].sum()))
+    ranReportGsmTable['Latest Hour'][6] = '{:.2f}'.format(float(ranReportGsmTableTmp['PS CSSR'].mean()))
     ranReportGsmTable['Threshold'] = ['', '>= 99.87%', '<= 0.30%', '', '', '', '']
-    print(type(float(ranReportGsmTable['Latest Hour'][0])))
+    lte_style_cell_conditional = [
+        {
+            'if':{'column_id':'KPI\\Object'},
+            'textAlign':'left',
+            'minWidth': dataTableObjectColumnWidth,
+            'width': dataTableObjectColumnWidth,
+            'maxWidth': dataTableObjectColumnWidth
+        },
+        {
+            'if':{'column_id':'RAT'},
+            'textAlign':'center',
+            'minWidth': dataTableRatColumnWidth,
+            'width': dataTableRatColumnWidth,
+            'maxWidth': dataTableRatColumnWidth
+        },
+        {
+            'if':{'column_id':'Threshold'},
+            'textAlign':'center',
+            'minWidth': dataTableThresholdColumnWidth,
+            'width': dataTableThresholdColumnWidth,
+            'maxWidth': dataTableThresholdColumnWidth
+        },
+        {
+            'if':{'column_id':'Latest Hour'},
+            'textAlign':'right',
+            'minWidth': dataTableLatestHourColumnWidth,
+            'width': dataTableLatestHourColumnWidth,
+            'maxWidth': dataTableLatestHourColumnWidth
+        }
+    ]
+
     # If the trigger is the weekly interval, update accordingly
     if timer_id == 'currentKPIWeeklyInterval':
         currentKPIDirList = ran_functions.getFtpPathFileList(ftpLogin, weeklyKPIGridFilePath)
@@ -611,46 +655,66 @@ def updateDatatable(currentInterval, weeklyInterval, ranReportLteTableStateData,
             if currentFileDate > (datetime.now() - timedelta(days=7)):
                 latestWeeklyRanReport = weeklyKPIGridFilePath + file
         currentWeekNum = 'Week-' + str(currentFileDate.isocalendar()[1])
+        lte_style_cell_conditional.append(
+            {
+                'if':{'column_id':currentWeekNum},
+                'textAlign':'right',
+                'minWidth': dataTableLatestHourColumnWidth,
+                'width': dataTableLatestHourColumnWidth,
+                'maxWidth': dataTableLatestHourColumnWidth
+            }
+        )
         ranReportLteTableTmp = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, weeklyKPIGridFilePath, latestWeeklyRanReport), sheet_name='4G Whole Network')
         # Drop columns
         ranReportLteTableTmp = ranReportLteTableTmp.drop('Integrity', axis=1)
         # Assign new list to currentWeekNum column on df
         ranReportLteTable[currentWeekNum] = list(ranReportLteTableTmp.iloc[0])
+        ranReportLteTable[currentWeekNum][2] = '{:.2f}'.format(float(ranReportLteTable[currentWeekNum][2]))
+        ranReportLteTable[currentWeekNum][3] = '{:.2f}'.format(float(ranReportLteTable[currentWeekNum][3]))
+        ranReportLteTable[currentWeekNum][4] = '{:.2f}'.format(float(ranReportLteTable[currentWeekNum][4]))
+        ranReportLteTable[currentWeekNum][5] = '{:.2f}'.format(float(ranReportLteTable[currentWeekNum][5]))
+        ranReportLteTable[currentWeekNum][6] = '{:.2f}'.format(float(ranReportLteTable[currentWeekNum][6]))
+        ranReportLteTable[currentWeekNum][7] = '{:.2f}'.format(float(ranReportLteTable[currentWeekNum][7]))
+        ranReportLteTable[currentWeekNum][8] = '{:.2f}'.format(float(ranReportLteTable[currentWeekNum][8]))
+        ranReportLteTable[currentWeekNum][9] = '{:.2f}'.format(float(ranReportLteTable[currentWeekNum][9]))
+        ranReportLteTable[currentWeekNum][10] = '{:.2f}'.format(float(ranReportLteTable[currentWeekNum][10]))
+        ranReportLteTable[currentWeekNum][11] = '{:.2f}'.format(float(ranReportLteTable[currentWeekNum][11]))
+        ranReportLteTable[currentWeekNum][12] = '{:.2f}'.format(float(ranReportLteTable[currentWeekNum][12]))
         # Read UMTS Data
         ranReportUmtsTableTmp = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, weeklyKPIGridFilePath, latestWeeklyRanReport), sheet_name='3G Whole Network')
         # Adjust data
         tmpList = []
-        tmpList.append(ranReportUmtsTableTmp['PS Traffic'].sum())
-        tmpList.append(ranReportUmtsTableTmp['CS Traffic(Erl)'].sum())
-        tmpList.append(ranReportUmtsTableTmp['HSDPA DCR(%)'].mean())
-        tmpList.append(ranReportUmtsTableTmp['HSUPA DCR(%)'].mean())
-        tmpList.append(ranReportUmtsTableTmp['CS DCR(%)'].mean())
-        tmpList.append(ranReportUmtsTableTmp['HSDPA CSSR(%)'].mean())
-        tmpList.append(ranReportUmtsTableTmp['HSUPA CSSR(%)'].mean())
-        tmpList.append(ranReportUmtsTableTmp['CS CSSR'].mean())
-        tmpList.append(ranReportUmtsTableTmp['HSDPA Users'].sum())
-        tmpList.append(ranReportUmtsTableTmp['DL Throughput(kbit/s)'].mean())
-        tmpList.append(ranReportUmtsTableTmp['CSSR CSFB(%)'].mean())
-        tmpList.append(ranReportUmtsTableTmp['MOC CSFB SR(%)'].mean())
-        tmpList.append(ranReportUmtsTableTmp['MTC CSFB SR(%)'].mean())
+        tmpList.append('{:.2f}'.format(float(ranReportUmtsTableTmp['PS Traffic'].sum())))
+        tmpList.append('{:.2f}'.format(float(ranReportUmtsTableTmp['CS Traffic(Erl)'].sum())))
+        tmpList.append('{:.2f}'.format(float(ranReportUmtsTableTmp['HSDPA DCR(%)'].mean())))
+        tmpList.append('{:.2f}'.format(float(ranReportUmtsTableTmp['HSUPA DCR(%)'].mean())))
+        tmpList.append('{:.2f}'.format(float(ranReportUmtsTableTmp['CS DCR(%)'].mean())))
+        tmpList.append('{:.2f}'.format(float(ranReportUmtsTableTmp['HSDPA CSSR(%)'].mean())))
+        tmpList.append('{:.2f}'.format(float(ranReportUmtsTableTmp['HSUPA CSSR(%)'].mean())))
+        tmpList.append('{:.2f}'.format(float(ranReportUmtsTableTmp['CS CSSR'].mean())))
+        tmpList.append('{:.2f}'.format(float(ranReportUmtsTableTmp['HSDPA Users'].sum())))
+        tmpList.append('{:.2f}'.format(float(ranReportUmtsTableTmp['DL Throughput(kbit/s)'].mean())))
+        tmpList.append('{:.2f}'.format(float(ranReportUmtsTableTmp['CSSR CSFB(%)'].mean())))
+        tmpList.append('{:.2f}'.format(float(ranReportUmtsTableTmp['MOC CSFB SR(%)'].mean())))
+        tmpList.append('{:.2f}'.format(float(ranReportUmtsTableTmp['MTC CSFB SR(%)'].mean())))
         ranReportUmtsTable[currentWeekNum] = tmpList
         # Read GSM Data
         ranReportGsmTableTmp = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, weeklyKPIGridFilePath, latestWeeklyRanReport), sheet_name='2G Whole Network')
         # Adjust data
         tmpList = []
-        tmpList.append(ranReportGsmTableTmp['CS Traffic(Erl)'].sum())
-        tmpList.append(ranReportGsmTableTmp['CS CSSR'].mean())
-        tmpList.append(ranReportGsmTableTmp['CS DCR'].mean())
-        tmpList.append(ranReportGsmTableTmp['TCH Client Perceived Congestion'].mean())
-        tmpList.append(ranReportGsmTableTmp['RA333A:BSS Call Establishment Success Rate(%)'].mean())
-        tmpList.append(ranReportGsmTableTmp['PS Traffic'].sum())
-        tmpList.append(ranReportGsmTableTmp['PS CSSR'].mean())
+        tmpList.append('{:.2f}'.format(float(ranReportGsmTableTmp['CS Traffic(Erl)'].sum())))
+        tmpList.append('{:.2f}'.format(float(ranReportGsmTableTmp['CS CSSR'].mean())))
+        tmpList.append('{:.2f}'.format(float(ranReportGsmTableTmp['CS DCR'].mean())))
+        tmpList.append('{:.2f}'.format(float(ranReportGsmTableTmp['TCH Client Perceived Congestion'].mean())))
+        tmpList.append('{:.2f}'.format(float(ranReportGsmTableTmp['RA333A:BSS Call Establishment Success Rate(%)'].mean())))
+        tmpList.append('{:.2f}'.format(float(ranReportGsmTableTmp['PS Traffic'].sum())))
+        tmpList.append('{:.2f}'.format(float(ranReportGsmTableTmp['PS CSSR'].mean())))
         ranReportGsmTable[currentWeekNum] = tmpList
     # Format columns data
     ranReportLteColumns = [{'name': i, 'id': i} for i in ranReportLteTable.columns]
     ranReportUmtsColumns = [{'name': i, 'id': i} for i in ranReportUmtsTable.columns]
     ranReportGsmColumns = [{'name': i, 'id': i} for i in ranReportGsmTable.columns]
-    return ranReportLteColumns, ranReportLteTable.to_dict('records'), ranReportUmtsColumns, ranReportUmtsTable.to_dict('records'), ranReportGsmColumns, ranReportGsmTable.to_dict('records')
+    return ranReportLteColumns, ranReportLteTable.to_dict('records'), lte_style_cell_conditional, ranReportUmtsColumns, ranReportUmtsTable.to_dict('records'), ranReportGsmColumns, ranReportGsmTable.to_dict('records')
 
 # Callback to update the view
 @app.callback(
