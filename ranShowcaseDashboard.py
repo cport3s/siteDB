@@ -5,6 +5,8 @@ from dash.dependencies import Input, Output, State
 import dash_table
 from plotly.subplots import make_subplots
 import pandas as pd
+# Round to 2 decimal places in dataframe
+pd.set_option('display.float_format', '{:,.2f}'.format)
 import mysql.connector
 from datetime import datetime, timedelta
 from dash.exceptions import PreventUpdate
@@ -314,13 +316,13 @@ app.layout = html.Div(
             id='viewUpateInterval',
             # interval is expressed in milliseconds (evey 1min)
             #interval=20*1000,
-            interval=2000*1000,
+            interval=20*1000,
             n_intervals=0
         ),
         dcc.Interval(
             id='currentKPIWeeklyInterval',
             # interval is expressed in milliseconds (evey 1min)
-            interval=3600*1000,
+            interval=42*1000,
             #interval=10*1000,
             n_intervals=0
         )
@@ -598,7 +600,7 @@ def updateDatatable(currentInterval, weeklyInterval, ranReportLteTableStateData,
     ranReportGsmTable['Latest Hour'][5] = ranReportGsmTableTmp['PS Traffic'].sum()
     ranReportGsmTable['Latest Hour'][6] = ranReportGsmTableTmp['PS CSSR'].mean()
     ranReportGsmTable['Threshold'] = ['', '>= 99.87%', '<= 0.30%', '', '', '', '']
-
+    print(type(float(ranReportGsmTable['Latest Hour'][0])))
     # If the trigger is the weekly interval, update accordingly
     if timer_id == 'currentKPIWeeklyInterval':
         currentKPIDirList = ran_functions.getFtpPathFileList(ftpLogin, weeklyKPIGridFilePath)
@@ -609,10 +611,6 @@ def updateDatatable(currentInterval, weeklyInterval, ranReportLteTableStateData,
             if currentFileDate > (datetime.now() - timedelta(days=7)):
                 latestWeeklyRanReport = weeklyKPIGridFilePath + file
         currentWeekNum = 'Week-' + str(currentFileDate.isocalendar()[1])
-        # Add new column to DF
-        #ranReportLteTable[currentWeekNum] = []
-        #ranReportUmtsTable[currentWeekNum] = []
-        #ranReportGsmTable[currentWeekNum] = []
         ranReportLteTableTmp = pd.read_excel(ran_functions.downloadFtpFile(ftpLogin, weeklyKPIGridFilePath, latestWeeklyRanReport), sheet_name='4G Whole Network')
         # Drop columns
         ranReportLteTableTmp = ranReportLteTableTmp.drop('Integrity', axis=1)
